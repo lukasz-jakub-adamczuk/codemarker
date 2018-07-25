@@ -25,7 +25,7 @@ var exam = {
 
 
 function processAnswers(answers) {
-    var result = {'correct': 0, 'wrong': 0, 'choices': [], 'processed': true};
+    var result = {'correct': 0, 'wrong': 0, 'choices': [], 'processed': true, 'shuffled': false};
     var types = ['correct', 'wrong'];
     var answer;
     for (var type in types) {
@@ -66,20 +66,46 @@ function shuffleArray(array) {
 function reorderArray(array) {
     for (var i = 0; i < array.length; i++) {
         array[i].index = i+1;
+        // array[i].processed = true;
     }
     return array;
 }
 
 function generateQuestion(q) {
-    var answers = q.processed ? q.answers : processAnswers(q.answers);
+    // q = q.processed ? q : processAnswers(q.anwers);
+    var answers;
+    if (q.processed) {
+        answers = q.answers;
+    } else {
+        answers = processAnswers(q.answers);
+        q.answers = answers;
+        q.processed = true;
+    }
+    //  = q.processed ? q.answers : processAnswers(q.answers);
+    // var answers = q.answers;
+    // q.answers = answers;
     var html = '';
     var id = '';
     var answer = '';
+    var checked = false;
+
+    console.log(q.answers);
+    console.log(answers);
 
     // console.log(challenge);
     // console.log(q);
 
-    answers.choices = shuffleArray(answers.choices);
+
+    // answers.choices = answers.processed ? answers.choices : shuffleArray(answers.choices);
+    // answers.choices = answers.shuffled ? answers.choices : shuffleArray(answers.choices);
+
+    if (answers.shuffled) {
+        answers.choices = answers.choices;
+    } else {
+        answers.choices = shuffleArray(answers.choices);
+        answers.shuffled = true;
+        q.answers = answers;
+    }
 
     html += '<b class="text-muted">Question ' + q['index'] + '</b>';
     html += '<h2>' + q.name + '</h2>';
@@ -90,16 +116,21 @@ function generateQuestion(q) {
         // id = 'qstn-'+slugify(q.name)+'-answr-'+answers.choices[ans].slug+'';
         id = 'qstn-'+q['index']+'-answr-'+ans+'';
         answer = answers.choices[ans].name;
+        if (q.index in exam.questions && ans in exam.questions[q.index]) {
+            checked = true;
+        } else {
+            checked = false;
+        }
         if (answers.choices.length - answers.wrong > 1) {
             // multi choice
             html += '<div class="custom-control custom-checkbox">'
-                +'<input type="checkbox" id="'+id+'" name="customCheckbox" class="custom-control-input">'
+                +'<input type="checkbox" id="'+id+'" name="customCheckbox" class="custom-control-input" value="'+slugify(answer)+'"'+(checked ? ' checked' : '')+'>'
                 +'<label class="custom-control-label" for="'+id+'">'+answer+'</label>'
             +'</div>';
         } else {
             // single choice
             html += '<div class="custom-control custom-radio">'
-                +'<input type="radio" id="'+id+'" name="customRadio" class="custom-control-input">'
+                +'<input type="radio" id="'+id+'" name="customRadio" class="custom-control-input" value="'+slugify(answer)+'"'+(checked ? ' checked' : '')+'>'
                 +'<label class="custom-control-label" for="'+id+'">'+answer+'</label>'
             +'</div>';
         }
@@ -154,6 +185,9 @@ function slugify(st) {
 function displayContents(contents) {
     var element = document.getElementById('file-content');
     element.innerHTML = contents;
+    if ('localStorage' in window) {
+        localStorage.setItem('hr-exam', document.getElementById('file-content').innerHTML);
+    }
     var parts = contents.split('\n');
 
     // simple parser
@@ -280,11 +314,26 @@ function registerAnswer(event) {
 
         var question = label.split('qstn-')[1].split('-answr-')[0];
         var answer = label.split('-answr-')[1];
+        // var option;
 
-        // if (exam.questions
-        exam.questions.push(question)
+        // console.log(question);
+        // console.log(answer);
+        console.log(event.target.getAttribute('checked'));
+
+        if (question in exam.questions) {
+        } else {
+            exam.questions[question] = {};
+        }
+        // console.log(exam);
+        if (answer in exam.questions[question]) {
+            exam.questions[question][answer] = event.target.getAttribute('checked') != '' ? false : true;
+        }else {
+            exam.questions[question][answer] = true;
+        }
+        // exam.questions.push(question)
         console.log(question);
         console.log(answer);
+        console.log(exam);
     }
 }
 
@@ -308,6 +357,11 @@ var arrows = {
 
 
 
+if ('localStorage' in window) {
+    if ('hr-exam' in localStorage) {
+        displayContents(localStorage.getItem('hr-exam'));
+    }
+}
 
 
 
