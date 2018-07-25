@@ -3,6 +3,27 @@ var questions = [];
 var challenge;
 var limit;
 
+var initialSetup = {
+    'sys-admin': {
+        questions: 60,
+        duration: 130,
+        pass: 80
+    },
+    'cis-hr': {
+        questions: 60,
+        duration: 130,
+        pass: 80
+    }
+};
+var exam = 'cis-hr';
+var time = initialSetup[exam].duration * 60;
+
+var exam = {
+    questions: [],
+    score: 0,
+}
+
+
 function processAnswers(answers) {
     var result = {'correct': 0, 'wrong': 0, 'choices': [], 'processed': true};
     var types = ['correct', 'wrong'];
@@ -55,29 +76,28 @@ function generateQuestion(q) {
     var id = '';
     var answer = '';
 
-    console.log(challenge);
-    console.log(q);
+    // console.log(challenge);
+    // console.log(q);
 
     answers.choices = shuffleArray(answers.choices);
 
     html += '<b class="text-muted">Question ' + q['index'] + '</b>';
     html += '<h2>' + q.name + '</h2>';
 
-    if (answers.choices.length - answers.wrong > 1) {
-        // multi choice
-        for (var ans in answers.choices) {
-            id = 'q-'+name+'-a-'+answers.choices[ans].slug+'';
-            answer = answers.choices[ans].name;
+    console.log(answers.choices);
+        
+    for (var ans in answers.choices) {
+        // id = 'qstn-'+slugify(q.name)+'-answr-'+answers.choices[ans].slug+'';
+        id = 'qstn-'+q['index']+'-answr-'+ans+'';
+        answer = answers.choices[ans].name;
+        if (answers.choices.length - answers.wrong > 1) {
+            // multi choice
             html += '<div class="custom-control custom-checkbox">'
                 +'<input type="checkbox" id="'+id+'" name="customCheckbox" class="custom-control-input">'
                 +'<label class="custom-control-label" for="'+id+'">'+answer+'</label>'
             +'</div>';
-        }
-    } else {
-        // single choice
-        for (var ans in answers.choices) {
-            id = 'q-'+name+'-a-'+answers.choices[ans].slug+'';
-            answer = answers.choices[ans].name;
+        } else {
+            // single choice
             html += '<div class="custom-control custom-radio">'
                 +'<input type="radio" id="'+id+'" name="customRadio" class="custom-control-input">'
                 +'<label class="custom-control-label" for="'+id+'">'+answer+'</label>'
@@ -116,8 +136,21 @@ function readSingleFile(e) {
       displayContents(contents);
     };
     reader.readAsText(file);
-  }
-   
+}
+
+function slugify(st) {
+    st = st.toLowerCase();
+    st = st.replace(/[\u00C0-\u00C5]/ig,'a')
+    st = st.replace(/[\u00C8-\u00CB]/ig,'e')
+    st = st.replace(/[\u00CC-\u00CF]/ig,'i')
+    st = st.replace(/[\u00D2-\u00D6]/ig,'o')
+    st = st.replace(/[\u00D9-\u00DC]/ig,'u')
+    st = st.replace(/[\u00D1]/ig,'n')
+    st = st.replace(/[^a-z0-9 ]+/gi,'')
+    st = st.trim().replace(/ /g,'-');
+    st = st.replace(/[\-]{2}/g,'');
+    return (st.replace(/[^a-z\- ]*/gi,''));
+} 
 function displayContents(contents) {
     var element = document.getElementById('file-content');
     element.innerHTML = contents;
@@ -147,11 +180,11 @@ function displayContents(contents) {
             switch(line[0]) {
                 case '+':
                     answer = line.substr(1,).trim();
-                    question.answers.correct[answer.toLowerCase()] = answer;
+                    question.answers.correct[slugify(answer)] = answer;
                     break;
                 case '-':
                     answer = line.substr(1,).trim();
-                    question.answers.wrong[answer.toLowerCase()] = answer;
+                    question.answers.wrong[slugify(answer)] = answer;
                     break;
                 case '{':
 
@@ -166,6 +199,7 @@ function displayContents(contents) {
                         n++;
                     }
                     question.name = line;
+                    // question.slug = slugify(line);
                     question.index = n;
                     question.processed = false;
 
@@ -189,7 +223,23 @@ function displayContents(contents) {
 
     // console.log(questions[challenge]);
 
-    generateQuestion(questions[challenge]);
+    // generateQuestion(questions[challenge]);
+    toggleElement('start');
+}
+
+function toggleElement(element) {
+    var el = document.getElementById(element);
+    // console.log(el.className);
+    if (el.className.indexOf('hidden') != -1) {
+        // console.log(el.className);
+        // var parts = el.className.split(' ');
+        // el.className.split(' ').push('visible').join(' ');
+        el.className = el.className.replace('hidden', 'visible');
+    } else {
+        // el.style.display = 'none';
+        // el.className.split(' ').push('visible').join(' ');
+        el.className = el.className.replace('visible', 'hidden');
+    }
 }
 
 function prevQuestion(event) {
@@ -205,10 +255,37 @@ function nextQuestion(event) {
         generateQuestion(questions[challenge]);
         event.preventDefault();
     }
+    console.log(exam);
 }
 function startChallenge(event) {
-    startDate = new Date();
+    // generate first questions
+    generateQuestion(questions[challenge]);
+    // show nav buttons
+    toggleElement('prev');
+    toggleElement('next');
+    // start timer
+    timer();
+    // start interval
+    var displayTimer = setInterval(function() {
+        time--;
+        timer();
+    }, 1000);
     event.preventDefault();
+    toggleElement('start', 1000);
+}
+
+function registerAnswer(event) {
+    if (event.target.getAttribute('id')) {
+        var label = event.target.getAttribute('id');
+
+        var question = label.split('qstn-')[1].split('-answr-')[0];
+        var answer = label.split('-answr-')[1];
+
+        // if (exam.questions
+        exam.questions.push(question)
+        console.log(question);
+        console.log(answer);
+    }
 }
 
 // var file = '/home/ash/Sites/codemarker/hr-questions.md';
@@ -220,12 +297,20 @@ document.getElementById('next').addEventListener('click', nextQuestion, false);
 
 document.getElementById('start').addEventListener('click', startChallenge, false);
 
+document.getElementById('container').addEventListener('click', registerAnswer, true);
+
 var arrows = {
     'left': 37,
     'up': 38,
     'right': 39,
     'down': 40
 };
+
+
+
+
+
+
 
 window.addEventListener('keydown', function(event) {
     switch (event.keyCode) {
@@ -238,23 +323,8 @@ window.addEventListener('keydown', function(event) {
     }
 });
 
-var initialSetup = {
-    'sys-admin': {
-        questions: 60,
-        duration: 130,
-        pass: 80
-    },
-    'cis-hr': {
-        questions: 60,
-        duration: 130,
-        pass: 80
-    }
-};
-var exam = 'cis-hr';
-var time = initialSetup[exam].duration * 60;
 
 function timer() {
-    time--;
     var hours   = Math.floor(time / 3600);
     var minutes = Math.floor((time - (hours*3600)) / 60);
     var seconds = Math.floor(time - (hours*3600) - (minutes*60));
@@ -262,15 +332,8 @@ function timer() {
     document.getElementById('timer').innerHTML = timer;
 }
 
-var displayTimer = setInterval(function() {    
-    timer();
-}, 1000);
 
 
-var exam = {
-    questions: [],
-    score: 0
-}
 
 
 

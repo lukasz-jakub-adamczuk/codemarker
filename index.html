@@ -2,25 +2,29 @@
     <head>
         <title>CodeMarker</title>
         <link rel="stylesheet" href="bootstrap-4.0.0/dist/css/bootstrap.css">
+        <link rel="stylesheet" href="css/main.css">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
     </head>
     <body>
-        <div class="container">
+        <div id="container" class="container">
 
         </div>
         
         <div id="timer"></div>
 
         <nav>
-            <a id="start">START</a>
-            <a id="prev">PREV</a>
-            <a id="next">NEXT</a>
+            <button id="prev" class="btn btn-secondary hidden">Previous</button>
+            <button id="next" class="btn btn-secondary hidden">Next</button>
+            <br>
+            <button id="start" class="btn btn-primary hidden">Start challenge</button>
+            <button id="finish" class="btn btn-primary hidden">Finish challenge</button>
         </nav>
 
-        <input type="file" id="file-input" >
-        <div id="file-content" style="display: none;"></div>
-
+        <div id="loader">
+            <input type="file" id="file-input" >
+            <div id="file-content" style="display: none;"></div>
+        </div>
 
         <script src="js/hammer.js"></script>
         <script src="js/main.js"></script>

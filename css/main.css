@@ -1,0 +1,59 @@
+
+.container {
+    font-size: 150%
+}
+
+#timer {
+    position: absolute;
+    bottom: 20%;
+    width: 100%;
+    height: 8%;
+    text-align: center;
+    color: #888;
+    font-size: 2em;
+}
+nav {
+    position: absolute;
+    bottom: 8%;
+    width: 100%;
+    height: 14%;
+    text-align: center;
+}
+#loader {
+    position: absolute;
+    bottom: 0%;
+    width: 100%;
+    height: 8%;
+    text-align: center;
+}
+
+/* labels */
+.custom-control-label {
+    margin-left: .5rem;
+}
+
+.custom-control-label::before,
+.custom-control-label::after {
+    top: .335rem;
+    width: 1.5rem;
+    height: 1.5rem;
+}
+#prev {
+    float: left;
+    margin: 1rem;
+}
+#next {
+    float: right;
+    margin: 1rem;
+}
+
+
+.btn.visible {
+    /* transition-property: opacity;
+    transition-timing-function: ease; */
+    opacity: 1;
+    transition: all 1s ease-out;
+}
+.btn.hidden {
+    opacity: 0;
+}
