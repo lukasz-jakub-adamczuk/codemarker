@@ -10,3 +10,7 @@ app for learning...
 * pause challenge
 * pwa
 * rwd
+
+## TOFIX
+* one incorrect answer in multiple answers question is 0 points
+* check what answer was checked/unchecked during question
