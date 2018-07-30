@@ -1,7 +1,12 @@
 
-var questions = [];
+var questions = {
+    'all': [],
+    'used': [],
+    'exam': []
+};
 var challenge;
 var limit;
+var displayTimer;
 
 var initialSetup = {
     'sys-admin': {
@@ -10,13 +15,17 @@ var initialSetup = {
         pass: 80
     },
     'cis-hr': {
-        questions: 60,
-        duration: 130,
+        // questions: 60,
+        questions: 5,
+        // duration: 130,
+        duration: 1,
         pass: 80
     }
 };
-var exam = 'cis-hr';
-var time = initialSetup[exam].duration * 60;
+
+var cert = 'cis-hr';
+var time = initialSetup[cert].duration * 60;
+
 
 var exam = {
     questions: [],
@@ -116,7 +125,7 @@ function generateQuestion(q) {
         // id = 'qstn-'+slugify(q.name)+'-answr-'+answers.choices[ans].slug+'';
         id = 'qstn-'+q['index']+'-answr-'+ans+'';
         answer = answers.choices[ans].name;
-        if (q.index in exam.questions && ans in exam.questions[q.index]) {
+        if (q.index in questions.exam && ans in questions.exam[q.index]) {
             checked = true;
         } else {
             checked = false;
@@ -228,7 +237,7 @@ function displayContents(contents) {
                     questionFound = true;
 
                     if (question.name) {
-                        questions[n] = question;
+                        questions.all[n] = question;
                         question = {};
                         n++;
                     }
@@ -238,7 +247,7 @@ function displayContents(contents) {
                     question.processed = false;
 
                     if (questionFound && !questionAdded) {
-                        questions[n] = question;
+                        questions.all[n] = question;
                         questionAdded = false;
                         // n++;
                     }
@@ -247,65 +256,74 @@ function displayContents(contents) {
         }
     }
 
-    // console.log(questions);
-    questions = shuffleArray(questions);
-    // console.log(questions);
-    questions = reorderArray(questions);
+    questions.all = shuffleArray(questions.all);
+    questions.used = reorderArray(questions.all.slice(0, initialSetup[cert].questions));
 
     challenge = 0;
-    limit = questions.length;
+    limit = questions.used.length;
 
-    // console.log(questions[challenge]);
-
-    // generateQuestion(questions[challenge]);
     toggleElement('start');
 }
 
 function toggleElement(element) {
     var el = document.getElementById(element);
-    // console.log(el.className);
     if (el.className.indexOf('hidden') != -1) {
-        // console.log(el.className);
-        // var parts = el.className.split(' ');
-        // el.className.split(' ').push('visible').join(' ');
         el.className = el.className.replace('hidden', 'visible');
     } else {
-        // el.style.display = 'none';
-        // el.className.split(' ').push('visible').join(' ');
         el.className = el.className.replace('visible', 'hidden');
     }
+}
+function showElement(element) {
+    var el = document.getElementById(element);
+    el.className = el.className.replace('hidden', 'visible');
 }
 
 function prevQuestion(event) {
     if (challenge > 0) {
         challenge--;
-        generateQuestion(questions[challenge]);
+        generateQuestion(questions.used[challenge]);
         event.preventDefault();
     }
 }
 function nextQuestion(event) {
     if (challenge < limit-1) {
         challenge++;
-        generateQuestion(questions[challenge]);
+        generateQuestion(questions.used[challenge]);
         event.preventDefault();
     }
     console.log(exam);
 }
 function startChallenge(event) {
     // generate first questions
-    generateQuestion(questions[challenge]);
+    generateQuestion(questions.used[challenge]);
     // show nav buttons
     toggleElement('prev');
     toggleElement('next');
     // start timer
     timer();
     // start interval
-    var displayTimer = setInterval(function() {
+    displayTimer = setInterval(function() {
         time--;
         timer();
+        if (time <= 0) {
+            clearInterval(displayTimer);
+            showResult();
+        }
     }, 1000);
     event.preventDefault();
     toggleElement('start', 1000);
+}
+function finishChallenge() {
+    // timerStop();
+    clearInterval(displayTimer);
+    console.log('finished...');
+    showResult();
+}
+
+function showResult() {
+    // alert('Time ended and you got ' + 55 + '%. FAILED.');
+    validateExamAnswers();
+
 }
 
 function registerAnswer(event) {
@@ -320,22 +338,69 @@ function registerAnswer(event) {
         // console.log(answer);
         console.log(event.target.getAttribute('checked'));
 
-        if (question in exam.questions) {
+        if (question in questions.exam) {
         } else {
-            exam.questions[question] = {};
+            questions.exam[question] = {};
         }
         // console.log(exam);
-        if (answer in exam.questions[question]) {
-            exam.questions[question][answer] = event.target.getAttribute('checked') != '' ? false : true;
-        }else {
-            exam.questions[question][answer] = true;
+        if (answer in questions.exam[question]) {
+            questions.exam[question][answer] = event.target.getAttribute('checked') != '' ? false : true;
+        } else {
+            questions.exam[question][answer] = true;
         }
-        // exam.questions.push(question)
-        console.log(question);
-        console.log(answer);
-        console.log(exam);
+        countProgress();
+        // questions.exam.push(question)
+        // console.log(question);
+        // console.log(answer);
+        // console.log(questions.exam);
+
+        if ((answeredExamQuestions().length) == initialSetup[cert].questions) {
+            showElement('finish');
+        }
     }
 }
+function countProgress() {
+    var answered = answeredExamQuestions();
+    var current = answered.length / initialSetup[cert].questions * 100;
+    document.querySelector('.progresso span').style = 'width: ' + current + '%;';
+}
+function answeredExamQuestions() {
+    return questions.exam.filter(function(elem, index, array) { return typeof elem != 'undefined';})
+}
+function timerStop() {
+
+}
+
+function validateExamAnswers() {
+    var score = 0;
+    var signlePoint = 100/initialSetup[cert].questions;
+    var ratio;
+
+    console.log(questions.exam);
+    console.log(questions.used);
+
+    for (var i = 1; i < questions.exam.length; i++) {
+        ratio = 1 / questions.used[i-1].answers.correct;
+        console.log('chosen: ' + Object.keys(questions.exam[i]).length);
+        console.log('correct: ' + questions.used[i-1].answers.correct);
+        console.log('ratio: ' + ratio);
+        for (var answer in questions.exam[i]) {
+            // console.log(questions.exam[i][answer]);
+            // console.log(questions.used[i-1].answers.choices[answer].type);
+            if (questions.exam[i][answer] == true && questions.used[i-1].answers.choices[answer].type == 'correct') {
+                score+=ratio;
+            }
+        }
+        console.log(score);
+    }
+
+    score = score * signlePoint;
+
+    console.log(score);
+}
+
+
+// adding events
 
 // var file = '/home/ash/Sites/codemarker/hr-questions.md';
    
@@ -345,6 +410,7 @@ document.getElementById('prev').addEventListener('click', prevQuestion, false);
 document.getElementById('next').addEventListener('click', nextQuestion, false);
 
 document.getElementById('start').addEventListener('click', startChallenge, false);
+document.getElementById('finish').addEventListener('click', finishChallenge, false);
 
 document.getElementById('container').addEventListener('click', registerAnswer, true);
 
@@ -362,6 +428,7 @@ if ('localStorage' in window) {
         displayContents(localStorage.getItem('hr-exam'));
     }
 }
+
 
 
 
@@ -384,6 +451,7 @@ function timer() {
     var seconds = Math.floor(time - (hours*3600) - (minutes*60));
     var timer = (hours+'').padStart(2, '0') + ':' + (minutes+'').padStart(2, '0') + ':' + (seconds+'').padStart(2, '0');
     document.getElementById('timer').innerHTML = timer;
+    // console.log(time);
 }
 
 
