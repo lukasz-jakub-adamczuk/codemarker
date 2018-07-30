@@ -57,3 +57,32 @@ nav {
 .btn.hidden {
     opacity: 0;
 }
+
+
+.progresso {
+    /* width: 100%; */
+    /* height: 16px; */
+}
+.progresso > span {
+    display: inline-block;
+    height: 16px;
+    background-image:
+         linear-gradient(-45deg, 
+                                 transparent 33%, rgba(0, 0, 0, .1) 33%, 
+                                 rgba(0,0, 0, .1) 66%, transparent 66%),
+         linear-gradient(to top, 
+                                 rgba(255, 255, 255, .25), 
+                                 rgba(0, 0, 0, .25)),
+         linear-gradient(to left, #09c, #f44);
+    
+    /* background: linear-gradient(to left, #09c, #f44); */
+    /* background: linear-gradient(red, blue); */
+    /* background: yellow; */
+      /* border-radius: 2px;  */
+      background-size: 35px 20px, 100% 100%, 100% 100%;
+      animation: animate-stripes 5s linear infinite;
+  }
+ 
+ @keyframes animate-stripes {
+    100% { background-position: 0px 0px; }
+ }
