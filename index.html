@@ -7,6 +7,25 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
     </head>
     <body>
+        <input id="options-tgr" type="checkbox">
+        <div class="menu-options">
+            <div class="options form-inline">
+                <div class="form-row">
+                    <!-- <div class="col-small-6"> -->
+                        <p>Use this option to load questions form your computer or mobile</p>
+                        <button id="load" class="btn btn-secondary">Load questions</button>
+                    <!-- </div> -->
+                </div>
+                <div class="form-row">
+                    <!-- <div class="col-small-6"> -->
+                        <p>Use this option to load questions CodeMarker cloud storage space</p>
+                        <input id="retrieve-code" type="text" class="form-control col-sm-4" placeholder="type code">
+                        <button id="retrieve" class="btn btn-secondary">Retrieve</button>
+                    <!-- </div> -->
+                </div>
+                <label id="close-options" for="options-tgr" class="btn btn-secondary">Close options</label>
+            </div>
+        </div>
         <div class="progresso">
             <span></span>
         </div>
@@ -16,14 +35,17 @@
 
         <nav>
             <button id="prev" class="btn btn-secondary hidden">Previous</button>
+            <button id="help" class="btn btn-disabled hidden">Answer(s)</button>
             <button id="next" class="btn btn-secondary hidden">Next</button>
             <br>
             <button id="start" class="btn btn-primary hidden">Start challenge</button>
             <br>
             <button id="finish" class="btn btn-primary hidden">Finish challenge</button>
         </nav>
+        <label id="show-options" for="options-tgr" class="btn btn-secondary">Show options</label>
 
-        <div id="loader">
+
+        <div id="loader" style="display: none;">
             <input type="file" id="file-input" >
             <div id="file-content" style="display: none;"></div>
         </div>

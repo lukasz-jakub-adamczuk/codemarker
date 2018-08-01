@@ -7,16 +7,16 @@
     position: absolute;
     bottom: 20%;
     width: 100%;
-    height: 8%;
+    height: 10%;
     text-align: center;
     color: #888;
     font-size: 2em;
 }
 nav {
     position: absolute;
-    bottom: 8%;
+    bottom: 0;
     width: 100%;
-    height: 14%;
+    height: 25%;
     text-align: center;
 }
 #loader {
@@ -30,6 +30,28 @@ nav {
 /* labels */
 .custom-control-label {
     margin-left: .5rem;
+    opacity: .8;
+}
+/* highlight correct answers */
+
+.custom-control-label.marked-correct {
+    opacity: 1;
+    animation: marked-correct .5s linear;
+}
+.custom-control-label.marked-wrong {
+    opacity: .1;
+    animation: marked-wrong .5s linear;
+}
+@keyframes marked-correct {
+    100% { opacity: 1 }
+}
+@keyframes marked-wrong {
+    100% { opacity: .1 }
+}
+
+
+.form-control {
+    /* margin: .5rem; */
 }
 
 .custom-control-label::before,
@@ -38,13 +60,17 @@ nav {
     width: 1.5rem;
     height: 1.5rem;
 }
+#prev,
+#next {
+    width: 11ch;
+    margin: .5rem;
+}
 #prev {
-    float: left;
-    margin: 1rem;
+    /* float: left; */
+
 }
 #next {
-    float: right;
-    margin: 1rem;
+    /* float: right; */
 }
 
 
@@ -74,15 +100,83 @@ nav {
                                  rgba(255, 255, 255, .25), 
                                  rgba(0, 0, 0, .25)),
          linear-gradient(to left, #09c, #f44);
-    
-    /* background: linear-gradient(to left, #09c, #f44); */
-    /* background: linear-gradient(red, blue); */
-    /* background: yellow; */
-      /* border-radius: 2px;  */
-      background-size: 35px 20px, 100% 100%, 100% 100%;
-      animation: animate-stripes 5s linear infinite;
-  }
+    background-size: 35px 20px, 100% 100%, 100% 100%;
+    animation: animate-stripes 5s linear infinite;
+}
  
- @keyframes animate-stripes {
+@keyframes animate-stripes {
     100% { background-position: 0px 0px; }
- }
+}
+
+.result {
+    height: 40%;
+    background-size: 50% auto;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.passed {
+    background-image: url(../img/passed.png);
+}
+.failed {
+    background-image: url(../img/failed.png);
+}
+.epic-fail {
+    background-image: url(../img/epic-fail.png);
+}
+.advice {
+    text-align: center;
+    font-size: 125%;
+
+}
+
+
+/* menu options */
+.menu-options {
+    background: url(../img/trianglify.png) 50% 50% no-repeat;
+    /* text-align: center; */
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    transform: translateY(-100%);
+    transition: .5s ease-in transform;
+    z-index: 1;
+}
+.options {
+    padding: 1rem;
+}
+.options .form-row {
+    margin-bottom: 2rem;
+}
+.options p {
+    margin-bottom: 0;
+    text-shadow: 0 1px 0 #fff;
+}
+#options-tgr {
+    display: none;
+}
+#options-tgr:checked + .menu-options {
+    transform: translateY(0);
+    /* animation: menu-options; */
+}
+/*@keyframes menu-options {
+    80% { transform: translateY(0); }
+    900% { transform: translateY(10%); }
+    100% { transform: translateY(0); }
+}*/
+
+#retrieve-code {
+    width: 40%;
+}
+
+#show-options {
+    width: 16ch;
+    position: fixed;
+    bottom: 0;
+    left: calc(50% - 8ch);
+}
+#close-options {
+    width: 16ch;
+    position: absolute;
+    bottom: 0;
+    left: calc(50% - 8ch);
+}
