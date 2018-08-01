@@ -354,7 +354,7 @@ function retrieveQuestions() {
     var code = document.getElementById('retrieve-code').value;
     var req = new XMLHttpRequest();
 
-    req.open('POST', 'http://ash.unixstorm.org/codemarker/cloud/index.php', false); 
+    req.open('POST', 'https://ash.unixstorm.org/codemarker/cloud/index.php', false); 
     req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     req.send('code=' + code);
 
