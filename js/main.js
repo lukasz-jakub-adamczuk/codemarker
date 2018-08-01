@@ -24,7 +24,8 @@ var initialSetup = {
 };
 
 var cert = 'cis-hr';
-var time = initialSetup[cert].duration * 60;
+// var time = initialSetup[cert].duration * 60;
+var time;
 
 
 var exam = {
@@ -81,8 +82,12 @@ function reorderArray(array) {
 }
 
 function generateQuestion(q) {
-    // q = q.processed ? q : processAnswers(q.anwers);
     var answers;
+    var html = '';
+    var id = '';
+    var answer = '';
+    var checked = false;
+
     if (q.processed) {
         answers = q.answers;
     } else {
@@ -90,23 +95,6 @@ function generateQuestion(q) {
         q.answers = answers;
         q.processed = true;
     }
-    //  = q.processed ? q.answers : processAnswers(q.answers);
-    // var answers = q.answers;
-    // q.answers = answers;
-    var html = '';
-    var id = '';
-    var answer = '';
-    var checked = false;
-
-    console.log(q.answers);
-    console.log(answers);
-
-    // console.log(challenge);
-    // console.log(q);
-
-
-    // answers.choices = answers.processed ? answers.choices : shuffleArray(answers.choices);
-    // answers.choices = answers.shuffled ? answers.choices : shuffleArray(answers.choices);
 
     if (answers.shuffled) {
         answers.choices = answers.choices;
@@ -118,11 +106,8 @@ function generateQuestion(q) {
 
     html += '<b class="text-muted">Question ' + q['index'] + '</b>';
     html += '<h2>' + q.name + '</h2>';
-
-    console.log(answers.choices);
         
     for (var ans in answers.choices) {
-        // id = 'qstn-'+slugify(q.name)+'-answr-'+answers.choices[ans].slug+'';
         id = 'qstn-'+q['index']+'-answr-'+ans+'';
         answer = answers.choices[ans].name;
         if (q.index in questions.exam && ans in questions.exam[q.index]) {
@@ -195,7 +180,7 @@ function displayContents(contents) {
     var element = document.getElementById('file-content');
     element.innerHTML = contents;
     if ('localStorage' in window) {
-        localStorage.setItem('hr-exam', document.getElementById('file-content').innerHTML);
+        localStorage.setItem(cert, document.getElementById('file-content').innerHTML);
     }
     var parts = contents.split('\n');
 
@@ -242,25 +227,17 @@ function displayContents(contents) {
                         n++;
                     }
                     question.name = line;
-                    // question.slug = slugify(line);
                     question.index = n;
                     question.processed = false;
 
                     if (questionFound && !questionAdded) {
                         questions.all[n] = question;
                         questionAdded = false;
-                        // n++;
                     }
                     break;
             }
         }
     }
-
-    questions.all = shuffleArray(questions.all);
-    questions.used = reorderArray(questions.all.slice(0, initialSetup[cert].questions));
-
-    challenge = 0;
-    limit = questions.used.length;
 
     toggleElement('start');
 }
@@ -277,6 +254,10 @@ function showElement(element) {
     var el = document.getElementById(element);
     el.className = el.className.replace('hidden', 'visible');
 }
+function hideElement(element) {
+    var el = document.getElementById(element);
+    el.className = el.className.replace('visible', 'hidden');
+}
 
 function prevQuestion(event) {
     if (challenge > 0) {
@@ -291,23 +272,34 @@ function nextQuestion(event) {
         generateQuestion(questions.used[challenge]);
         event.preventDefault();
     }
-    console.log(exam);
 }
+function initChallenge() {
+    questions.all = shuffleArray(questions.all);
+    questions.used = reorderArray(questions.all.slice(0, initialSetup[cert].questions));
+    questions.exam = [];
+    challenge = 0;
+    limit = questions.used.length;
+}
+
 function startChallenge(event) {
+    // reset used questions
+    initChallenge();
+    setProgress(0);
     // generate first questions
     generateQuestion(questions.used[challenge]);
     // show nav buttons
     toggleElement('prev');
     toggleElement('next');
+    toggleElement('help');
     // start timer
+    time = initialSetup[cert].duration * 60;
     timer();
     // start interval
     displayTimer = setInterval(function() {
         time--;
         timer();
         if (time <= 0) {
-            clearInterval(displayTimer);
-            showResult();
+            finishChallenge();
         }
     }, 1000);
     event.preventDefault();
@@ -316,14 +308,59 @@ function startChallenge(event) {
 function finishChallenge() {
     // timerStop();
     clearInterval(displayTimer);
-    console.log('finished...');
+    // hide nav buttons
+    toggleElement('prev');
+    toggleElement('next');
+    toggleElement('help');
     showResult();
+    toggleElement('start');
+    hideElement('finish');
+
+    challenge = 0;
+}
+function showResult() {
+    var score = validateExamAnswers();
+    var result;
+    var advice;
+
+    if (score >= 80) {
+        result = '<div class="result passed"></div>';
+        advice = 'Your score is '+score+'%. Congratulations!';
+    }
+    if (score > 50 && score < 80) {
+        result = '<div class="result failed"></div>';
+        advice = 'Your score is '+score+'%. Try again.';
+    }
+    if (score < 50) {
+        result = '<div class="result epic-fail"></div>';
+        advice = 'Your score is '+score+'% only. Learn more.';
+    }
+
+    document.getElementById('container').innerHTML = result + '<p class="advice">' + advice + '</p>';
+    // document.getElementById('timer').innerHTML = advice;
+}
+function showCorrectAnswers() {
+    for (var answer in questions.used[challenge].answers.choices) {
+        if (questions.used[challenge].answers.choices[answer].type == 'wrong') {
+            document.querySelector('label[for="qstn-'+(challenge+1)+'-answr-'+answer+'"]').className += ' marked-wrong';
+        } else {
+            document.querySelector('label[for="qstn-'+(challenge+1)+'-answr-'+answer+'"]').className += ' marked-correct';
+        }
+
+    }
 }
 
-function showResult() {
-    // alert('Time ended and you got ' + 55 + '%. FAILED.');
-    validateExamAnswers();
+function retrieveQuestions() {
+    var code = document.getElementById('retrieve-code').value;
+    var req = new XMLHttpRequest();
 
+    req.open('POST', 'http://ash.unixstorm.org/codemarker/cloud/index.php', false); 
+    req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    req.send('code=' + code);
+
+    if (req.status == 200) {
+        displayContents(req.responseText);
+    }
 }
 
 function registerAnswer(event) {
@@ -332,11 +369,6 @@ function registerAnswer(event) {
 
         var question = label.split('qstn-')[1].split('-answr-')[0];
         var answer = label.split('-answr-')[1];
-        // var option;
-
-        // console.log(question);
-        // console.log(answer);
-        console.log(event.target.getAttribute('checked'));
 
         if (question in questions.exam) {
         } else {
@@ -349,10 +381,6 @@ function registerAnswer(event) {
             questions.exam[question][answer] = true;
         }
         countProgress();
-        // questions.exam.push(question)
-        // console.log(question);
-        // console.log(answer);
-        // console.log(questions.exam);
 
         if ((answeredExamQuestions().length) == initialSetup[cert].questions) {
             showElement('finish');
@@ -362,7 +390,10 @@ function registerAnswer(event) {
 function countProgress() {
     var answered = answeredExamQuestions();
     var current = answered.length / initialSetup[cert].questions * 100;
-    document.querySelector('.progresso span').style = 'width: ' + current + '%;';
+    setProgress(current);
+}
+function setProgress(value) {
+    document.querySelector('.progresso span').style = 'width: ' + value + '%;';
 }
 function answeredExamQuestions() {
     return questions.exam.filter(function(elem, index, array) { return typeof elem != 'undefined';})
@@ -373,41 +404,47 @@ function timerStop() {
 
 function validateExamAnswers() {
     var score = 0;
-    var signlePoint = 100/initialSetup[cert].questions;
+    var point;
     var ratio;
-
-    console.log(questions.exam);
-    console.log(questions.used);
 
     for (var i = 1; i < questions.exam.length; i++) {
         ratio = 1 / questions.used[i-1].answers.correct;
-        console.log('chosen: ' + Object.keys(questions.exam[i]).length);
-        console.log('correct: ' + questions.used[i-1].answers.correct);
-        console.log('ratio: ' + ratio);
+        point = 0;
+        // summarize multiple checked answers
         for (var answer in questions.exam[i]) {
-            // console.log(questions.exam[i][answer]);
-            // console.log(questions.used[i-1].answers.choices[answer].type);
             if (questions.exam[i][answer] == true && questions.used[i-1].answers.choices[answer].type == 'correct') {
-                score+=ratio;
+                point += ratio;
             }
         }
-        console.log(score);
+        // any incorrect answer wil
+        if (ratio < 1) {
+            if (answer in questions.exam[i] && questions.exam[i][answer] == true && questions.used[i-1].answers.choices[answer].type == 'wrong') {
+                point = 0;
+            }
+        }
+
+        score += point;
     }
+    console.log('Your score: ' + score + '%');
 
-    score = score * signlePoint;
+    score = score * 100 / initialSetup[cert].questions;
 
-    console.log(score);
+    return Math.floor(score);
 }
 
 
 // adding events
 
-// var file = '/home/ash/Sites/codemarker/hr-questions.md';
-   
+// options
 document.getElementById('file-input').addEventListener('change', readSingleFile, false);
+document.getElementById('load').addEventListener('click', function() { document.getElementById('file-input').click(); }, false);
+document.getElementById('retrieve').addEventListener('click', retrieveQuestions, false);
 
+
+// challenge
 document.getElementById('prev').addEventListener('click', prevQuestion, false);
 document.getElementById('next').addEventListener('click', nextQuestion, false);
+document.getElementById('help').addEventListener('click', showCorrectAnswers, false);
 
 document.getElementById('start').addEventListener('click', startChallenge, false);
 document.getElementById('finish').addEventListener('click', finishChallenge, false);
@@ -424,12 +461,10 @@ var arrows = {
 
 
 if ('localStorage' in window) {
-    if ('hr-exam' in localStorage) {
-        displayContents(localStorage.getItem('hr-exam'));
+    if (cert in localStorage) {
+        displayContents(localStorage.getItem(cert));
     }
 }
-
-
 
 
 
