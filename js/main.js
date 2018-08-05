@@ -17,8 +17,8 @@ var initialSetup = {
     'cis-itsm': {
         questions: 60,
         // questions: 5,
-        // duration: 130,
-        duration: 1,
+        duration: 130,
+        // duration: 1,
         pass: 80
     },
     'cis-hr': {
