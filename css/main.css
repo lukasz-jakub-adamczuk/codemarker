@@ -1,6 +1,6 @@
 
 .container {
-    font-size: 150%
+    /* font-size: 150% */
 }
 
 #timer {
@@ -52,6 +52,9 @@ nav {
 
 .form-control {
     /* margin: .5rem; */
+}
+.vam {
+    vertical-align: middle;
 }
 
 .custom-control-label::before,

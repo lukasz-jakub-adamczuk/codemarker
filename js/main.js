@@ -14,25 +14,140 @@ var initialSetup = {
         duration: 130,
         pass: 80
     },
-    'cis-hr': {
-        // questions: 60,
-        questions: 5,
+    'cis-itsm': {
+        questions: 60,
+        // questions: 5,
         // duration: 130,
         duration: 1,
+        pass: 80
+    },
+    'cis-hr': {
+        questions: 60,
+        duration: 130,
         pass: 80
     }
 };
 
-var cert = 'cis-hr';
-// var time = initialSetup[cert].duration * 60;
+var cert = 'cis-itsm';
 var time;
 
-
-var exam = {
-    questions: [],
-    score: 0,
+function readSingleFile(e) {
+    var file = e.target.files[0];
+    if (!file) {
+      return;
+    }
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var contents = e.target.result;
+      // Display file content
+      displayContents(contents);
+    };
+    reader.readAsText(file);
 }
+ 
+function displayContents(contents) {
+    var element = document.getElementById('file-content');
+    element.innerHTML = contents;
+    if ('localStorage' in window) {
+        localStorage.setItem(cert, document.getElementById('file-content').innerHTML);
+    }
+    var parts = contents.split('\n');
 
+    // simple parser
+    var question = {};
+    // var init = {prcess}
+    var line = '';
+    var answer = '';
+    var paramsFound = false;
+    // var questionFound = false;
+    // var questionAdded = false;
+    var n = 0;
+    lengths = [];
+
+    for (var i = 0; i < parts.length; i++) {
+        line = parts[i].trim();
+        if (line != '') {
+            // if (!question.answers) {
+            //     question.answers = {};
+            //     if (!question.answers.correct) {
+            //         question.answers.correct = {};
+            //     }
+            //     if (!question.answers.wrong) {
+            //         question.answers.wrong = {};
+            //     }
+            // }
+
+            // init
+            question.length = question.length || 0;
+            question.processed = false;
+
+            question.params = question.params || {};
+
+            question.answers = question.answers || {};
+            question.answers.correct = question.answers.correct || {};
+            question.answers.wrong = question.answers.wrong || {};
+            
+            // console.log(parts[i].trim().toLowerCase());
+            switch(line[0]) {
+                case '+':
+                    answer = line.substr(1,).trim();
+                    question.answers.correct[slugify(answer)] = answer;
+                    question.length += answer.length;
+                    break;
+                case '-':
+                    answer = line.substr(1,).trim();
+                    question.answers.wrong[slugify(answer)] = answer;
+                    question.length += answer.length;
+                    break;
+                case '{':
+                    question.params += line;
+                    paramsFound = true;
+                    if (line.trim().substr(-1) == '}') {
+                        question.params = JSON.parse(line);
+                        paramsFound = false;
+                    }
+                    break;
+                default:
+                    if (paramsFound) {
+                        question.params += line;
+                        if (line.trim().substr(-1) == '}') {
+                            question.params = JSON.parse(question.params);
+                            paramsFound = false;
+                        }
+                    } else {
+                        if (question.name) {
+                            questions.all[n] = question;
+                            lengths.push(question.length);
+                            question = {};
+                            
+                            question.length = 0;
+                            n++;
+                        }
+                        question.name = line;
+                        question.length += line.length;
+                        question.index = n;
+                        
+                        // question.params = {};
+
+                        // if (questionFound && !questionAdded) {
+                        //     console.
+                        //     questions.all[n] = question;
+                        //     questionAdded = false;
+                        // }
+                        // if (question.name) {
+                        //     questions.all[n] = question;
+                        //     question = {};
+                        //     n++;
+                        // }
+                    }
+                    break;
+            }
+            // console.log(question.length);
+        }
+    }
+
+    toggleElement('start');
+}
 
 function processAnswers(answers) {
     var result = {'correct': 0, 'wrong': 0, 'choices': [], 'processed': true, 'shuffled': false};
@@ -54,31 +169,17 @@ function processAnswers(answers) {
     return result;
 }
 
-function shuffleArray(array) {
-    var currentIndex = array.length, temporaryValue, randomIndex;
+function retrieveQuestions() {
+    var code = document.getElementById('retrieve-code').value;
+    var req = new XMLHttpRequest();
 
-    // While there remain elements to shuffle...
-    while (0 !== currentIndex) {
+    req.open('POST', 'https://ash.unixstorm.org/codemarker/cloud/index.php', false); 
+    req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    req.send('code=' + code);
 
-        // Pick a remaining element...
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex -= 1;
-
-        // And swap it with the current element.
-        temporaryValue = array[currentIndex];
-        array[currentIndex] = array[randomIndex];
-        array[randomIndex] = temporaryValue;
+    if (req.status == 200) {
+        displayContents(req.responseText);
     }
-  
-    return array;
-}
-
-function reorderArray(array) {
-    for (var i = 0; i < array.length; i++) {
-        array[i].index = i+1;
-        // array[i].processed = true;
-    }
-    return array;
 }
 
 function generateQuestion(q) {
@@ -104,11 +205,13 @@ function generateQuestion(q) {
         q.answers = answers;
     }
 
-    html += '<b class="text-muted">Question ' + q['index'] + '</b>';
+    html += '<b class="text-muted vam">Question ' + q.index + '</b>';
+    html += (q.params.area ? ' <span class="badge badge-secondary"> ' + q.params.area + '</span>' : '');
+    html += ' <span class=""> Length: ' + q.length + '</span>';
     html += '<h2>' + q.name + '</h2>';
         
     for (var ans in answers.choices) {
-        id = 'qstn-'+q['index']+'-answr-'+ans+'';
+        id = 'qstn-'+q.index+'-answr-'+ans+'';
         answer = answers.choices[ans].name;
         if (q.index in questions.exam && ans in questions.exam[q.index]) {
             checked = true;
@@ -130,134 +233,19 @@ function generateQuestion(q) {
         }
     }
 
-    document.querySelector('.container').innerHTML = html;
-}
-
-/**
- * Returns a random number between min (inclusive) and max (exclusive)
- */
-function getRandomArbitrary(min, max) {
-    return Math.random() * (max - min) + min;
-}
-
-/**
- * Returns a random integer between min (inclusive) and max (inclusive)
- * Using Math.round() will give you a non-uniform distribution!
- */
-function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-
-function readSingleFile(e) {
-    var file = e.target.files[0];
-    if (!file) {
-      return;
-    }
-    var reader = new FileReader();
-    reader.onload = function(e) {
-      var contents = e.target.result;
-      // Display file content
-      displayContents(contents);
-    };
-    reader.readAsText(file);
-}
-
-function slugify(st) {
-    st = st.toLowerCase();
-    st = st.replace(/[\u00C0-\u00C5]/ig,'a')
-    st = st.replace(/[\u00C8-\u00CB]/ig,'e')
-    st = st.replace(/[\u00CC-\u00CF]/ig,'i')
-    st = st.replace(/[\u00D2-\u00D6]/ig,'o')
-    st = st.replace(/[\u00D9-\u00DC]/ig,'u')
-    st = st.replace(/[\u00D1]/ig,'n')
-    st = st.replace(/[^a-z0-9 ]+/gi,'')
-    st = st.trim().replace(/ /g,'-');
-    st = st.replace(/[\-]{2}/g,'');
-    return (st.replace(/[^a-z\- ]*/gi,''));
-} 
-function displayContents(contents) {
-    var element = document.getElementById('file-content');
-    element.innerHTML = contents;
-    if ('localStorage' in window) {
-        localStorage.setItem(cert, document.getElementById('file-content').innerHTML);
-    }
-    var parts = contents.split('\n');
-
-    // simple parser
-    var question = {'processed': false};
-    var line = '';
-    var answer = '';
-    var questionFound = false;
-    var questionAdded = false;
-    var n = 0;
-    for (var i = 0; i < parts.length; i++) {
-        line = parts[i].trim();
-        if (line != '') {
-            if (!question.answers) {
-                question.answers = {};
-                if (!question.answers.correct) {
-                    question.answers.correct = {};
-                }
-                if (!question.answers.wrong) {
-                    question.answers.wrong = {};
-                }
-            }
-            
-            // console.log(parts[i].trim().toLowerCase());
-            switch(line[0]) {
-                case '+':
-                    answer = line.substr(1,).trim();
-                    question.answers.correct[slugify(answer)] = answer;
-                    break;
-                case '-':
-                    answer = line.substr(1,).trim();
-                    question.answers.wrong[slugify(answer)] = answer;
-                    break;
-                case '{':
-
-                    break;
-                default:
-                    
-                    questionFound = true;
-
-                    if (question.name) {
-                        questions.all[n] = question;
-                        question = {};
-                        n++;
-                    }
-                    question.name = line;
-                    question.index = n;
-                    question.processed = false;
-
-                    if (questionFound && !questionAdded) {
-                        questions.all[n] = question;
-                        questionAdded = false;
-                    }
-                    break;
-            }
-        }
-    }
-
-    toggleElement('start');
-}
-
-function toggleElement(element) {
-    var el = document.getElementById(element);
-    if (el.className.indexOf('hidden') != -1) {
-        el.className = el.className.replace('hidden', 'visible');
+    var scale = 100;
+    // scale question
+    if (q.length > 512) {
+        scale = 100;
+    } else if (q.length > 256 && q.length <= 512) {
+        scale = 125;
     } else {
-        el.className = el.className.replace('visible', 'hidden');
+        scale = 150;
     }
+
+    document.querySelector('.container').innerHTML = '<div style="font-size: '+scale+'%;">' + html + '</div>';
 }
-function showElement(element) {
-    var el = document.getElementById(element);
-    el.className = el.className.replace('hidden', 'visible');
-}
-function hideElement(element) {
-    var el = document.getElementById(element);
-    el.className = el.className.replace('visible', 'hidden');
-}
+
 
 function prevQuestion(event) {
     if (challenge > 0) {
@@ -266,6 +254,7 @@ function prevQuestion(event) {
         event.preventDefault();
     }
 }
+
 function nextQuestion(event) {
     if (challenge < limit-1) {
         challenge++;
@@ -273,6 +262,7 @@ function nextQuestion(event) {
         event.preventDefault();
     }
 }
+
 function initChallenge() {
     questions.all = shuffleArray(questions.all);
     questions.used = reorderArray(questions.all.slice(0, initialSetup[cert].questions));
@@ -318,6 +308,7 @@ function finishChallenge() {
 
     challenge = 0;
 }
+
 function showResult() {
     var score = validateExamAnswers();
     var result;
@@ -339,6 +330,7 @@ function showResult() {
     document.getElementById('container').innerHTML = result + '<p class="advice">' + advice + '</p>';
     // document.getElementById('timer').innerHTML = advice;
 }
+
 function showCorrectAnswers() {
     for (var answer in questions.used[challenge].answers.choices) {
         if (questions.used[challenge].answers.choices[answer].type == 'wrong') {
@@ -347,19 +339,6 @@ function showCorrectAnswers() {
             document.querySelector('label[for="qstn-'+(challenge+1)+'-answr-'+answer+'"]').className += ' marked-correct';
         }
 
-    }
-}
-
-function retrieveQuestions() {
-    var code = document.getElementById('retrieve-code').value;
-    var req = new XMLHttpRequest();
-
-    req.open('POST', 'https://ash.unixstorm.org/codemarker/cloud/index.php', false); 
-    req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    req.send('code=' + code);
-
-    if (req.status == 200) {
-        displayContents(req.responseText);
     }
 }
 
@@ -387,19 +366,19 @@ function registerAnswer(event) {
         }
     }
 }
+
 function countProgress() {
     var answered = answeredExamQuestions();
     var current = answered.length / initialSetup[cert].questions * 100;
     setProgress(current);
 }
+
 function setProgress(value) {
     document.querySelector('.progresso span').style = 'width: ' + value + '%;';
 }
+
 function answeredExamQuestions() {
     return questions.exam.filter(function(elem, index, array) { return typeof elem != 'undefined';})
-}
-function timerStop() {
-
 }
 
 function validateExamAnswers() {
@@ -433,6 +412,14 @@ function validateExamAnswers() {
 }
 
 
+if ('localStorage' in window) {
+    if (cert in localStorage) {
+        displayContents(localStorage.getItem(cert));
+    }
+}
+
+
+
 // adding events
 
 // options
@@ -451,22 +438,13 @@ document.getElementById('finish').addEventListener('click', finishChallenge, fal
 
 document.getElementById('container').addEventListener('click', registerAnswer, true);
 
+
 var arrows = {
     'left': 37,
     'up': 38,
     'right': 39,
     'down': 40
 };
-
-
-
-if ('localStorage' in window) {
-    if (cert in localStorage) {
-        displayContents(localStorage.getItem(cert));
-    }
-}
-
-
 
 window.addEventListener('keydown', function(event) {
     switch (event.keyCode) {
