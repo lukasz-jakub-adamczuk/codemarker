@@ -272,6 +272,7 @@ function startChallenge(event) {
     setProgress(0);
     // generate first questions
     generateQuestion(questions.used[challenge]);
+    hideElement('select-exam');
     // show nav buttons
     toggleElement('prev');
     toggleElement('next');
