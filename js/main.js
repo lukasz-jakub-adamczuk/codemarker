@@ -30,9 +30,9 @@ function readSingleFile(e) {
 function displayContents(contents) {
     var element = document.getElementById('file-content');
     element.innerHTML = contents;
-//     if ('localStorage' in window) {
-//         localStorage.setItem(exam, document.getElementById('file-content').innerHTML);
-//     }
+    if ('localStorage' in window) {
+        localStorage.setItem(exam, document.getElementById('file-content').innerHTML);
+    }
     var parts = contents.split('\n');
 
     // simple parser
@@ -422,6 +422,7 @@ if ('localStorage' in window) {
     // take first
     if (availableExams.length) {
         if (availableExams[0] in localStorage) {
+            exam = availableExams[0];
             displayContents(localStorage.getItem(availableExams[0]));
         }
     }
