@@ -8,27 +8,9 @@ var challenge;
 var limit;
 var displayTimer;
 
-var initialSetup = {
-    'sys-admin': {
-        questions: 60,
-        duration: 130,
-        pass: 80
-    },
-    'cis-itsm': {
-        questions: 60,
-        // questions: 5,
-        duration: 130,
-        // duration: 1,
-        pass: 80
-    },
-    'cis-hr': {
-        questions: 60,
-        duration: 130,
-        pass: 80
-    }
-};
+var initialSetup = {};
 
-var cert = 'cis-itsm';
+var exam;
 var time;
 
 function readSingleFile(e) {
@@ -55,7 +37,7 @@ function displayContents(contents) {
 
     // simple parser
     var question = {};
-    // var init = {prcess}
+    var setup;
     var line = '';
     var answer = '';
     var paramsFound = false;
@@ -106,6 +88,17 @@ function displayContents(contents) {
                         console.log(line);
                         question.params = JSON.parse(line);
                         paramsFound = false;
+                    }
+                    break;
+                case '#':
+                    setup = line.substr(1,).trim().split(':');
+                    if (setup.length > 1) {
+                        if (setup[0] == 'exam') {
+                            exam = setup[1].trim();
+                            initialSetup[exam] = {};
+                        } else {
+                            initialSetup[exam][setup[0]] = setup[1].trim();
+                        }
                     }
                     break;
                 default:
@@ -267,7 +260,7 @@ function nextQuestion(event) {
 
 function initChallenge() {
     questions.all = shuffleArray(questions.all);
-    questions.used = reorderArray(questions.all.slice(0, initialSetup[cert].questions));
+    questions.used = reorderArray(questions.all.slice(0, initialSetup[exam].questions));
     questions.exam = [];
     challenge = 0;
     limit = questions.used.length;
@@ -284,7 +277,7 @@ function startChallenge(event) {
     toggleElement('next');
     toggleElement('help');
     // start timer
-    time = initialSetup[cert].duration * 60;
+    time = initialSetup[exam].duration * 60;
     timer();
     // start interval
     displayTimer = setInterval(function() {
@@ -363,7 +356,7 @@ function registerAnswer(event) {
         }
         countProgress();
 
-        if ((answeredExamQuestions().length) == initialSetup[cert].questions) {
+        if ((answeredExamQuestions().length) == initialSetup[exam].questions) {
             showElement('finish');
         }
     }
@@ -371,7 +364,7 @@ function registerAnswer(event) {
 
 function countProgress() {
     var answered = answeredExamQuestions();
-    var current = answered.length / initialSetup[cert].questions * 100;
+    var current = answered.length / initialSetup[exam].questions * 100;
     setProgress(current);
 }
 
@@ -408,7 +401,7 @@ function validateExamAnswers() {
     }
     console.log('Your score: ' + score + '%');
 
-    score = score * 100 / initialSetup[cert].questions;
+    score = score * 100 / initialSetup[exam].questions;
 
     return Math.floor(score);
 }
@@ -416,7 +409,7 @@ function validateExamAnswers() {
 
 if ('localStorage' in window) {
     if (cert in localStorage) {
-        displayContents(localStorage.getItem(cert));
+        displayContents(localStorage.getItem(exam));
     }
 }
 
