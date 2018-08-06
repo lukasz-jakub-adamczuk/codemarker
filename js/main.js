@@ -202,7 +202,7 @@ function generateQuestion(q) {
 
     html += '<b class="text-muted vam">Question ' + q.index + '</b>';
     html += (q.params.area ? ' <span class="badge badge-secondary"> ' + q.params.area + '</span>' : '');
-    html += ' <span class=""> Length: ' + q.length + '</span>';
+//     html += ' <span class=""> Length: ' + q.length + '</span>';
     html += '<h2>' + q.name + '</h2>';
         
     for (var ans in answers.choices) {
