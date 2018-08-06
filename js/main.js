@@ -31,7 +31,7 @@ function displayContents(contents) {
     var element = document.getElementById('file-content');
     element.innerHTML = contents;
     if ('localStorage' in window) {
-        localStorage.setItem(cert, document.getElementById('file-content').innerHTML);
+        localStorage.setItem(exam, document.getElementById('file-content').innerHTML);
     }
     var parts = contents.split('\n');
 
