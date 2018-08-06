@@ -30,9 +30,7 @@ function readSingleFile(e) {
 function displayContents(contents) {
     var element = document.getElementById('file-content');
     element.innerHTML = contents;
-    if ('localStorage' in window) {
-        localStorage.setItem(exam, document.getElementById('file-content').innerHTML);
-    }
+    
     var parts = contents.split('\n');
 
     // simple parser
@@ -139,6 +137,11 @@ function displayContents(contents) {
             }
             // console.log(question.length);
         }
+    }
+    
+    // store in localStorage when exam is known  
+    if ('localStorage' in window) {
+        localStorage.setItem(exam, document.getElementById('file-content').innerHTML);
     }
 
     toggleElement('start');
