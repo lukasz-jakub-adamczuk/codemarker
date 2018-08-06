@@ -407,11 +407,11 @@ function validateExamAnswers() {
 }
 
 
-if ('localStorage' in window) {
-    if (exam in localStorage) {
-        displayContents(localStorage.getItem(exam));
-    }
-}
+// if ('localStorage' in window) {
+//     if (exam in localStorage) {
+//         displayContents(localStorage.getItem(exam));
+//     }
+// }
 
 
 
