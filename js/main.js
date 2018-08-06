@@ -30,9 +30,9 @@ function readSingleFile(e) {
 function displayContents(contents) {
     var element = document.getElementById('file-content');
     element.innerHTML = contents;
-    if ('localStorage' in window) {
-        localStorage.setItem(exam, document.getElementById('file-content').innerHTML);
-    }
+//     if ('localStorage' in window) {
+//         localStorage.setItem(exam, document.getElementById('file-content').innerHTML);
+//     }
     var parts = contents.split('\n');
 
     // simple parser
@@ -94,7 +94,7 @@ function displayContents(contents) {
                     setup = line.substr(1,).trim().split(':');
                     if (setup.length > 1) {
                         if (setup[0] == 'exam') {
-                            exam = setup[1].trim();
+                            exam = 'cm-' + setup[1].trim();
                             initialSetup[exam] = {};
                         } else {
                             initialSetup[exam][setup[0]] = setup[1].trim();
@@ -406,12 +406,37 @@ function validateExamAnswers() {
     return Math.floor(score);
 }
 
+function selectExam(event) {
+    if (event.target.getAttribute('id')) {
+        exam = event.target.value;
+    }
+}
 
-// if ('localStorage' in window) {
-//     if (exam in localStorage) {
-//         displayContents(localStorage.getItem(exam));
-//     }
-// }
+if ('localStorage' in window) {
+    var availableExams = [];
+    for (var prop in localStorage) {
+        if (prop.substr(0, 2) == 'cm') {
+            availableExams.push(prop);
+        }
+    }
+    // take first
+    if (availableExams.length) {
+        if (availableExams[0] in localStorage) {
+            displayContents(localStorage.getItem(availableExams[0]));
+        }
+    }
+    // print available exams
+    var html = '';
+    html = '<h1>Choose available exams:</h1>';
+    for (var i in availableExams) {
+        html += '<div class="custom-control custom-radio">'
+        +'<input type="radio" id="'+availableExams[i]+'" name="customRadio" class="custom-control-input" value="'+availableExams[i]+'"'+(i == 0 ? ' checked' : '')+'>'
+        +'<label class="custom-control-label" for="'+availableExams[i]+'">'+availableExams[i]+'</label>'
+    +'</div>';
+    }
+    document.getElementById('select-exam').innerHTML = html;
+}
+
 
 
 
