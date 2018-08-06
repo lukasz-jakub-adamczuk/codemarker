@@ -408,7 +408,7 @@ function validateExamAnswers() {
 
 
 if ('localStorage' in window) {
-    if (cert in localStorage) {
+    if (exam in localStorage) {
         displayContents(localStorage.getItem(exam));
     }
 }
