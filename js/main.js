@@ -103,6 +103,7 @@ function displayContents(contents) {
                     question.params += line;
                     paramsFound = true;
                     if (line.trim().substr(-1) == '}') {
+                        console.log(line);
                         question.params = JSON.parse(line);
                         paramsFound = false;
                     }
@@ -111,6 +112,7 @@ function displayContents(contents) {
                     if (paramsFound) {
                         question.params += line;
                         if (line.trim().substr(-1) == '}') {
+                            console.log(question.params);
                             question.params = JSON.parse(question.params);
                             paramsFound = false;
                         }
