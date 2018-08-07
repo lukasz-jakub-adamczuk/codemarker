@@ -21,6 +21,9 @@ Application for learning on exams. '''CodeMarker''' displays questions from text
 - [ ] support for param shuffle
 - [ ] support for param answers
 - [ ] support for param comment
+- [ ] displays letters before answers
+- [ ] move exam initial to questions file
+- [ ] file parsing errors handling
 
 ## TOFIX
 - [ ] verify what answer was checked/unchecked during question
