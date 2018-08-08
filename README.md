@@ -19,11 +19,11 @@ Application for learning on exams. '''CodeMarker''' displays questions from text
 - [ ] support for images in questions
 - [ ] support for dropdown or match available answers
 - [ ] support for param shuffle
-- [ ] support for param answers
+- [x] support for param answers (nothing to do)
 - [ ] support for param comment
 - [ ] displays letters before answers
-- [ ] move exam initial to questions file
 - [ ] file parsing errors handling
+
 
 ## TOFIX
 - [ ] verify what answer was checked/unchecked during question
@@ -33,6 +33,8 @@ Application for learning on exams. '''CodeMarker''' displays questions from text
 
 ### v0.04
 - [x] decrese font when question or answers are too long
+- [x] move exam initials to questions file
+- [x] enabling to choose stored exams on front page
 
 ### v0.03
 - [x] parsing question parameters

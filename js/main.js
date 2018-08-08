@@ -8,27 +8,10 @@ var challenge;
 var limit;
 var displayTimer;
 
-var initialSetup = {
-    'sys-admin': {
-        questions: 60,
-        duration: 130,
-        pass: 80
-    },
-    'cis-itsm': {
-        questions: 60,
-        // questions: 5,
-        duration: 130,
-        // duration: 1,
-        pass: 80
-    },
-    'cis-hr': {
-        questions: 60,
-        duration: 130,
-        pass: 80
-    }
-};
 
-var cert = 'cis-itsm';
+var initialSetup = {};
+
+var exam;
 var time;
 
 function readSingleFile(e) {
@@ -48,35 +31,23 @@ function readSingleFile(e) {
 function displayContents(contents) {
     var element = document.getElementById('file-content');
     element.innerHTML = contents;
-    if ('localStorage' in window) {
-        localStorage.setItem(cert, document.getElementById('file-content').innerHTML);
-    }
+    
     var parts = contents.split('\n');
+
+    console.log(parts[0]);
 
     // simple parser
     var question = {};
-    // var init = {prcess}
+    var setup;
     var line = '';
     var answer = '';
     var paramsFound = false;
-    // var questionFound = false;
-    // var questionAdded = false;
     var n = 0;
     lengths = [];
 
     for (var i = 0; i < parts.length; i++) {
         line = parts[i].trim();
         if (line != '') {
-            // if (!question.answers) {
-            //     question.answers = {};
-            //     if (!question.answers.correct) {
-            //         question.answers.correct = {};
-            //     }
-            //     if (!question.answers.wrong) {
-            //         question.answers.wrong = {};
-            //     }
-            // }
-
             // init
             question.length = question.length || 0;
             question.processed = false;
@@ -87,7 +58,6 @@ function displayContents(contents) {
             question.answers.correct = question.answers.correct || {};
             question.answers.wrong = question.answers.wrong || {};
             
-            // console.log(parts[i].trim().toLowerCase());
             switch(line[0]) {
                 case '+':
                     answer = line.substr(1,).trim();
@@ -103,14 +73,28 @@ function displayContents(contents) {
                     question.params += line;
                     paramsFound = true;
                     if (line.trim().substr(-1) == '}') {
+                        console.log(line);
                         question.params = JSON.parse(line);
                         paramsFound = false;
+                    }
+                    break;
+                case '#':
+                    setup = line.substr(1,).trim().split(':');
+                    if (setup.length > 1) {
+                        if (setup[0] == 'exam') {
+                            exam = 'cm-' + setup[1].trim();
+                            initialSetup[exam] = {};
+                            initialSetup[exam].name = setup[1].trim();
+                        } else {
+                            initialSetup[exam][setup[0]] = setup[1].trim();
+                        }
                     }
                     break;
                 default:
                     if (paramsFound) {
                         question.params += line;
                         if (line.trim().substr(-1) == '}') {
+                            console.log(question.params);
                             question.params = JSON.parse(question.params);
                             paramsFound = false;
                         }
@@ -126,24 +110,20 @@ function displayContents(contents) {
                         question.name = line;
                         question.length += line.length;
                         question.index = n;
-                        
-                        // question.params = {};
-
-                        // if (questionFound && !questionAdded) {
-                        //     console.
-                        //     questions.all[n] = question;
-                        //     questionAdded = false;
-                        // }
-                        // if (question.name) {
-                        //     questions.all[n] = question;
-                        //     question = {};
-                        //     n++;
-                        // }
                     }
                     break;
             }
-            // console.log(question.length);
         }
+    }
+    // last question
+    questions.all[n] = question;
+
+    initialSetup[exam].all = questions.all.length;
+    
+    // store in localStorage when exam is known  
+    if ('localStorage' in window) {
+        localStorage.setItem(exam, document.getElementById('file-content').innerHTML);
+        localStorage.setItem('initialSetup', JSON.stringify(initialSetup));
     }
 
     toggleElement('start');
@@ -207,7 +187,7 @@ function generateQuestion(q) {
 
     html += '<b class="text-muted vam">Question ' + q.index + '</b>';
     html += (q.params.area ? ' <span class="badge badge-secondary"> ' + q.params.area + '</span>' : '');
-    html += ' <span class=""> Length: ' + q.length + '</span>';
+//     html += ' <span class=""> Length: ' + q.length + '</span>';
     html += '<h2>' + q.name + '</h2>';
         
     for (var ans in answers.choices) {
@@ -265,7 +245,7 @@ function nextQuestion(event) {
 
 function initChallenge() {
     questions.all = shuffleArray(questions.all);
-    questions.used = reorderArray(questions.all.slice(0, initialSetup[cert].questions));
+    questions.used = reorderArray(questions.all.slice(0, initialSetup[exam].questions));
     questions.exam = [];
     challenge = 0;
     limit = questions.used.length;
@@ -277,12 +257,13 @@ function startChallenge(event) {
     setProgress(0);
     // generate first questions
     generateQuestion(questions.used[challenge]);
+    hideElement('select-exam');
     // show nav buttons
     toggleElement('prev');
     toggleElement('next');
     toggleElement('help');
     // start timer
-    time = initialSetup[cert].duration * 60;
+    time = initialSetup[exam].duration * 60;
     timer();
     // start interval
     displayTimer = setInterval(function() {
@@ -361,7 +342,7 @@ function registerAnswer(event) {
         }
         countProgress();
 
-        if ((answeredExamQuestions().length) == initialSetup[cert].questions) {
+        if ((answeredExamQuestions().length) == initialSetup[exam].questions) {
             showElement('finish');
         }
     }
@@ -369,7 +350,7 @@ function registerAnswer(event) {
 
 function countProgress() {
     var answered = answeredExamQuestions();
-    var current = answered.length / initialSetup[cert].questions * 100;
+    var current = answered.length / initialSetup[exam].questions * 100;
     setProgress(current);
 }
 
@@ -406,17 +387,59 @@ function validateExamAnswers() {
     }
     console.log('Your score: ' + score + '%');
 
-    score = score * 100 / initialSetup[cert].questions;
+    score = score * 100 / initialSetup[exam].questions;
 
     return Math.floor(score);
 }
 
+function selectExam(event) {
+    for (var elem in event.path) {
+        // console.log(event.path[elem]);
+        if (event.path[elem].getAttribute('id')) {
+            exam = event.path[elem].getAttribute('id');
+            // if (availableExams[0] in localStorage) {
+        //     exam = availableExams[0];
+            displayContents(localStorage.getItem(exam));
+        // }
+            break;
+        }
+    }
+    showElement('start');
+}
 
 if ('localStorage' in window) {
-    if (cert in localStorage) {
-        displayContents(localStorage.getItem(cert));
+    var availableExams = [];
+    if ('initialSetup' in localStorage) {
+        initialSetup = JSON.parse(localStorage.getItem('initialSetup'));
     }
+    for (var prop in localStorage) {
+        if (prop.substr(0, 2) == 'cm') {
+            availableExams.push(prop);
+        }
+    }
+    // take first
+    if (availableExams.length) {
+        // if (availableExams[0] in localStorage) {
+        //     exam = availableExams[0];
+        //     displayContents(localStorage.getItem(availableExams[0]));
+        // }
+    }
+    // print available exams
+    var html = '<div class="list-group">';
+    for (var i in availableExams) {
+    html += '<a id="cm-'+initialSetup[availableExams[i]].name+'" class="list-group-item list-group-item-action flex-column align-items-start">'
+        + '<div class="d-flex w-100 justify-content-between">'
+        + '<h5 class="mb-1">'+initialSetup[availableExams[i]].name.split('-').join(' ').toUpperCase()+'</h5>'
+        + '<small>'+initialSetup[availableExams[i]].questions+' questions in '+initialSetup[availableExams[i]].duration+'min</small>'
+        + '</div>'
+        + '<p class="mb-1">'+initialSetup[availableExams[i]].description+'</p>'
+        + '<small>'+initialSetup[availableExams[i]].all+' questions available</small>'
+    + '</a>'
+    }
+    html += '</div>';
+    document.getElementById('select-exam').innerHTML = html;
 }
+
 
 
 
@@ -437,6 +460,7 @@ document.getElementById('start').addEventListener('click', startChallenge, false
 document.getElementById('finish').addEventListener('click', finishChallenge, false);
 
 document.getElementById('container').addEventListener('click', registerAnswer, true);
+document.getElementById('select-exam').addEventListener('click', selectExam, true);
 
 
 var arrows = {
