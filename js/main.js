@@ -44,6 +44,7 @@ function displayContents(contents) {
     var paramsFound = false;
     var n = 0;
     lengths = [];
+    questions.all = [];
 
     for (var i = 0; i < parts.length; i++) {
         line = parts[i].trim();
