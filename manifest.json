@@ -2,7 +2,7 @@
   "short_name": "CodeMarker",
   "name": "Good app for learning",
   "background_color": "#ffffff",
-  "display": "browser",
+  "display": "standalone",
   "theme_color": "#000000",
   "icons": [
     {
