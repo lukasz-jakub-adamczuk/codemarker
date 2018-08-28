@@ -26,10 +26,12 @@ Application for learning on exams. '''CodeMarker''' displays questions from text
 
 
 ## TOFIX
-- [ ] verify what answer was checked/unchecked during question
 - [ ] prev and next after time ended
 
 ## Changelogs
+
+### v0.05
+- [x] verify what answer was checked/unchecked during question
 
 ### v0.04
 - [x] decrese font when question or answers are too long

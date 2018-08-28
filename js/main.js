@@ -1,3 +1,4 @@
+'use strict';
 
 var questions = {
     'all': [],
@@ -43,7 +44,7 @@ function displayContents(contents) {
     var answer = '';
     var paramsFound = false;
     var n = 0;
-    lengths = [];
+    var lengths = [];
 
     for (var i = 0; i < parts.length; i++) {
         line = parts[i].trim();
@@ -188,28 +189,37 @@ function generateQuestion(q) {
     html += '<b class="text-muted vam">Question ' + q.index + '</b>';
     html += (q.params.area ? ' <span class="badge badge-secondary"> ' + q.params.area + '</span>' : '');
 //     html += ' <span class=""> Length: ' + q.length + '</span>';
-    html += '<h2>' + q.name + '</h2>';
-        
-    for (var ans in answers.choices) {
-        id = 'qstn-'+q.index+'-answr-'+ans+'';
-        answer = answers.choices[ans].name;
-        if (q.index in questions.exam && ans in questions.exam[q.index]) {
-            checked = true;
-        } else {
-            checked = false;
+    
+    if ('type' in q.params) {
+        if (q.params.type == 'input') {
+            id = 'qstn-'+q.index+'-answr-0';
+            answer = answers.choices[0].name;
+            var input = '<input type="text" name="">';
+            html += '<h2>' + q.name.replace('[]', input) + '</h2>';
         }
-        if (answers.choices.length - answers.wrong > 1) {
-            // multi choice
-            html += '<div class="custom-control custom-checkbox">'
-                +'<input type="checkbox" id="'+id+'" name="customCheckbox" class="custom-control-input" value="'+slugify(answer)+'"'+(checked ? ' checked' : '')+'>'
-                +'<label class="custom-control-label" for="'+id+'">'+answer+'</label>'
-            +'</div>';
-        } else {
-            // single choice
-            html += '<div class="custom-control custom-radio">'
-                +'<input type="radio" id="'+id+'" name="customRadio" class="custom-control-input" value="'+slugify(answer)+'"'+(checked ? ' checked' : '')+'>'
-                +'<label class="custom-control-label" for="'+id+'">'+answer+'</label>'
-            +'</div>';
+    } else {
+        html += '<h2>' + q.name + '</h2>';
+        for (var ans in answers.choices) {
+            id = 'qstn-'+q.index+'-answr-'+ans+'';
+            answer = answers.choices[ans].name;
+            if (q.index in questions.exam && ans in questions.exam[q.index] && questions.exam[q.index][ans] == true) {
+                checked = true;
+            } else {
+                checked = false;
+            }
+            if (answers.choices.length - answers.wrong > 1) {
+                // multi choice
+                html += '<div class="custom-control custom-checkbox">'
+                    +'<input type="checkbox" id="'+id+'" name="customCheckbox" class="custom-control-input" value="'+slugify(answer)+'"'+(checked ? ' checked' : '')+'>'
+                    +'<label class="custom-control-label" for="'+id+'">'+answer+'</label>'
+                +'</div>';
+            } else {
+                // single choice
+                html += '<div class="custom-control custom-radio">'
+                    +'<input type="radio" id="'+id+'" name="customRadio" class="custom-control-input" value="'+slugify(answer)+'"'+(checked ? ' checked' : '')+'>'
+                    +'<label class="custom-control-label" for="'+id+'">'+answer+'</label>'
+                +'</div>';
+            }
         }
     }
 
@@ -334,12 +344,15 @@ function registerAnswer(event) {
         } else {
             questions.exam[question] = {};
         }
-        // console.log(exam);
         if (answer in questions.exam[question]) {
-            questions.exam[question][answer] = event.target.getAttribute('checked') != '' ? false : true;
+            questions.exam[question][answer] = !questions.exam[question][answer];
         } else {
+            // first click in answer
             questions.exam[question][answer] = true;
         }
+        console.log('Registered answer:');
+        console.log(questions.exam[question]);
+
         countProgress();
 
         if ((answeredExamQuestions().length) == initialSetup[exam].questions) {
