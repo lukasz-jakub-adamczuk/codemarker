@@ -11,5 +11,10 @@
       "sizes": "512x512"
     }
   ],
+<<<<<<< HEAD
   "start_url": "."
 }
+=======
+  "start_url": "./codemarker/"
+}
+>>>>>>> ad68108401a079f09dddfc086392b5d9f8c993a4
