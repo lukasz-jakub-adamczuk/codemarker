@@ -1,5 +1,7 @@
 'use strict';
 
+var codeMarker = {};
+
 var questions = {
     'all': [],
     'used': [],
@@ -33,91 +35,98 @@ function displayContents(contents) {
     var element = document.getElementById('file-content');
     element.innerHTML = contents;
     
-    var parts = contents.split('\n');
+    // var parts = contents.split('\n');
 
-    console.log(parts[0]);
+    // console.log(parts[0]);
 
     // simple parser
-    var question = {};
-    var setup;
-    var line = '';
-    var answer = '';
-    var paramsFound = false;
-    var n = 0;
-    var lengths = [];
+    // var question = {};
+    // var setup;
+    // var line = '';
+    // var answer = '';
+    // var paramsFound = false;
+    // var n = 0;
+    // var lengths = [];
 
-    for (var i = 0; i < parts.length; i++) {
-        line = parts[i].trim();
-        if (line != '') {
-            // init
-            question.length = question.length || 0;
-            question.processed = false;
+    // for (var i = 0; i < parts.length; i++) {
+    //     line = parts[i].trim();
+    //     if (line != '') {
+    //         // init
+    //         question.length = question.length || 0;
+    //         question.processed = false;
 
-            question.params = question.params || {};
+    //         question.params = question.params || {};
 
-            question.answers = question.answers || {};
-            question.answers.correct = question.answers.correct || {};
-            question.answers.wrong = question.answers.wrong || {};
+    //         question.answers = question.answers || {};
+    //         question.answers.correct = question.answers.correct || {};
+    //         question.answers.wrong = question.answers.wrong || {};
             
-            switch(line[0]) {
-                case '+':
-                    answer = line.substr(1,).trim();
-                    question.answers.correct[slugify(answer)] = answer;
-                    question.length += answer.length;
-                    break;
-                case '-':
-                    answer = line.substr(1,).trim();
-                    question.answers.wrong[slugify(answer)] = answer;
-                    question.length += answer.length;
-                    break;
-                case '{':
-                    question.params += line;
-                    paramsFound = true;
-                    if (line.trim().substr(-1) == '}') {
-                        console.log(line);
-                        question.params = JSON.parse(line);
-                        paramsFound = false;
-                    }
-                    break;
-                case '#':
-                    setup = line.substr(1,).trim().split(':');
-                    if (setup.length > 1) {
-                        if (setup[0] == 'exam') {
-                            exam = 'cm-' + setup[1].trim();
-                            initialSetup[exam] = {};
-                            initialSetup[exam].name = setup[1].trim();
-                        } else {
-                            initialSetup[exam][setup[0]] = setup[1].trim();
-                        }
-                    }
-                    break;
-                default:
-                    if (paramsFound) {
-                        question.params += line;
-                        if (line.trim().substr(-1) == '}') {
-                            console.log(question.params);
-                            question.params = JSON.parse(question.params);
-                            paramsFound = false;
-                        }
-                    } else {
-                        if (question.name) {
-                            questions.all[n] = question;
-                            lengths.push(question.length);
-                            question = {};
+    //         switch(line[0]) {
+    //             case '+':
+    //                 answer = line.substr(1,).trim();
+    //                 question.answers.correct[slugify(answer)] = answer;
+    //                 question.length += answer.length;
+    //                 break;
+    //             case '-':
+    //                 answer = line.substr(1,).trim();
+    //                 question.answers.wrong[slugify(answer)] = answer;
+    //                 question.length += answer.length;
+    //                 break;
+    //             case '{':
+    //                 question.params += line;
+    //                 paramsFound = true;
+    //                 if (line.trim().substr(-1) == '}') {
+    //                     console.log(line);
+    //                     question.params = JSON.parse(line);
+    //                     paramsFound = false;
+    //                 }
+    //                 break;
+    //             case '#':
+    //                 setup = line.substr(1,).trim().split(':');
+    //                 if (setup.length > 1) {
+    //                     if (setup[0] == 'exam') {
+    //                         exam = 'cm-' + setup[1].trim();
+    //                         initialSetup[exam] = {};
+    //                         initialSetup[exam].name = setup[1].trim();
+    //                     } else {
+    //                         initialSetup[exam][setup[0]] = setup[1].trim();
+    //                     }
+    //                 }
+    //                 break;
+    //             default:
+    //                 if (paramsFound) {
+    //                     question.params += line;
+    //                     if (line.trim().substr(-1) == '}') {
+    //                         console.log(question.params);
+    //                         question.params = JSON.parse(question.params);
+    //                         paramsFound = false;
+    //                     }
+    //                 } else {
+    //                     if (question.name) {
+    //                         questions.all[n] = question;
+    //                         lengths.push(question.length);
+    //                         question = {};
                             
-                            question.length = 0;
-                            n++;
-                        }
-                        question.name = line;
-                        question.length += line.length;
-                        question.index = n;
-                    }
-                    break;
-            }
-        }
-    }
-    // last question
-    questions.all[n] = question;
+    //                         question.length = 0;
+    //                         n++;
+    //                     }
+    //                     question.name = line;
+    //                     question.length += line.length;
+    //                     question.index = n;
+    //                 }
+    //                 break;
+    //         }
+    //     }
+    // }
+    // // last question
+    // questions.all[n] = question;
+
+    parser.parse(contents);
+
+    console.warn(parser.questions);
+
+    questions.all = parser.questions;
+    exam = parser.exam;
 
     initialSetup[exam].all = questions.all.length;
     
@@ -168,6 +177,7 @@ function generateQuestion(q) {
     var html = '';
     var id = '';
     var answer = '';
+    var matching = '';
     var checked = false;
 
     if (q.processed) {
@@ -196,6 +206,24 @@ function generateQuestion(q) {
             answer = answers.choices[0].name;
             var input = '<input type="text" name="">';
             html += '<h2>' + q.name.replace('[]', input) + '</h2>';
+        }
+        if (q.params.type == 'matching') {
+            html += '<h2>Match possible answers:</h2>';
+            for (var ans in answers.choices) {
+                id = 'qstn-'+q.index+'-answr-'+ans+'';
+                answer = answers.choices[ans].name.split('=')[0].trim();
+                html += '<div class="custom-control_ custom-radio_">'
+                    // +'<input type="radio" id="'+id+'" name="customRadio" class="custom-control-input" value="'+slugify(answer)+'"'+(checked ? ' checked' : '')+'>'
+                    +'<label class="custom-control-label" for="'+id+'" style="width: 40%;">'+answer+'</label>'
+                    +'<select class="" name="">';
+                    html +='<option value="">choose answer</option>'
+                    for (var mtch in answers.choices) {
+                        matching = answers.choices[mtch].name.split('=')[1].trim();
+                        html +='<option value="">' + matching + '</option>'
+                    }
+                    html +='</select>'
+                +'</div>';
+            }
         }
     } else {
         html += '<h2>' + q.name + '</h2>';
@@ -364,6 +392,9 @@ function registerAnswer(event) {
 function countProgress() {
     var answered = answeredExamQuestions();
     var current = answered.length / initialSetup[exam].questions * 100;
+    if (current === 100) {
+        showElement('finish');
+    }
     setProgress(current);
 }
 
