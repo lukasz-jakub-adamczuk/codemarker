@@ -16,6 +16,8 @@ var parser = {
     
     paramsFound: false,
 
+    answersFound: false,
+
     initialSetup: {},
     
     n: 0,
@@ -28,9 +30,11 @@ var parser = {
         for (var i = 0; i < parts.length; i++) {
             parser.line = parts[i].trim();
             if (parser.line != '') {
+                console.log(parser.line);
                 // init
+                parser.question.name = parser.question.name || '';
                 parser.question.length = parser.question.length || 0;
-                parser.question.processed = false;
+                // parser.question.processed = false;
     
                 parser.question.params = parser.question.params || {};
     
@@ -43,11 +47,13 @@ var parser = {
                         parser.answer = parser.line.substr(1,).trim();
                         parser.question.answers.correct[slugify(parser.answer)] = parser.answer;
                         parser.question.length += parser.answer.length;
+                        parser.answersFound = true;
                         break;
                     case '-':
                         parser.answer = parser.line.substr(1,).trim();
                         parser.question.answers.wrong[slugify(parser.answer)] = parser.answer;
                         parser.question.length += parser.answer.length;
+                        parser.answersFound = true;
                         break;
                     case '{':
                         parser.question.params += parser.line;
@@ -79,20 +85,40 @@ var parser = {
                                 parser.paramsFound = false;
                             }
                         } else {
-                            if (parser.question.name) {
+                            if (parser.answersFound) {
+                                parser.answersFound = false;
                                 parser.questions[parser.n] = parser.question;
                                 parser.lengths.push(parser.question.length);
                                 parser.question = {};
                                 
+                                parser.question.name = '';
                                 parser.question.length = 0;
+                                parser.question.params = {};
+                                parser.question.answers = {};
+                                parser.question.answers.correct = {};
+                                parser.question.answers.wrong = {};
                                 parser.n++;
-                            }
-                            parser.question.name = parser.line;
-                            parser.question.length += parser.line.length;
-                            parser.question.index = parser.n;
+                            }// else {
+                                parser.question.name += parser.line + '<br>';
+                                parser.question.length += parser.line.length;
+                                parser.question.index = parser.n;
+                            // }
+                            // if (parser.question.name) {
+                            //     parser.questions[parser.n] = parser.question;
+                            //     parser.lengths.push(parser.question.length);
+                            //     parser.question = {};
+                                
+                            //     parser.question.length = 0;
+                            //     parser.n++;
+                            // }
+                            // parser.question.name = parser.line;
+                            // parser.question.length += parser.line.length;
+                            // parser.question.index = parser.n;
                         }
                         break;
+                    
                 }
+                console.log('parser.question.name: ' + parser.question.name);
             }
         }
         parser.questions[parser.n] = parser.question;
