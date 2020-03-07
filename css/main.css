@@ -1,6 +1,6 @@
 
 body {
-    line-height: 2;
+    line-height: 1.75;
 }
 
 .container {
@@ -10,18 +10,18 @@ body {
 
 #timer {
     position: absolute;
-    bottom: 20%;
+    bottom: 15%;
     width: 100%;
-    height: 10%;
+    height: 5%;
     text-align: center;
     color: #888;
-    font-size: 2em;
+    font-size: 1rem;
 }
 nav {
     position: absolute;
     bottom: 0;
     width: 100%;
-    height: 25%;
+    height: 15%;
     text-align: center;
 }
 #loader {
@@ -53,8 +53,12 @@ nav {
 @keyframes marked-wrong {
     100% { opacity: .1 }
 }
-br {
+.question {
+    font-weight: bold;
+}
+.question p {
     margin-bottom: .5rem;
+    line-height: 1.5;
 }
 
 .form-control {
@@ -184,10 +188,10 @@ div.hidden {
 }
 
 #show-options {
-    width: 16ch;
+    width: 8ch;
     position: fixed;
     bottom: 0;
-    left: calc(50% - 8ch);
+    left: calc(50% - 4ch);
 }
 #close-options {
     width: 16ch;

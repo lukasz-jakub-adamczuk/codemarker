@@ -245,7 +245,7 @@ function generateQuestion(q) {
             }
         }
     } else {
-        html += '<h2>' + q.name + '</h2>';
+        html += '<div class="question">' + q.name + '</div>';
         for (var ans in answers.choices) {
             id = 'qstn-'+q.index+'-answr-'+ans+'';
             answer = answers.choices[ans].name;

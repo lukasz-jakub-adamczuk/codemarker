@@ -99,7 +99,7 @@ var parser = {
                                 parser.question.answers.wrong = {};
                                 parser.n++;
                             }// else {
-                                parser.question.name += parser.line + '<br>';
+                                parser.question.name += '<p>' + parser.line + '</p>';
                                 parser.question.length += parser.line.length;
                                 parser.question.index = parser.n;
                             // }
