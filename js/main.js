@@ -144,10 +144,17 @@ function displayContents(contents) {
     questions.all = parser.questions;
     exam = parser.exam;
 
+    console.log(parser.initialSetup);
+    if ('localStorage' in window) {
+        if ('initialSetup' in localStorage) {
+            initialSetup = JSON.parse(localStorage.getItem('initialSetup'));
+        }
+    }
 
-
-
+    initialSetup[exam] = parser.initialSetup[exam];
     initialSetup[exam].all = questions.all.length;
+
+    console.warn(initialSetup);
     
     // store in localStorage when exam is known  
     if ('localStorage' in window) {
@@ -491,17 +498,21 @@ if ('localStorage' in window) {
         //     displayContents(localStorage.getItem(availableExams[0]));
         // }
     }
+    console.log(availableExams);
+    console.log(initialSetup);
     // print available exams
     var html = '<div class="list-group">';
     for (var i in availableExams) {
-    html += '<a id="cm-'+initialSetup[availableExams[i]].name+'" class="list-group-item list-group-item-action flex-column align-items-start">'
-        + '<div class="d-flex w-100 justify-content-between">'
-        + '<h5 class="mb-1">'+initialSetup[availableExams[i]].name.split('-').join(' ').toUpperCase()+'</h5>'
-        + '<small>'+initialSetup[availableExams[i]].questions+' questions in '+initialSetup[availableExams[i]].duration+'min</small>'
-        + '</div>'
-        + '<p class="mb-1">'+initialSetup[availableExams[i]].description+'</p>'
-        + '<small>'+initialSetup[availableExams[i]].all+' questions available</small>'
-    + '</a>'
+        if (initialSetup[availableExams[i]]) {
+            html += '<a id="cm-'+initialSetup[availableExams[i]].name+'" class="list-group-item list-group-item-action flex-column align-items-start">'
+                + '<div class="d-flex w-100 justify-content-between">'
+                + '<h5 class="mb-1">'+initialSetup[availableExams[i]].name.split('-').join(' ').toUpperCase()+'</h5>'
+                + '<small>'+initialSetup[availableExams[i]].questions+' questions in '+initialSetup[availableExams[i]].duration+'min</small>'
+                + '</div>'
+                + '<p class="mb-1">'+initialSetup[availableExams[i]].description+'</p>'
+                + '<small>'+initialSetup[availableExams[i]].all+' questions available</small>'
+            + '</a>';
+        }
     }
     html += '</div>';
     document.getElementById('select-exam').innerHTML = html;
