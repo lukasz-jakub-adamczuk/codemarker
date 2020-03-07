@@ -1,5 +1,7 @@
 'use strict';
 
+var codeMarker = {};
+
 var questions = {
     'all': [],
     'used': [],
@@ -26,7 +28,9 @@ function readSingleFile(e) {
       // Display file content
       displayContents(contents);
     };
+    console.log(file);
     reader.readAsText(file);
+    console.log(reader);
 }
  
 function displayContents(contents) {
@@ -35,10 +39,10 @@ function displayContents(contents) {
     
     var parts = contents.split('\n');
 
-    console.log(parts[0]);
+    // console.log(parts[0]);
 
-    // simple parser
-    var question = {};
+    //simple parser
+    /*var question = {};
     var setup;
     var line = '';
     var answer = '';
@@ -50,6 +54,7 @@ function displayContents(contents) {
         line = parts[i].trim();
         if (line != '') {
             // init
+            question.name = question.name || '';
             question.length = question.length || 0;
             question.processed = false;
 
@@ -100,17 +105,30 @@ function displayContents(contents) {
                             paramsFound = false;
                         }
                     } else {
-                        if (question.name) {
+                        if (question.answers) {
                             questions.all[n] = question;
                             lengths.push(question.length);
                             question = {};
                             
+                            question.name = '';
                             question.length = 0;
                             n++;
+                        } else {
+                            question.name += line;
+                            question.length += line.length;
+                            question.index = n;
                         }
-                        question.name = line;
-                        question.length += line.length;
-                        question.index = n;
+                        // if (question.name) {
+                        //     questions.all[n] = question;
+                        //     lengths.push(question.length);
+                        //     question = {};
+                            
+                        //     question.length = 0;
+                        //     n++;
+                        // }
+                        // question.name = line;
+                        // question.length += line.length;
+                        // question.index = n;
                     }
                     break;
             }
@@ -118,6 +136,16 @@ function displayContents(contents) {
     }
     // last question
     questions.all[n] = question;
+*/
+    parser.parse(contents);
+
+    console.warn(parser.questions);
+
+    questions.all = parser.questions;
+    exam = parser.exam;
+
+
+
 
     initialSetup[exam].all = questions.all.length;
     
@@ -168,6 +196,7 @@ function generateQuestion(q) {
     var html = '';
     var id = '';
     var answer = '';
+    var matching = '';
     var checked = false;
 
     if (q.processed) {
@@ -197,6 +226,24 @@ function generateQuestion(q) {
             var input = '<input type="text" name="">';
             html += '<h2>' + q.name.replace('[]', input) + '</h2>';
         }
+        if (q.params.type == 'matching') {
+            html += '<h2>Match possible answers:</h2>';
+            for (var ans in answers.choices) {
+                id = 'qstn-'+q.index+'-answr-'+ans+'';
+                answer = answers.choices[ans].name.split('=')[0].trim();
+                html += '<div class="custom-control_ custom-radio_">'
+                    // +'<input type="radio" id="'+id+'" name="customRadio" class="custom-control-input" value="'+slugify(answer)+'"'+(checked ? ' checked' : '')+'>'
+                    +'<label class="custom-control-label" for="'+id+'" style="width: 40%;">'+answer+'</label>'
+                    +'<select class="" name="">';
+                    html +='<option value="">choose answer</option>'
+                    for (var mtch in answers.choices) {
+                        matching = answers.choices[mtch].name.split('=')[1].trim();
+                        html +='<option value="">' + matching + '</option>'
+                    }
+                    html +='</select>'
+                +'</div>';
+            }
+        }
     } else {
         html += '<h2>' + q.name + '</h2>';
         for (var ans in answers.choices) {
@@ -225,13 +272,13 @@ function generateQuestion(q) {
 
     var scale = 100;
     // scale question
-    if (q.length > 512) {
-        scale = 100;
-    } else if (q.length > 256 && q.length <= 512) {
-        scale = 125;
-    } else {
-        scale = 150;
-    }
+    // if (q.length > 512) {
+    //     scale = 100;
+    // } else if (q.length > 256 && q.length <= 512) {
+    //     scale = 125;
+    // } else {
+    //     scale = 150;
+    // }
 
     document.querySelector('.container').innerHTML = '<div style="font-size: '+scale+'%;">' + html + '</div>';
 }
@@ -254,8 +301,9 @@ function nextQuestion(event) {
 }
 
 function initChallenge() {
-    questions.all = shuffleArray(questions.all);
-    questions.used = reorderArray(questions.all.slice(0, initialSetup[exam].questions));
+    // questions.all = shuffleArray(questions.all);
+    // questions.used = reorderArray(questions.all.slice(0, initialSetup[exam].questions));
+    questions.used = reorderArray(questions.all);
     questions.exam = [];
     challenge = 0;
     limit = questions.used.length;
@@ -364,6 +412,9 @@ function registerAnswer(event) {
 function countProgress() {
     var answered = answeredExamQuestions();
     var current = answered.length / initialSetup[exam].questions * 100;
+    if (current === 100) {
+        showElement('finish');
+    }
     setProgress(current);
 }
 
@@ -406,10 +457,13 @@ function validateExamAnswers() {
 }
 
 function selectExam(event) {
+    console.log('test');
+    console.log(event);
     for (var elem in event.path) {
         // console.log(event.path[elem]);
         if (event.path[elem].getAttribute('id')) {
             exam = event.path[elem].getAttribute('id');
+            console.log(exam);
             // if (availableExams[0] in localStorage) {
         //     exam = availableExams[0];
             displayContents(localStorage.getItem(exam));
