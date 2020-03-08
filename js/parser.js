@@ -34,7 +34,7 @@ var parser = {
                 // init
                 parser.question.name = parser.question.name || '';
                 parser.question.length = parser.question.length || 0;
-                // parser.question.processed = false;
+                parser.question.processed = false;
     
                 parser.question.params = parser.question.params || {};
     

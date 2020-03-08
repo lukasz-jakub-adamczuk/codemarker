@@ -11,5 +11,6 @@
       "sizes": "512x512"
     }
   ],
-  "start_url": "./codemarker/"
+  // "start_url": "./codemarker/"
+  "start_url": "/"
 }

@@ -198,13 +198,14 @@ function retrieveQuestions() {
     }
 }
 
-function generateQuestion(q) {
+function generateQuestion(q, mode) {
     var answers;
     var html = '';
     var id = '';
     var answer = '';
     var matching = '';
     var checked = false;
+    var answerClass;
 
     if (q.processed) {
         answers = q.answers;
@@ -222,10 +223,11 @@ function generateQuestion(q) {
         q.answers = answers;
     }
 
-    html += '<b class="text-muted vam">Question ' + q.index + '</b>';
-    html += (q.params.area ? ' <span class="badge badge-secondary"> ' + q.params.area + '</span>' : '');
+    if (mode != 'print') {
+        html += '<b class="text-muted vam">Question ' + q.index + '</b>';
+        html += (q.params.area ? ' <span class="badge badge-secondary"> ' + q.params.area + '</span>' : '');
 //     html += ' <span class=""> Length: ' + q.length + '</span>';
-    
+    }
     if ('type' in q.params) {
         if (q.params.type == 'input') {
             id = 'qstn-'+q.index+'-answr-0';
@@ -252,7 +254,11 @@ function generateQuestion(q) {
             }
         }
     } else {
-        html += '<div class="question">' + q.name + '</div>';
+        if (mode == 'print') {
+            html += '<div class="question">' + q.name.replace('<p>', '<p>' + q.index + '. ') + '</div>';
+        } else {
+            html += '<div class="question">' + q.name + '</div>';
+        }
         for (var ans in answers.choices) {
             id = 'qstn-'+q.index+'-answr-'+ans+'';
             answer = answers.choices[ans].name;
@@ -261,19 +267,26 @@ function generateQuestion(q) {
             } else {
                 checked = false;
             }
+            // correct answer
+            if (mode == 'print') {
+                answerClass = answers.choices[ans].type == 'wrong' ? ' marked-wrong' : ' marked-correct';
+            } else {
+                answerClass = '';
+            }
             if (answers.choices.length - answers.wrong > 1) {
                 // multi choice
                 html += '<div class="custom-control custom-checkbox">'
                     +'<input type="checkbox" id="'+id+'" name="customCheckbox" class="custom-control-input" value="'+slugify(answer)+'"'+(checked ? ' checked' : '')+'>'
-                    +'<label class="custom-control-label" for="'+id+'">'+answer+'</label>'
+                    +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+answer+'</label>'
                 +'</div>';
             } else {
                 // single choice
                 html += '<div class="custom-control custom-radio">'
                     +'<input type="radio" id="'+id+'" name="customRadio" class="custom-control-input" value="'+slugify(answer)+'"'+(checked ? ' checked' : '')+'>'
-                    +'<label class="custom-control-label" for="'+id+'">'+answer+'</label>'
+                    +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+answer+'</label>'
                 +'</div>';
             }
+            
         }
     }
 
@@ -287,7 +300,11 @@ function generateQuestion(q) {
     //     scale = 150;
     // }
 
+    if (mode == 'print') {
+        return html;
+    }
     document.querySelector('.container').innerHTML = '<div style="font-size: '+scale+'%;">' + html + '</div>';
+
 }
 
 
@@ -479,6 +496,25 @@ function selectExam(event) {
         }
     }
     showElement('start');
+    showElement('print');
+}
+
+function printExam() {
+    console.log('print');
+    initChallenge();
+    // generate first questions
+    // generateQuestion(questions.used[challenge]);
+    hideElement('select-exam');
+    var html = '';
+    for (var q in questions.used) {
+        html += generateQuestion(questions.used[q], 'print');
+    }
+
+    document.querySelector('.container').innerHTML = html;
+
+    hideElement('start');
+    hideElement('print');
+    hideElement('show-options');
 }
 
 if ('localStorage' in window) {
@@ -539,6 +575,7 @@ document.getElementById('finish').addEventListener('click', finishChallenge, fal
 
 document.getElementById('container').addEventListener('click', registerAnswer, true);
 document.getElementById('select-exam').addEventListener('click', selectExam, true);
+document.getElementById('print').addEventListener('click', printExam, false);
 
 
 var arrows = {

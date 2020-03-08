@@ -10,7 +10,7 @@ body {
 
 #timer {
     position: absolute;
-    bottom: 15%;
+    bottom: 20%;
     width: 100%;
     height: 5%;
     text-align: center;
@@ -21,7 +21,7 @@ nav {
     position: absolute;
     bottom: 0;
     width: 100%;
-    height: 15%;
+    height: 20%;
     text-align: center;
 }
 #loader {
