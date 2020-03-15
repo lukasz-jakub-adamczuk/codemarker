@@ -1,18 +1,29 @@
 <html>
     <head>
         <title>CodeMarker</title>
-        <link rel="stylesheet" href="bootstrap-4.0.0/dist/css/bootstrap.css">
+        <!-- <link rel="stylesheet" href="bootstrap-4.0.0/dist/css/bootstrap.css"> -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script> -->
         <link rel="stylesheet" href="css/main.css">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="icon" href="/favicon.png">
+        <link rel="icon" href="./favicon.png">
         <meta name="theme-color" content="#ffffff"/>
         <link rel="manifest" href="manifest.json">
     </head>
     <body>
         <input id="options-tgr" type="checkbox">
         <div class="menu-options">
-            <div class="options _form-inline">
+            <div class="container">
+                <p class="opts-header">About</p>
+                <div class="list-group">
+                    <span id="version" class="list-group-item list-group-item-action flex-column align-items-start">
+                        <span>Learn Wise: <strong>v0.06</strong></span>
+                    </span>
+                    <span id="version" class="list-group-item list-group-item-action flex-column align-items-start">
+                        <span>Source code: <a href="https://github.com/lukasz-jakub-adamczuk/codemarker#codemarker">GitHub</a></span>
+                    </span>
+                </div>
                 <div class="form-row">
                     <div class="col-small-6">
                         <p>Use this option to load questions form your computer or mobile</p>
@@ -26,40 +37,49 @@
                         <button id="retrieve" class="btn btn-secondary">Retrieve</button>
                     </div>
                 </div>
-                <p>v0.06</p>
-                <label id="close-options" for="options-tgr" class="btn btn-secondary">Close options</label>
+                <div id="app-properties"></div>
             </div>
         </div>
         <div class="progresso">
             <span></span>
         </div>
-        <div id="container" class="container"></div>
-        <div id="select-exam" class="container visible"></div>
+        <div id="challenge" class="container hidden"></div>
+        <div id="exams" class="container hidden">
+            <div class="list"></div>
+        </div>
+        <div id="splash" class="container hidden">
+            <img src="./img/learn-wise-logo.png" alt="">
+        </div>
 
-        <div id="timer"></div>
+        <div id="timer">
+            <span class="timer-content"></span>
+        </div>
 
-        <nav>
-            <button id="prev" class="btn btn-secondary hidden">Previous</button>
-            <button id="help" class="btn btn-disabled hidden">Answer(s)</button>
-            <button id="next" class="btn btn-secondary hidden">Next</button>
-            <br>
-            <button id="start" class="btn btn-primary hidden">Start</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <button id="finish" class="btn btn-primary hidden">Finish</button>
-            <button id="print" class="btn btn-primary hidden">Print all</button>
-            <br>
-            
+        <nav id="menu" class="main-nav hidden">
+            <a id="prev-button" class="button prev disabled"><span>Prev</span></a>
+            <a id="start-button" class="button start disabled"><span>Start</span></a>
+            <a id="stop-button" class="button stop disabled"><span>Start</span></a>
+            <label id="show-options" for="options-tgr" class="button menu">
+                <a id="menu-button" class=""><span>Menu</span></a>
+            </label>
+            <a id="answers-button" class="button answers disabled"><span>Menu</span></a>
+            <a id="print-button" class="button print disabled"><span>Menu</span></a>
+            <a id="next-button" class="button next disabled"><span>Next</span></a>
         </nav>
-        <label id="show-options" for="options-tgr" class="btn btn-secondary visible">Menu</label>
-
 
         <div id="loader" style="display: none;">
             <input type="file" id="file-input" >
             <div id="file-content" style="display: none;"></div>
         </div>
 
-        <script src="js/hammer.js"></script>
+        <script src="js/hammer.min.js"></script>
         <script src="js/parser.js"></script>
         <script src="js/utils.js"></script>
+        <script src="js/properties.js"></script>
+        <script src="js/exam.js"></script>
+        <script src="js/question.js"></script>
+        <script src="js/answer.js"></script>
+        <script src="js/codeMarker.js"></script>
         <script src="js/main.js"></script>
     </body>
 </html>
