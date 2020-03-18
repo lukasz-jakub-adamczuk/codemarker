@@ -5,7 +5,8 @@ var codeMarker = {};
 var questions = {
     'all': [],
     'used': [],
-    'exam': []
+    'exam': [],
+    'ignored': []
 };
 var challenge;
 var limit;

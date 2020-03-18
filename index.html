@@ -2,8 +2,9 @@
     <head>
         <title>CodeMarker</title>
         <!-- <link rel="stylesheet" href="bootstrap-4.0.0/dist/css/bootstrap.css"> -->
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-        <!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script> -->
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="css/main.css">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -17,24 +18,34 @@
             <div class="container">
                 <p class="opts-header">About</p>
                 <div class="list-group">
-                    <span id="version" class="list-group-item list-group-item-action flex-column align-items-start">
+                    <div id="version" class="list-group-item list-group-item-action flex-column align-items-start">
                         <span>Learn Wise: <strong>v0.06</strong></span>
-                    </span>
-                    <span id="version" class="list-group-item list-group-item-action flex-column align-items-start">
+                    </div>
+                    <div id="version" class="list-group-item list-group-item-action flex-column align-items-start">
                         <span>Source code: <a href="https://github.com/lukasz-jakub-adamczuk/codemarker#codemarker">GitHub</a></span>
-                    </span>
-                </div>
-                <div class="form-row">
-                    <div class="col-small-6">
-                        <p>Use this option to load questions form your computer or mobile</p>
-                        <button id="load" class="btn btn-secondary">Load questions</button>
                     </div>
                 </div>
-                <div class="form-row">
-                    <div class="col-small-6">
-                        <p>Use this option to load questions CodeMarker cloud storage space</p>
-                        <input id="retrieve-code" type="text" class="form-control col-sm-4" placeholder="type code">
-                        <button id="retrieve" class="btn btn-secondary">Retrieve</button>
+                <p class="opts-header">Upload file</p>
+                <div class="list-group">
+                    <div id="version" class="list-group-item list-group-item-action flex-column align-items-start">
+                        <span>Use this option to load questions from your computer or mobile. File content must be in <a href="https://github.com/lukasz-jakub-adamczuk/codemarker#exam-format">special format</a> to be parsed with application.</span>
+                        <div class="input-group mb-3">
+                            <button id="load" class="btn btn-primary">Load your questions</button>
+                        </div>
+                        <div class="loading-errors"></div>
+                    </div>
+                </div>
+                <p class="opts-header">Retrieve from internet</p>
+                <div class="list-group">
+                    <div id="version" class="list-group-item list-group-item-action flex-column align-items-start">
+                        <span>Use this option to load prepared questions from LearnWise cloud storage.</span>
+                        <div class="input-group mb-3">
+                            <input id="retrieve-code" type="text" class="form-control" placeholder="use code" aria-label="use code" aria-describedby="retrieve">
+                            <div class="input-group-append">
+                                <button id="retrieve" class="btn btn-primary" type="button" id="button-addon2">Retrieve</button>
+                            </div>
+                        </div>
+                        <div class="downloading-errors"></div>
                     </div>
                 </div>
                 <div id="app-properties"></div>
@@ -66,6 +77,45 @@
             <a id="print-button" class="button print disabled"><span>Menu</span></a>
             <a id="next-button" class="button next disabled"><span>Next</span></a>
         </nav>
+
+        <!-- Modal -->
+        <div class="modal fade" id="comment-modal" tabindex="-1" role="dialog" aria-labelledby="comment-modal-label" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="comment-modal-label">Comment</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        ...
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="image-modal" tabindex="-1" role="dialog" aria-labelledby="image-modal-label" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="image-modal-label">Image</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        ...
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div id="loader" style="display: none;">
             <input type="file" id="file-input" >

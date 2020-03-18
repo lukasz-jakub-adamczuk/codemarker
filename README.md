@@ -9,28 +9,28 @@ Application for learning on exams. __LearnWise__ displays questions from text fi
 Exam file is written in plain text file, but in special format. It's possible to define various type of questions. Let's see how configure simple question with anwser:
 ```
 This is simple question
-+ correct answer starts with + character
-- incorrect answer starts with - character
++ correct answer starts with + (plus) character
+- incorrect answer starts with - (minus) character
 ```
 
 Each question can have one or many correct answers, same with incorrect one. There is no limits, otherwise you define it as param, but this more advanced setup. For now it's important to know that question with multiple answers will be rendered in different way. Look for next example:
 ```
 This is other simple question
-+ correct answer starts with + character
-- incorrect answer starts with - character
++ correct answer
+- incorrect answer
 + second correct answer
-- one more incorrect answer
+- second incorrect answer
 ```
 
 Order of answers does not matter. Only matters to start each answer with `+` (plus) or `-` (minus) character. Each question must be separated with at least one new empty line:
 ```
 Here you have first question
-+ correct answer starts with + character
-- incorrect answer starts with - character
++ correct answer
+- incorrect answer
 
 Here you have second question
-+ correct answer starts with + character
-- incorrect answer starts with - character
++ correct answer
+- incorrect answer
 ```
 
 Question can be defined as multiline. When question has started then all written in next lines until first answer or params (will be explained later) will be treated as one question. Example below should be clear enough:
@@ -39,19 +39,19 @@ Here you have first line of question.
 
 Next line one can be splitted with new empty line or not.
 This is completely your decision.
-+ correct answer starts with + character
-- incorrect answer starts with - character
++ correct answer
+- incorrect answer
 ```
 
 Question and answers will be truncated anyway and displayed and HTML. Any additional spaces will be ignored too. Keeping proposed format makes whole exam file more readable. Look on this awful example:
 ```
             This question is indented, but it will be ignored by application
-+Answer can start directly after + character
++Answer can start directly after + (plus) character
 + But with additional space looks much better
 -       Number of spaces doesn't matter again
 ```
 
-It's not mandatory to define answers. Question without answers will be marked as `incomplete`. Exactly the same will be when all available answers will be incorrect.
+It's not mandatory to define answers, but question without answers will be ignored. Parser expects question and answer, params optionally. Until params or answers will be found all rest is treated as one question. Example below has been prepared as question without answers and question without correct anwsers. Finally will be parsed as one multi-line question with no correct answer. System will mark it as `incomplete`.
 ```
 This question has no answers
 
@@ -60,12 +60,12 @@ This has no correct answers
 - Choose that
 ```
 
-If you are not sure about correct answer or answers for given question just mark it as `incomplete` manually. This is where params useful. To define such element you need to use JSON object between question and answers, generally. Params starts with `{` (opening curly bracket) character and ends with `}` (closing curly bracket) character. All between are params divided with (`,`) comma character. Each param has *<key>* and *<value>* which need to enclosed with `"` double quotation mark and divided with `:` colon character. It's only sounds complicated:
+If you are not sure about correct answer or answers for given question just mark it as `incomplete` manually. This is where params useful. To define such element you need to use JSON object between question and answers, generally. Params starts with `{` (opening curly bracket) character and ends with `}` (closing curly bracket) character. All between are params divided with (`,`) comma character. Each param has *<key>* and *<value>* which need to enclosed with `"` double quotation mark and divided with `:` (colon) character. It's only sounds complicated:
 ```
 This question will be ignored
 {"status": "incomplete"}
-+ correct answer starts with + character
-- incorrect answer starts with - character
++ correct answer
+- incorrect answer
 ```
 
 There is more params which can be used to define complex question types. Here is list of all suppoerted params:
@@ -74,15 +74,15 @@ There is more params which can be used to define complex question types. Here is
 - `"type": "single"` - Added automatically to each question with single correct answer.
 - `"type": "multiple"` - Added automatically to each question with multiple correct answers.
 - `"type": "input"` - Defines question where answer or answers must be typed. Correct answer or anwsers are needed still.
-- `"type": "matching"` - Defines question where answers must be matched. Each answer must be correct and has `==` (two equal signs) inside, splitting whole anser on two parts.
+- `"type": "matching"` - Defines question where answers must be matched. Each answer must be correct and has `==` (two equal signs) inside, splitting whole anwser on two parts.
 - `"type": "answers"` - Defines how many answers must be selected in question. Applicable for `multiple` type question only.
 - `"type": "comment"` - Adds addional comment for the question.
 
 ```
 This question will be ignored
 {"status": "incomplete"}
-+ correct answer starts with + character
-- incorrect answer starts with - character
++ correct answer starts with plus character
+- incorrect answer starts with minus character
 ```
 
 What is missing in file format
@@ -92,7 +92,10 @@ What is missing in file format
 Download sample-exam file, load in application and check how questions have been displayed. Experiment with own questions.
 
 ## TODO
-
+- [ ] click on challenge div (not answer) causes error
+- [ ] navigation by keys works any time
+- [ ] too many questions counted for exam when selected exam (parsed indeed) and then loaded another (parsing new one without reset parser)
+- [ ] configurable prev and next buttons for left/right edge if screen (mobile)
 - [ ] collect questions answered wrong and use again
 - [ ] pause challenge
 - [ ] pwa
@@ -108,7 +111,7 @@ Download sample-exam file, load in application and check how questions have been
 - [x] support for param answers (nothing to do)
 - [ ] support for param comment
 - [ ] displays letters before answers
-- [] complete file parsing errors handling
+- [ ] complete file parsing errors handling
 
 ## TOFIX
 - [ ] prev and next after time ended

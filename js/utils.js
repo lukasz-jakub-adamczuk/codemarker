@@ -8,6 +8,15 @@ function readSingleFile(e) {
     reader.onload = function(e) {
         parseChallenge(e.target.result);
 
+        //render potencial errors
+        if (parser.errors.length) {
+            var html = '<hr>';
+            for (var error of parser.errors) {
+                html += '<div class="alert alert-warning" role="alert">' + error + '</div>';
+            }
+            renderElement('.loading-errors', html);
+        }
+
         renderExams();
     
         if (properties['app.ui.start_challenge_after_load_success']) {

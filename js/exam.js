@@ -13,13 +13,13 @@ function renderExams() {
     if (exams.length) {
         html += '<div class="list-group">';
         for (var i in exams) {
-            html += '<span id="'+exams[i].name+'" class="list-group-item list-group-item-action flex-column align-items-start">'
+            html += '<span id="'+exams[i].exam+'" class="list-group-item list-group-item-action flex-column align-items-start">'
                 + '<div class="d-flex w-100 justify-content-between">'
-                + '<h5 class="mb-1">'+exams[i].name.split('-').join(' ').toUpperCase()+'</h5>'
+                + '<h5 class="mb-1">'+exams[i].exam.split('-').join(' ').toUpperCase()+'</h5>'
                 + '<small>'+exams[i].questions+' questions in '+exams[i].duration+'min</small>'
                 + '</div>'
                 + '<p class="mb-1">'+exams[i].description+'</p>'
-                + '<small>'+exams[i].all+' questions available</small>'
+                + '<small>'+exams[i].all+' questions available'+(exams[i].incomplete > 0 ? ', ' + exams[i].incomplete + ' questions incomplete' : '')+'</small>'
             + '</span>';
         }
         html += '</div>';
@@ -36,7 +36,7 @@ function selectExam(event) {
     while (node.tagName.toLowerCase() != 'span') {
         node = node.parentNode;
     }
-    exam = node.getAttribute('id');
+    exam = 'cm-' + node.getAttribute('id');
 
     // console.log(exam);
     // console.log(localStorage.getItem(exam));
@@ -57,7 +57,7 @@ function parseChallenge(content) {
     parser.parse(content);
 
     questions.all = parser.questions;
-    exam = parser.examConfig.name;
+    exam = 'cm-' + parser.examConfig.exam;
     // console.log(exam);
 
     // console.log(allExams);

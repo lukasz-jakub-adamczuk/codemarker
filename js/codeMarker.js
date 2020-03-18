@@ -83,10 +83,15 @@ function generateQuestion(q, mode) {
     //     q.answers = answers;
     // }
 
+    console.log(q);
+
     if (mode != 'print') {
         html += '<b class="text-muted vam">Question ' + q.index + '</b>';
         html += (q.params.area ? ' <span class="badge badge-secondary"> ' + q.params.area + '</span>' : '');
 //     html += ' <span class=""> Length: ' + q.length + '</span>';
+    }
+    if (q.params.commment) {
+        html += '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#comment-modal">Comment</button>';
     }
     if ('type' in q.params) {
         if (q.params.type == 'input') {
