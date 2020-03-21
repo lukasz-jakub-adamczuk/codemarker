@@ -1,3 +1,6 @@
+# exam:         sample-exam
+# description:  Sample exam to present possible questions types
+
 This is simple question
 + correct answer starts with + (plus) character
 - incorrect answer starts with - (minus) character
@@ -15,10 +18,12 @@ Here you have first question
 Here you have second question
 + correct answer
 - incorrect answer
+
 Here you have first line of question.
 
 Next line one can be splitted with new empty line or not.
-This is completely your decision.
+This is __completely__ your decision.
+
 + correct answer
 - incorrect answer
 
@@ -51,6 +56,6 @@ Question with params in multli-line version:
 + correct answer
 - incorrect answer
 
-Next question. Nothing else.
-+ correct answer
+Question with _italic_ and __bold__ content:
++ __correct__ answer
 - incorrect answer

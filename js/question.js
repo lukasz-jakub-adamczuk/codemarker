@@ -3,7 +3,7 @@
 // Handle previous question for running challenge
 function prevQuestion(event) {
     console.log('Prev event has been triggered.');
-    if (event.target.className.indexOf('disabled') != -1) {
+    if ($('#prev').hasClass('disabled')) {
         return;
     }
         
@@ -14,17 +14,17 @@ function prevQuestion(event) {
     }
 
     if (challenge == 0) {
-        disableAction('prev');
+        disableAction('#prev');
     } else {
-        enableAction('prev');
+        enableAction('#prev');
     }
-    enableAction('next');
+    enableAction('#next');
 }
 
 // Handle next question for running challenge
 function nextQuestion(event) {
     console.log('Next event has been triggered.');
-    if (event.target.className.indexOf('disabled') != -1) {
+    if ($('#next').hasClass('disabled')) {
         return;
     }
     
@@ -35,22 +35,26 @@ function nextQuestion(event) {
     }
 
     if (challenge == limit-1) {
-        disableAction('next');
+        disableAction('#next');
     } else {
-        enableAction('next');
+        enableAction('#next');
     }
-    enableAction('prev');
+    enableAction('#prev');
 }
 
 function prepareSimpleQuestion(q, mode) {
     var id, answer, checked, answerClass;
-    var answers = processAnswers(q.answers);
+    if (!q.answers.processed) {
+        q.answers = processAnswers(q.answers);
+    }
+    var answers = q.answers;
     var html = '';
     if (mode == 'print') {
-        html += '<div class="question">' + q.name.replace('<p>', '<p>' + q.index + '. ') + '</div>';
+        html += '<div class="question">' + marked(q.name).replace('<p>', '<p>' + q.index + '. ') + '</div>';
     } else {
-        html += '<div class="question">' + q.name + '</div>';
+        html += '<div class="question">' + marked(q.name) + '</div>';
     }
+    html += '<div class="answers">';
     for (var ans in answers.choices) {
         id = 'qstn-'+q.index+'-answr-'+ans+'';
         answer = answers.choices[ans].name;
@@ -79,5 +83,58 @@ function prepareSimpleQuestion(q, mode) {
             +'</div>';
         }
     }
+    html += '</div>';
+    return html;
+}
+
+function prepareMatchingQuestion(q, mode) {
+    var id, answer, choice, selected, answerClass;
+    if (!q.answers.processed) {
+        q.answers = processAnswers(q.answers);
+    }
+    var answers = q.answers;
+    var html = '';
+    var matching = '';
+    if (mode == 'print') {
+        html += '<div class="question">' + marked(q.name).replace('<p>', '<p>' + q.index + '. ') + '</div>';
+    } else {
+        html += '<div class="question">' + marked(q.name) + '</div>';
+    }
+    
+    // prepare choices for matching
+    var choices = [];
+    for (var choice of answers.choices) {
+        var chc = choice.name.split('==');
+        choices.push({'choice': chc[0].trim(), 'answer': chc[1].trim()});
+    }
+    choices = shuffleArray(choices);
+
+    html += '<div class="answers">';
+    for (var ans in answers.choices) {
+        id = 'qstn-'+q.index+'-answr-'+ans+'';
+        answer = answers.choices[ans].name.split('==')[0].trim();
+        choice = answers.choices[ans].name.split('==')[1].trim();
+        
+        html += '<div class="matching-control">'
+            // +'<input type="radio" id="'+id+'" name="customRadio" class="custom-control-input" value="'+slugify(answer)+'"'+(checked ? ' checked' : '')+'>'
+            +'<label class="matching-control-label" for="'+id+'">'+answer+'</label>'
+            +'<select class="custom-select" id="'+id+'" name="'+slugify(answer)+'">';
+            html +='<option value="">choose answer</option>'
+            // for (var mtch in answers.choices) {
+            //     matching = answers.choices[mtch].name.split('==')[1].trim();
+            //     html +='<option value="'+slugify(matching)+'">' + matching + '</option>'
+            // }
+            for (var match of choices) {
+                if (q.index in questions.exam && ans in questions.exam[q.index] && questions.exam[q.index][ans] == slugify(match.answer)) {
+                    selected = ' selected';
+                } else {
+                    selected = '';
+                }
+                html +='<option value="'+slugify(match.answer)+'"'+selected+'>' + match.answer + '</option>'
+            }
+            html +='</select>'
+        +'</div>';
+    }
+    html += '</div>';
     return html;
 }

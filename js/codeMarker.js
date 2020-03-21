@@ -4,11 +4,12 @@ function startChallenge(event) {
     if (event && event.target.className.indexOf('disabled') != -1) {
         return;
     }
-    hideElement('exams');
-    showElement('challenge');
+    enableKeyEvents();
+    hideElement('#exams');
+    showElement('.challenge');
     // enable nav buttons
-    enableAction('next');
-    enableAction('answers');
+    enableAction('#next');
+    enableAction('#answers');
     // reset used questions
     initChallenge();
     renderProgress(0);
@@ -28,8 +29,8 @@ function startChallenge(event) {
     }, 1000);
     // event.preventDefault();
 
-    disableAction('start');
-    disableAction('print');
+    disableAction('#start');
+    disableAction('#print');
 }
 
 // Internal function to init challenge
@@ -37,7 +38,16 @@ function initChallenge() {
     if (properties['quiz.questions.shuffle']) {
         questions.all = shuffleArray(questions.all);
     }
-    questions.used = reorderArray(questions.all.slice(0, allExams[exam].questions));
+    // skip ignored
+    questions.used = questions.all.filter(function(elem, index, array) { return elem.params.status != 'ignored'; });
+    var ignored = questions.all.filter(function(elem, index, array) { return elem.params.status == 'ignored'; });
+    var questionsForExam;
+    if (questions.used.length > allExams[exam].questions) {
+        questionsForExam = allExams[exam].questions;
+    } else {
+        questionsForExam = questions.used.length;
+    }
+    questions.used = reorderArray(questions.used.slice(0, questionsForExam));
     // questions.used = reorderArray(questions.all);
     questions.exam = [];
     challenge = 0;
@@ -48,11 +58,12 @@ function initChallenge() {
 function finishChallenge() {
     clearInterval(displayTimer);
     // hide nav buttons
-    disableAction('prev');
-    disableAction('next');
-    disableAction('answers');
+    disableAction('#prev');
+    disableAction('#next');
+    disableAction('#answers');
+    disableKeyEvents();
 
-    enableAction('start');
+    enableAction('#start');
     
     renderExamResult();
 }
@@ -67,94 +78,45 @@ function generateQuestion(q, mode) {
     var checked = false;
     var answerClass;
 
-    // if (q.processed) {
-    //     answers = q.answers;
-    // } else {
-    //     answers = processAnswers(q.answers);
-    //     q.answers = answers;
-    //     q.processed = true;
-    // }
-
-    // if (answers.shuffled) {
-    //     answers.choices = answers.choices;
-    // } else {
-    //     answers.choices = shuffleArray(answers.choices);
-    //     answers.shuffled = true;
-    //     q.answers = answers;
-    // }
-
     console.log(q);
 
     if (mode != 'print') {
-        html += '<b class="text-muted vam">Question ' + q.index + '</b>';
-        html += (q.params.area ? ' <span class="badge badge-secondary"> ' + q.params.area + '</span>' : '');
-//     html += ' <span class=""> Length: ' + q.length + '</span>';
+        html += '<div class="challenge-header">';
+        html += '<b class="_text-muted _badge _badge-secondary question-number">Question ' + q.index + '</b>';
+        html += (q.params.area ? ' <span class="_badge _badge-secondary tag"> ' + q.params.area + '</span>' : '');
+        
+        if (q.params.comment) {
+            // html += '<button type="button" class="btn btn-primary icon comment-icon" data-toggle="modal" data-target="#comment-modal"></button>';
+            html += '<span class="icon comment-icon" data-toggle="modal" data-target="#comment-modal"></span>';
+            renderElement('#comment-modal .modal-body', marked(q.params.comment));
+        }
+        if (q.params.image) {
+            // html += '<button type="button" class="btn btn-primary icon comment-icon" data-toggle="modal" data-target="#comment-modal"></button>';
+            html += '<span class="icon image-icon" data-toggle="modal" data-target="#image-modal"></span>';
+            renderElement('#image-modal .modal-body', '<img class="question-image" src="'+q.params.image+'">');
+        }
+        html += '</div>';
     }
-    if (q.params.commment) {
-        html += '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#comment-modal">Comment</button>';
-    }
+    
     if ('type' in q.params) {
         if (q.params.type == 'input') {
-            id = 'qstn-'+q.index+'-answr-0';
-            answer = answers.choices[0].name;
-            var input = '<input type="text" name="" />';
-            html += '<h2>' + q.name.replace('[]', input) + '</h2>';
+            html += prepareInputQuestion(q, mode);
         }
         if (q.params.type == 'matching') {
-            html += '<div class="question">' + q.name + '</div>';
-            for (var ans in answers.choices) {
-                id = 'qstn-'+q.index+'-answr-'+ans+'';
-                answer = answers.choices[ans].name.split('==')[0].trim();
-                html += '<div class="custom-control_ custom-radio_">'
-                    // +'<input type="radio" id="'+id+'" name="customRadio" class="custom-control-input" value="'+slugify(answer)+'"'+(checked ? ' checked' : '')+'>'
-                    +'<label class="custom-control-label" for="'+id+'" style="width: 40%;">'+answer+'</label>'
-                    +'<select class="" name="">';
-                    html +='<option value="">choose answer</option>'
-                    for (var mtch in answers.choices) {
-                        matching = answers.choices[mtch].name.split('=')[1].trim();
-                        html +='<option value="">' + matching + '</option>'
-                    }
-                    html +='</select>'
-                +'</div>';
-            }
+            html += prepareMatchingQuestion(q, mode);
         }
         if (q.params.type == 'single' || q.params.type == 'multiple') {
             html += prepareSimpleQuestion(q, mode);
-            /*if (mode == 'print') {
-                html += '<div class="question">' + q.name.replace('<p>', '<p>' + q.index + '. ') + '</div>';
-            } else {
-                html += '<div class="question">' + q.name + '</div>';
-            }
-            for (var ans in answers.choices) {
-                id = 'qstn-'+q.index+'-answr-'+ans+'';
-                answer = answers.choices[ans].name;
-                if (q.index in questions.exam && ans in questions.exam[q.index] && questions.exam[q.index][ans] == true) {
-                    checked = true;
-                } else {
-                    checked = false;
-                }
-                // correct answer
-                if (mode == 'print') {
-                    answerClass = answers.choices[ans].type == 'wrong' ? ' marked-wrong' : ' marked-correct';
-                } else {
-                    answerClass = '';
-                }
-                if (answers.choices.length - answers.wrong > 1) {
-                    // multi choice
-                    html += '<div class="custom-control custom-checkbox">'
-                        +'<input type="checkbox" id="'+id+'" name="customCheckbox" class="custom-control-input" value="'+slugify(answer)+'"'+(checked ? ' checked' : '')+'>'
-                        +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+answer+'</label>'
-                    +'</div>';
-                } else {
-                    // single choice
-                    html += '<div class="custom-control custom-radio">'
-                        +'<input type="radio" id="'+id+'" name="customRadio" class="custom-control-input" value="'+slugify(answer)+'"'+(checked ? ' checked' : '')+'>'
-                        +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+answer+'</label>'
-                    +'</div>';
-                }
-            }*/
         }
     }
+
+    html += '<div class="question-errors">';
+    if (errors[q.index-1]) {
+        for (var error of errors[q.index-1]) {
+            html += '<div class="alert alert-danger" role="alert">'+error+'</div>';
+        }
+    }
+    html += '</div>';
 
     var scale = 100;
     // scale question
@@ -171,7 +133,7 @@ function generateQuestion(q, mode) {
     if (mode == 'print') {
         return html;
     };
-    renderElement('#challenge', '<div style="font-size: '+scale+'%;">' + html + '</div>');
+    renderElement('.challenge', '<div style="font-size: '+scale+'%;">' + html + '</div>');
 }
 
 

@@ -16,10 +16,10 @@ function renderExams() {
             html += '<span id="'+exams[i].exam+'" class="list-group-item list-group-item-action flex-column align-items-start">'
                 + '<div class="d-flex w-100 justify-content-between">'
                 + '<h5 class="mb-1">'+exams[i].exam.split('-').join(' ').toUpperCase()+'</h5>'
-                + '<small>'+exams[i].questions+' questions in '+exams[i].duration+'min</small>'
+                + '<small>'+(exams[i].all - exams[i].ignored > exams[i].questions ? exams[i].questions : exams[i].all - exams[i].ignored)+' questions in '+exams[i].duration+'min</small>'
                 + '</div>'
                 + '<p class="mb-1">'+exams[i].description+'</p>'
-                + '<small>'+exams[i].all+' questions available'+(exams[i].incomplete > 0 ? ', ' + exams[i].incomplete + ' questions incomplete' : '')+'</small>'
+                + '<small>'+exams[i].all+' questions available'+(exams[i].ignored > 0 ? ', ' + exams[i].ignored + ' questions ignored' : '')+'</small>'
             + '</span>';
         }
         html += '</div>';
@@ -47,8 +47,8 @@ function selectExam(event) {
     if (properties['app.ui.start_challenge_after_selecting']) {
         startChallenge();
     } else {
-        enableAction('start');
-        enableAction('print');
+        enableAction('#start');
+        enableAction('#print');
     }
 }
 
@@ -66,9 +66,9 @@ function parseChallenge(content) {
     
     // store exam in localStorage for the future
     if ('localStorage' in window) {
-        if (!localStorage.getItem(exam)) {
+        // if (!localStorage.getItem(exam)) {
             localStorage.setItem(exam, content);
-        }
+        // }
         localStorage.setItem('allExams', JSON.stringify(allExams));
     }
     // triggerAction('start');
@@ -79,20 +79,20 @@ function printExam() {
     initChallenge();
     // generate first questions
     // generateQuestion(questions.used[challenge]);
-    hideElement('exams');
-    showElement('challenge');
+    hideElement('#exams');
+    showElement('.challenge');
     var html = '';
     for (var q in questions.used) {
         html += generateQuestion(questions.used[q], 'print');
     }
 
-    renderElement('#challenge', html);
+    renderElement('.challenge', html);
 
-    // hideElement('start');
-    // hideElement('print');
-    // hideElement('show-options');
-    disableAction('start');
-    disableAction('print');
+    // hideElement('#start');
+    // hideElement('#print');
+    // hideElement('#show-options');
+    disableAction('#start');
+    disableAction('#print');
 }
 
 // Handle rendering result of finished challenge
@@ -113,5 +113,5 @@ function renderExamResult() {
         result = '<div class="result epic-fail"></div>';
         advice = 'Your score is '+score+'% only. Learn more.';
     }
-    renderElement('#challenge', result + '<p class="advice">' + advice + '</p>');
+    renderElement('.challenge', result + '<p class="advice">' + advice + '</p>');
 }

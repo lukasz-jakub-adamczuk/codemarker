@@ -32,7 +32,7 @@
                         <div class="input-group mb-3">
                             <button id="load" class="btn btn-primary">Load your questions</button>
                         </div>
-                        <div class="loading-errors"></div>
+                        <div class="loading-messages"></div>
                     </div>
                 </div>
                 <p class="opts-header">Retrieve from internet</p>
@@ -42,10 +42,10 @@
                         <div class="input-group mb-3">
                             <input id="retrieve-code" type="text" class="form-control" placeholder="use code" aria-label="use code" aria-describedby="retrieve">
                             <div class="input-group-append">
-                                <button id="retrieve" class="btn btn-primary" type="button" id="button-addon2">Retrieve</button>
+                                <button id="retrieve" class="btn btn-primary" type="button">Retrieve</button>
                             </div>
                         </div>
-                        <div class="downloading-errors"></div>
+                        <div class="downloading-messages"></div>
                     </div>
                 </div>
                 <div id="app-properties"></div>
@@ -54,7 +54,7 @@
         <div class="progresso">
             <span></span>
         </div>
-        <div id="challenge" class="container hidden"></div>
+        <div class="challenge container hidden"></div>
         <div id="exams" class="container hidden">
             <div class="list"></div>
         </div>
@@ -78,7 +78,7 @@
             <a id="next-button" class="button next disabled"><span>Next</span></a>
         </nav>
 
-        <!-- Modal -->
+        <!-- Modals -->
         <div class="modal fade" id="comment-modal" tabindex="-1" role="dialog" aria-labelledby="comment-modal-label" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -123,6 +123,7 @@
         </div>
 
         <script src="js/hammer.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
         <script src="js/parser.js"></script>
         <script src="js/utils.js"></script>
         <script src="js/properties.js"></script>

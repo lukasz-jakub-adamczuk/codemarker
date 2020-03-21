@@ -12,9 +12,12 @@ var challenge;
 var limit;
 var displayTimer;
 
+var keyEventEnabled = false;
 
 // var initialSetup = {};
 var allExams = {};
+
+var errors = [];
 
 var exam;
 var time;
@@ -57,23 +60,24 @@ renderProperties(propertiesSetup);
 // adding events
 
 // options
-document.getElementById('file-input').addEventListener('change', readSingleFile, false);
-document.getElementById('load').addEventListener('click', function() { document.getElementById('file-input').click(); }, false);
-document.getElementById('retrieve').addEventListener('click', retrieveQuestions, false);
-document.getElementById('app-properties').addEventListener('click', manageProperty, true);
+document.querySelector('#file-input').addEventListener('change', readSingleFile, false);
+document.querySelector('#load').addEventListener('click', function() { document.querySelector('#file-input').click(); }, false);
+document.querySelector('#retrieve').addEventListener('click', retrieveQuestions, false);
+document.querySelector('#app-properties').addEventListener('click', manageProperty, true);
 
 
 // challenge
 document.querySelector('#exams .list').addEventListener('click', selectExam, true);
-document.getElementById('challenge').addEventListener('click', registerAnswer, false);
+document.querySelector('.challenge').addEventListener('click', registerAnswerForSimpleQuestion, false);
+document.querySelector('.challenge').addEventListener('change', registerAnswerForMatchingQuestion, false);
 
-document.getElementById('start-button').addEventListener('click', startChallenge, false);
-document.getElementById('stop-button').addEventListener('click', finishChallenge, false);
-document.getElementById('print-button').addEventListener('click', printExam, false);
+document.querySelector('#start-button').addEventListener('click', startChallenge, false);
+document.querySelector('#stop-button').addEventListener('click', finishChallenge, false);
+document.querySelector('#print-button').addEventListener('click', printExam, false);
 
-document.getElementById('prev-button').addEventListener('click', prevQuestion, false);
-document.getElementById('next-button').addEventListener('click', nextQuestion, false);
-document.getElementById('answers-button').addEventListener('click', showCorrectAnswers, false);
+document.querySelector('#prev-button').addEventListener('click', prevQuestion, false);
+document.querySelector('#next-button').addEventListener('click', nextQuestion, false);
+document.querySelector('#answers-button').addEventListener('click', showCorrectAnswers, false);
 
 
 
@@ -86,13 +90,20 @@ var arrows = {
 };
 
 window.addEventListener('keydown', function(event) {
-    switch (event.keyCode) {
-        case arrows.left:
-            prevQuestion(event);
-            break;
-        case arrows.right:
-            nextQuestion(event);
-            break;
+    if ($('body').hasClass('modal-open')) {
+        keyEventEnabled = false;
+    } else {
+        keyEventEnabled = true;
+    }
+    if (keyEventEnabled) {
+        switch (event.keyCode) {
+            case arrows.left:
+                prevQuestion(event);
+                break;
+            case arrows.right:
+                nextQuestion(event);
+                break;
+        }
     }
 });
 

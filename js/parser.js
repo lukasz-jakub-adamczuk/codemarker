@@ -11,6 +11,8 @@ var parser = {
     setup: null,
     
     line: '',
+
+    params: '',
     
     answer: '',
 
@@ -20,7 +22,7 @@ var parser = {
 
     answersFound: false,
 
-    examConfig: {'all': 0, 'incomplete': 0},
+    examConfig: {'all': 0, 'ignored': 0},
     
     n: 0,
 
@@ -37,6 +39,8 @@ var parser = {
             if (parser.line != '') {
                 parser.debug ? console.log(parser.line) : '';
                 // init
+                parser.params = parser.params || '';
+
                 parser.question.name = parser.question.name || '';
                 parser.question.length = parser.question.length || 0;
                 parser.question.counter = parser.question.counter || {'correct': 0, 'wrong': 0};
@@ -64,11 +68,12 @@ var parser = {
                         parser.answersFound = true;
                         break;
                     case '{':
-                        parser.question.params += parser.line;
+                        parser.params += parser.line;
                         parser.paramsFound = true;
                         if (parser.line.trim().substr(-1) == '}') {
                             parser.question.params = JSON.parse(parser.line);
                             parser.paramsFound = false;
+                            parser.params = '';
                         }
                         break;
                     case '#':
@@ -83,11 +88,13 @@ var parser = {
                         break;
                     default:
                         if (parser.paramsFound) {
-                            parser.question.params += parser.line;
+                            parser.params += parser.line;
                             if (parser.line.trim().substr(-1) == '}') {
+                                console.log('Exam params before parsing: ' + parser.question.params);
                                 console.log(parser.question.params);
-                                parser.question.params = JSON.parse(parser.question.params);
+                                parser.question.params = JSON.parse(parser.params);
                                 parser.paramsFound = false;
+                                parser.params = '';
                             }
                         } else {
                             if (parser.answersFound) {
@@ -96,8 +103,10 @@ var parser = {
                                 }
                                 // no correct answers
                                 if (parser.question.counter.correct == 0) {
-                                    parser.question.params.status = 'incomplete';
-                                    parser.examConfig.incomplete++;
+                                    parser.question.params.status = 'ignored';
+                                }
+                                if (parser.question.params.status == 'ignored') {
+                                    parser.examConfig.ignored++;
                                 }
                                 parser.answersFound = false;
                                 // adding found question to 
@@ -114,13 +123,27 @@ var parser = {
                                 parser.question.answers.wrong = {};
                                 parser.n++;
                             }
-                            parser.question.name += '<p>' + parser.line + '</p>';
+                            // parser.question.name += '<p>' + parser.line + '</p>';
+                            parser.question.name += parser.line + "\n\n";
                             parser.question.length += parser.line.length;
                             parser.question.index = parser.n;
                         }
                         break;
                 }
             }
+        }
+        // this actions needs to be done for last question because during loop parsing
+        // have been skipped as last line of question is answer and each question
+        // is added to list when next is found
+        if (!('type' in parser.question.params)) {
+            parser.question.params.type = parser.question.counter.correct == 1 ? 'single' : 'multiple';
+        }
+        // no correct answers
+        if (parser.question.counter.correct == 0) {
+            parser.question.params.status = 'ignored';
+        }
+        if (parser.question.params.status == 'ignored') {
+            parser.examConfig.ignored++;
         }
         parser.questions[parser.n] = parser.question;
         parser.examConfig.all = parser.questions.length;

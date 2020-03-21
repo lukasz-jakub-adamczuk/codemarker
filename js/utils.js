@@ -8,14 +8,15 @@ function readSingleFile(e) {
     reader.onload = function(e) {
         parseChallenge(e.target.result);
 
-        //render potencial errors
+        var html = '<hr>';
         if (parser.errors.length) {
-            var html = '<hr>';
             for (var error of parser.errors) {
                 html += '<div class="alert alert-warning" role="alert">' + error + '</div>';
             }
-            renderElement('.loading-errors', html);
+        } else {
+            html += '<div class="alert alert-info" role="info">Exam file has been loaded and parsed sucessfully.</div>';
         }
+        renderElement('.loading-messages', html);
 
         renderExams();
     
@@ -98,8 +99,8 @@ function slugify(st) {
     return (st.replace(/[^a-z0-9\- ]*/gi,''));
 }
 
-function toggleElement(element) {
-    var el = document.getElementById(element);
+function toggleElement(name) {
+    var el = document.getElementById(name);
     if (el.className.indexOf('hidden') != -1) {
         el.className = el.className.replace('hidden', 'visible');
     } else {
@@ -107,18 +108,18 @@ function toggleElement(element) {
     }
 }
 
-function showElement(element) {
-    var el = document.getElementById(element);
+function showElement(name) {
+    var el = document.querySelector(name);
     el.className = el.className.replace('hidden', 'visible');
 }
 
-function hideElement(element) {
-    var el = document.getElementById(element);
+function hideElement(name) {
+    var el = document.querySelector(name);
     el.className = el.className.replace('visible', 'hidden');
 }
 
 function enableAction(name) {
-    var el = document.getElementById(name+'-button');
+    var el = document.querySelector(name+'-button');
     if (el.className.indexOf('disabled') == -1) {
         return;
     }
@@ -127,7 +128,7 @@ function enableAction(name) {
 }
 
 function disableAction(name) {
-    var el = document.getElementById(name+'-button');
+    var el = document.querySelector(name+'-button');
     if (el.className.indexOf('enabled') == -1) {
         return;
     }
@@ -136,28 +137,36 @@ function disableAction(name) {
 }
 
 function triggerAction(name) {
-    document.getElementById(name+'-button').click();
+    document.querySelector(name+'-name').click();
 }
 
 function renderElement(name, html) {
     document.querySelector(name).innerHTML = html;
 }
 
+function enableKeyEvents() {
+    keyEventEnabled = true;
+}
+
+function disableKeyEvents() {
+    keyEventEnabled = false;
+}
+
 // Handle skiping intro
 function skipIntro() {
-    hideElement('splash');
-    showElement('exams');
-    showElement('menu');
+    hideElement('#splash');
+    showElement('#exams');
+    showElement('#menu');
     renderExams();
 }
 
 // Handle splash screen
 function runIntro() {
-    showElement('splash');
+    showElement('#splash');
     setTimeout(function() {
-        hideElement('splash');
-        showElement('exams');
-        showElement('menu');
+        hideElement('#splash');
+        showElement('#exams');
+        showElement('#menu');
         renderExams();
     }, 3000);
 }
@@ -165,9 +174,9 @@ function runIntro() {
 // Internal function for counting current progress
 function countProgress() {
     var answered = answeredExamQuestions();
-    var current = answered.length / allExams[exam].questions * 100;
+    var current = answered.length / questions.used.length * 100;
     if (current === 100) {
-        enableAction('stop');
+        enableAction('#stop');
     }
     renderProgress(current);
 }

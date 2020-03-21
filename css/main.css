@@ -1,13 +1,14 @@
 
 body {
     line-height: 1.75;
+    line-height: 1.5;
 }
 
 .container {
     color: #333a40;
 }
 
-#challenge,
+.challenge,
 #exams,
 #splash {
     position: absolute;
@@ -33,6 +34,52 @@ body {
     animation: blurFadeInOut 3s ease-in;
     opacity: 0;
 }
+.challenge-header {
+    display: flex;
+    /* align-items: baseline; */
+    align-items: center;
+    height: 2rem;
+    margin: .5rem 0;
+}
+
+.question-header {
+    height: 2rem;
+}
+.question-number {
+    height: 2rem;
+    line-height: 2;
+    /* padding: .375rem 0 .125rem; */
+    padding-top: .125rem;
+}
+
+.question {
+    /* font-weight: bold; */
+    margin-bottom: 1rem;
+}
+.question p {
+    margin-bottom: .5rem;
+    line-height: 1.5;
+}
+
+
+.question-image {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+}
+.answers {
+
+}
+
+
+.tag {
+    height: 2rem;
+    background-color: #eee;
+    border-radius: .25rem;
+    margin-left: .5rem;
+    padding: .375rem .5rem .125rem;
+}
+
 
 @keyframes blurFadeInOut{
 	0%{
@@ -77,6 +124,28 @@ body {
     text-align: center;
 }
 
+
+
+.matching-control {
+    display: flex;
+    background-color: #fafafa;
+    padding: .5rem;
+    margin-bottom: .5rem;
+    align-items: center;
+}
+.matching-control-label {
+    display: flex;
+    width: 50%;
+    margin: 0;
+}
+.custom-select {
+    display: flex;
+    width: 50%;
+}
+.custom-control-label {
+    /* margin: 0; */
+}
+
 .custom-control-label.marked-correct {
     opacity: 1;
     animation: marked-correct .5s linear;
@@ -91,13 +160,7 @@ body {
 @keyframes marked-wrong {
     100% { opacity: .1 }
 }
-.question {
-    font-weight: bold;
-}
-.question p {
-    margin-bottom: .5rem;
-    line-height: 1.5;
-}
+
 
 div.visible {
     display: block;
@@ -264,9 +327,26 @@ div.hidden {
 }
 .main-nav .answers {
     background-image: url('../img/IcoMoon-Free-master/SVG/066-lifebuoy.svg');
-    background-image: url('../img/IcoMoon-Free-master/SVG/066-lifebuoy.svg');
 }
 
+.icon {
+    display: flex;
+    min-width: 2rem;
+    height: 2rem;
+    padding: 0 .25rem;
+    margin-left: .5rem;
+    /* background-color: #a48b66; */
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    border-radius: .25rem;
+    background-color: #eee;
+}
+.comment-icon {
+    background-image: url('../img/IcoMoon-Free-master/SVG/108-bubble.svg');
+}
+.image-icon {
+    background-image: url('../img/IcoMoon-Free-master/SVG/014-image.svg');
+}
 
 
 a {
