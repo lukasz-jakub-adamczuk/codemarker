@@ -76,7 +76,7 @@ function parseChallenge(content) {
 
 // Handle displaying questions for exam in print mode
 function printExam() {
-    initChallenge();
+    initChallenge(properties['print.questions.skip_ignored']);
     // generate first questions
     // generateQuestion(questions.used[challenge]);
     hideElement('#exams');

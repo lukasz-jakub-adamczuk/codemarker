@@ -11,19 +11,19 @@ function startChallenge(event) {
     enableAction('#next');
     enableAction('#answers');
     // reset used questions
-    initChallenge();
+    initChallenge(properties['quiz.questions.skip_ignored']);
     renderProgress(0);
     // generate first questions
     generateQuestion(questions.used[challenge]);
     
     // start timer
     time = allExams[exam].duration * 60;
-    timer();
+    renderTimer();
     // start interval
     displayTimer = setInterval(function() {
         time--;
-        timer();
-        if (time <= 0) {
+        renderTimer();
+        if (properties['app.ui.display_timer'] && time <= 0) {
             finishChallenge();
         }
     }, 1000);
@@ -34,12 +34,16 @@ function startChallenge(event) {
 }
 
 // Internal function to init challenge
-function initChallenge() {
+function initChallenge(skip_ignored) {
     if (properties['quiz.questions.shuffle']) {
         questions.all = shuffleArray(questions.all);
     }
     // skip ignored
-    questions.used = questions.all.filter(function(elem, index, array) { return elem.params.status != 'ignored'; });
+    if (skip_ignored) {
+        questions.used = questions.all.filter(function(elem, index, array) { return elem.params.status != 'ignored'; });
+    } else {
+        questions.used = questions.all;
+    }
     var ignored = questions.all.filter(function(elem, index, array) { return elem.params.status == 'ignored'; });
     var questionsForExam;
     if (questions.used.length > allExams[exam].questions) {
@@ -52,6 +56,7 @@ function initChallenge() {
     questions.exam = [];
     challenge = 0;
     limit = questions.used.length;
+    errors = [];
 }
 
 // Handle finishing running challenge
@@ -70,13 +75,13 @@ function finishChallenge() {
 
 // Handle generating question
 function generateQuestion(q, mode) {
-    var answers;
+    // var answers;
     var html = '';
-    var id = '';
-    var answer = '';
-    var matching = '';
-    var checked = false;
-    var answerClass;
+    // var id = '';
+    // var answer = '';
+    // var matching = '';
+    // var checked = false;
+    // var answerClass;
 
     console.log(q);
 
@@ -111,12 +116,9 @@ function generateQuestion(q, mode) {
     }
 
     html += '<div class="question-errors">';
-    if (errors[q.index-1]) {
-        for (var error of errors[q.index-1]) {
-            html += '<div class="alert alert-danger" role="alert">'+error+'</div>';
-        }
-    }
+    html += renderErrors(q.index-1, true);
     html += '</div>';
+    
 
     var scale = 100;
     // scale question

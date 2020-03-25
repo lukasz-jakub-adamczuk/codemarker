@@ -9,7 +9,7 @@ function registerAnswerForSimpleQuestion(event) {
         var answer = label.split('-answr-')[1];
         var type = questions['used'][question-1].params['type'];
 
-        if (type == 'single' || type == 'multiple') {
+        if (type == 'single' || type == 'multiple' || type == 'input') {
             if (!(question in questions.exam)) {
                 questions.exam[question] = {};
             }
@@ -26,8 +26,24 @@ function registerAnswerForSimpleQuestion(event) {
                     questions.exam[question][answer] = true;
                 }
             }
+            if (type == 'input') {
+                // 
+                console.log('input...');
+            }
             console.log('Registered answer:');
             console.log(questions.exam[question]);
+
+            // multi choice questions may have exact number of answers
+            var answers = questions.used[question-1].params.answers;
+            if (answers) {
+                console.log(answers);
+                errors[question-1] = [];
+                if (Object.values(questions.exam[question]).filter(val => val == true).length != answers) {
+                    errors[question-1].push('You have to choose '+answers+' answers.');
+                    console.log(errors);
+                }
+            }
+            renderErrors(question-1);
 
             countProgress();
 
@@ -46,10 +62,7 @@ function registerAnswerForMatchingQuestion(event) {
 
     if (type == 'matching') {
         console.log('Register answer for matching question.');
-        // var label = event.target.getAttribute('id');
 
-        // var question = label.split('qstn-')[1].split('-answr-')[0];
-        // var answer = label.split('-answr-')[1];
         errors[question-1] = [];
 
         var choice = event.target.getAttribute('name');
@@ -59,19 +72,9 @@ function registerAnswerForMatchingQuestion(event) {
         // questions.exam[question][answer] = choice + '-' + match;
         questions.exam[question][answer] = match;
 
-        // console.log(question);
-        // console.log(answer);
-        // console.log(event.target.getAttribute('name'));
-        // console.log($('#' + event.target.getAttribute('id') + ' option:selected')[0].value);
-        
-        
-
-
         var selected = [];
         $('select option:selected').each(function(idx, itm) { if (itm.value != '') selected.push(itm.value) });
         console.log(selected);
-        // selected.length
-        // console.log(Object.values(questions.exam[question]));
         if (Object.values(questions.exam[question]).some(el => el == '')) {
             errors[question-1].push('You have to match each answer.');
         }
@@ -79,33 +82,50 @@ function registerAnswerForMatchingQuestion(event) {
             errors[question-1].push('You cannot use single answer many times.');
         }
 
-        var html = '';
-        if (errors[question-1]) {
-            for (var error of errors[question-1]) {
-                html += '<div class="alert alert-danger" role="alert">'+error+'</div>';
-            }
-        }
-        renderElement('.question-errors', html);
+        renderErrors(question-1);
+    }
+    if (type == 'input') {
+        console.log('Register answer for input question.');
+
+        questions.exam[question] = questions.exam[question] || {};
+        questions.exam[question][0] = event.target.value;
+    }
         
-        console.log('Registered answer:');
-        console.log(questions.exam[question]);
+    console.log('Registered answer:');
+    console.log(questions.exam[question]);
 
-        countProgress();
+    countProgress();
 
-        if ((answeredExamQuestions().length) == questions.used.length) {
-            enableAction('#stop');
-        }
+    if ((answeredExamQuestions().length) == questions.used.length) {
+        enableAction('#stop');
     }
 }
 
 // Handle showing correct answers on current question
 function showCorrectAnswers() {
-    for (var answer in questions.used[challenge].answers.choices) {
-        if (questions.used[challenge].answers.choices[answer].type == 'wrong') {
-            document.querySelector('label[for="qstn-'+(challenge+1)+'-answr-'+answer+'"]').className += ' marked-wrong';
-        } else {
-            document.querySelector('label[for="qstn-'+(challenge+1)+'-answr-'+answer+'"]').className += ' marked-correct';
+    var type = questions.used[challenge].params.type;
+    if (type == 'single' || type == 'multiple') {
+        for (var answer in questions.used[challenge].answers.choices) {
+            if (questions.used[challenge].answers.choices[answer].type == 'correct') {
+                document.querySelector('label[for="qstn-'+(challenge+1)+'-answr-'+answer+'"]').className += ' marked-correct';
+            } else {
+                document.querySelector('label[for="qstn-'+(challenge+1)+'-answr-'+answer+'"]').className += ' marked-wrong';
+            }
         }
+    }
+    if (type == 'matching') {
+        for (var chc in questions.used[challenge].answers.choices) {
+            var [answer, option] = questions.used[challenge].answers.choices[chc].name.split('==');
+            var selected = $('#qstn-'+(challenge+1)+'-answr-'+chc+' option:selected').val();
+            if (slugify(option.trim()) == selected) {
+                document.querySelector('#qstn-'+(challenge+1)+'-answr-'+chc+'').className += ' is-valid';
+            } else {
+                document.querySelector('#qstn-'+(challenge+1)+'-answr-'+chc+'').className += ' is-invalid';
+            }
+        }
+    }
+    if (type == 'input') {
+
     }
 }
 

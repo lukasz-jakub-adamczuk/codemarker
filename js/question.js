@@ -43,7 +43,7 @@ function nextQuestion(event) {
 }
 
 function prepareSimpleQuestion(q, mode) {
-    var id, answer, checked, answerClass;
+    var id, answer, checked, answerClass, letter = '';
     if (!q.answers.processed) {
         q.answers = processAnswers(q.answers);
     }
@@ -63,21 +63,23 @@ function prepareSimpleQuestion(q, mode) {
         } else {
             checked = false;
         }
+        if (properties['quiz.answers.print_letters']) {
+            letter = '<span class="answer-letter">'+letters[ans].toUpperCase()+'.</span>';
+        }
         // correct answer
+        answerClass = '';
         if (mode == 'print') {
             answerClass = answers.choices[ans].type == 'wrong' ? ' marked-wrong' : ' marked-correct';
-        } else {
-            answerClass = '';
         }
         if (answers.choices.length - answers.wrong > 1) {
             // multi choice
-            html += '<div class="custom-control custom-checkbox">'
+            html += '<div class="custom-control custom-checkbox">'+letter
                 +'<input type="checkbox" id="'+id+'" name="customCheckbox" class="custom-control-input" value="'+slugify(answer)+'"'+(checked ? ' checked' : '')+'>'
                 +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+answer+'</label>'
             +'</div>';
         } else {
             // single choice
-            html += '<div class="custom-control custom-radio">'
+            html += '<div class="custom-control custom-radio">'+letter
                 +'<input type="radio" id="'+id+'" name="customRadio" class="custom-control-input" value="'+slugify(answer)+'"'+(checked ? ' checked' : '')+'>'
                 +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+answer+'</label>'
             +'</div>';
@@ -115,6 +117,12 @@ function prepareMatchingQuestion(q, mode) {
         answer = answers.choices[ans].name.split('==')[0].trim();
         choice = answers.choices[ans].name.split('==')[1].trim();
         
+        // correct answer
+        answerClass = '';
+        if (mode == 'print') {
+            answerClass = answers.choices[ans].type == 'wrong' ? ' marked-wrong' : ' marked-correct';
+        }
+
         html += '<div class="matching-control">'
             // +'<input type="radio" id="'+id+'" name="customRadio" class="custom-control-input" value="'+slugify(answer)+'"'+(checked ? ' checked' : '')+'>'
             +'<label class="matching-control-label" for="'+id+'">'+answer+'</label>'
@@ -125,16 +133,53 @@ function prepareMatchingQuestion(q, mode) {
             //     html +='<option value="'+slugify(matching)+'">' + matching + '</option>'
             // }
             for (var match of choices) {
+                selected = '';
                 if (q.index in questions.exam && ans in questions.exam[q.index] && questions.exam[q.index][ans] == slugify(match.answer)) {
                     selected = ' selected';
-                } else {
-                    selected = '';
                 }
+                if (mode == 'print' && choice == match.answer) {
+                    selected = ' selected';
+                }
+
                 html +='<option value="'+slugify(match.answer)+'"'+selected+'>' + match.answer + '</option>'
             }
             html +='</select>'
         +'</div>';
     }
     html += '</div>';
+    return html;
+}
+
+function prepareInputQuestion(q, mode) {
+    var id, answer, choice, written, answerClass;
+    if (!q.answers.processed) {
+        q.answers = processAnswers(q.answers);
+    }
+    var answers = q.answers;
+
+    id = 'qstn-'+q.index+'-answr-0';
+    // answer = answers.choices[ans].name;
+
+    var choices = questions.used[q.index-1].answers.choices.map(function(elem, index, array) { return elem.name; });
+    for (var ans in answers.choices) {
+        if (q.index in questions.exam && ans in questions.exam[q.index] && questions.exam[q.index][0] in choices) {
+            written = questions.exam[q.index][0];
+        } else {
+            written = '';
+        }
+    }
+
+    var input = '<input type="text" id="'+id+'" name="aaa" value="'+written+'" />';
+
+    console.log();
+
+    var html = '';
+    if (mode == 'print') {
+        html += '<div class="question">' + marked(q.name).replace('<p>', '<p>' + q.index + '. ') + '</div>';
+    } else {
+        html += '<div class="question">' + marked(q.name).replace('[]', input) + '</div>';
+    }
+
+
     return html;
 }

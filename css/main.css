@@ -11,14 +11,15 @@ body {
 .challenge,
 #exams,
 #splash {
-    position: absolute;
+    /* position: absolute; */
     top: 0;
     bottom: 3rem;
-    height: calc(100% - 3rem);
+    /* height: calc(100% - 3rem); */
     background: #fff;
-    overflow: scroll;
+    /* overflow: scroll; */
     padding-top: 15px;
     padding-bottom: 15px;
+    margin-bottom: 3rem;
 }
 #exams {
     background-size: 50%;
@@ -240,7 +241,7 @@ div.hidden {
     /* top: 0; */
     /* bottom: 0; */
     width: 100%;
-    height: calc(100% - 30px);
+    height: calc(100% - 48px);
     overflow: overlay;
     transform: translateY(-100%);
     transition: .5s ease-in transform;
@@ -269,6 +270,11 @@ div.hidden {
 
 #retrieve-code {
     width: 40%;
+}
+
+.answer-letter {
+    position: relative;
+    left: -1.75rem;
 }
 
 

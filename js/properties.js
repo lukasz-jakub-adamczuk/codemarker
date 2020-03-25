@@ -8,11 +8,20 @@ var propertiesSetup = {
         'opts': [
             {
                 'name': 'quiz.questions.shuffle',
-                'label': 'Shuffle questions',
+                'label': 'Shuffle questions.',
                 'value': true
             }, {
                 'name': 'quiz.answers.shuffle',
-                'label': 'Shuffle available answers',
+                'label': 'Shuffle available answers.',
+                'value': true
+            }, {
+                'name': 'quiz.answers.print_letters',
+                'label': 'Display letters before answers.',
+                'value': false,
+                'state': 'disabled'
+            }, {
+                'name': 'quiz.questions.skip_ignored',
+                'label': 'Skip invalid or marked as ignored questions.',
                 'value': true
             }
         ]
@@ -47,8 +56,8 @@ var propertiesSetup = {
         'label': 'Print mode',
         'opts': [
             {
-                'name': 'print.questions.skip_incomplete',
-                'label': 'Skip incomplete questions',
+                'name': 'print.questions.skip_ignored',
+                'label': 'Skip invalid or marked as ignored questions.',
                 'value': true
             },{
                 'name': 'print.answers.print_incorrect',
@@ -93,6 +102,7 @@ function renderProperties(setup) {
 // Internal function to handle single property rendering
 function prepareProperty(property) {
     var disabled = 'localStorage' in window ? '' : ' disabled';
+    disabled = 'state' in property && property.state == 'disabled' ? ' disabled' : disabled;
     var html = '<span id="prop-' + property.name + '" class="list-group-item list-group-item-action flex-column align-items-start">'
         // + '<p class="mb-1">' + property.label + '</p>'
         + '<div class="custom-control custom-switch">'

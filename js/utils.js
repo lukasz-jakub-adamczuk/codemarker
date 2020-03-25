@@ -192,3 +192,16 @@ function renderProgress(value) {
 function answeredExamQuestions() {
     return questions.exam.filter(function(elem, index, array) { return typeof elem != 'undefined';})
 }
+
+function renderErrors(question, returnHtml = false) {
+    var html = '';
+    if (errors[question]) {
+        for (var error of errors[question]) {
+            html += '<div class="alert alert-danger" role="alert">'+error+'</div>';
+        }
+    }
+    if (returnHtml) {
+        return html;
+    }
+    renderElement('.question-errors', html);
+}

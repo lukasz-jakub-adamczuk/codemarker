@@ -92,7 +92,9 @@ What is missing in file format
 Download sample-exam file, load in application and check how questions have been displayed. Experiment with own questions.
 
 ## TODO
-- [ ] click on challenge div (not answer) causes error
+- [ ] display timer based on param
+- [ ] redesign and extend show result view
+- [x] click on challenge div (not answer) causes error
 - [ ] navigation by keys works any time
 - [ ] too many questions counted for exam when selected exam (parsed indeed) and then loaded another (parsing new one without reset parser)
 - [ ] configurable prev and next buttons for left/right edge if screen (mobile)
@@ -104,12 +106,12 @@ Download sample-exam file, load in application and check how questions have been
 - [ ] swipe support on mobile
 - [ ] show wrong questions after submitting
 - [ ] write tests
-- [ ] support for text input in questions
-- [ ] support for images in questions
-- [ ] support for dropdown or match available answers
-- [ ] support for param shuffle
+- [x] support for text input in questions
+- [x] support for images in questions
+- [x] support for dropdown or match available answers
+- [x] support for param shuffle
 - [x] support for param answers (nothing to do)
-- [ ] support for param comment
+- [x] support for param comment
 - [ ] displays letters before answers
 - [ ] complete file parsing errors handling
 
@@ -117,6 +119,18 @@ Download sample-exam file, load in application and check how questions have been
 - [ ] prev and next after time ended
 
 ## Changelogs
+### v0.07
+- [x] extending print mode for question new types
+- [x] matching type question support
+- [x] input type question support
+- [x] errors handling for answers in matching question
+- [x] comment param support
+- [x] image param support
+- [x] answers params support
+- [x] markdown support in questions and answers
+- [x] properties handling
+- [x] display progress bar during challenge property handling
+
 ### v0.06
 - [x] print mode
 - [x] support for configuration properties
@@ -131,7 +145,7 @@ Download sample-exam file, load in application and check how questions have been
 - [x] verify what answer was checked/unchecked during question
 
 ### v0.04
-- [x] decrese font when question or answers are too long
+- [x] ~~decrease font when question or answers are too long~~
 - [x] move exam initials to questions file
 - [x] enabling to choose stored exams on front page
 
