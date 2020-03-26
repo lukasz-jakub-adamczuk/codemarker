@@ -79,10 +79,11 @@ function prepareSimpleQuestion(q, mode) {
             +'</div>';
         } else {
             // single choice
+            if (mode != 'print' || (mode == 'print' && answers.choices[ans].type == 'correct') || (mode == 'print' && properties['print.answers.print_incorrect'] && answers.choices[ans].type == 'wrong')) {
             html += '<div class="custom-control custom-radio">'+letter
                 +'<input type="radio" id="'+id+'" name="customRadio" class="custom-control-input" value="'+slugify(answer)+'"'+(checked ? ' checked' : '')+'>'
                 +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+answer+'</label>'
-            +'</div>';
+            +'</div>';}
         }
     }
     html += '</div>';
@@ -169,7 +170,7 @@ function prepareInputQuestion(q, mode) {
         }
     }
 
-    var input = '<input type="text" id="'+id+'" name="aaa" value="'+written+'" />';
+    var input = '<input type="text" id="'+id+'" name="aaa" value="'+written+'" class="form-control" />';
 
     console.log();
 

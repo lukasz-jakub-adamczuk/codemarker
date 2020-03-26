@@ -55,7 +55,7 @@ body {
 
 .question {
     /* font-weight: bold; */
-    margin-bottom: 1rem;
+    /* margin-bottom: 1rem; */
 }
 .question p {
     margin-bottom: .5rem;
@@ -69,7 +69,10 @@ body {
     height: auto;
 }
 .answers {
-
+    
+}
+.question-errors {
+    margin-bottom: 2rem;
 }
 
 

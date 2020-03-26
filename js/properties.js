@@ -61,9 +61,9 @@ var propertiesSetup = {
                 'value': true
             },{
                 'name': 'print.answers.print_incorrect',
-                'label': 'Print incorrect answers',
+                'label': 'Print incorrect (less visible) answers',
                 'value': false
-            },
+            }
         ]
     }
 };

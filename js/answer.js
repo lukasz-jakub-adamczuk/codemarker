@@ -27,8 +27,8 @@ function registerAnswerForSimpleQuestion(event) {
                 }
             }
             if (type == 'input') {
-                // 
-                console.log('input...');
+                // questions.exam[question][answer] = event.target.value;
+                // console.log(event.target.value);
             }
             console.log('Registered answer:');
             console.log(questions.exam[question]);
@@ -108,8 +108,10 @@ function showCorrectAnswers() {
         for (var answer in questions.used[challenge].answers.choices) {
             if (questions.used[challenge].answers.choices[answer].type == 'correct') {
                 document.querySelector('label[for="qstn-'+(challenge+1)+'-answr-'+answer+'"]').className += ' marked-correct';
+                document.querySelector('#qstn-'+(challenge+1)+'-answr-'+answer).className = 'custom-control-input is-valid';
             } else {
                 document.querySelector('label[for="qstn-'+(challenge+1)+'-answr-'+answer+'"]').className += ' marked-wrong';
+                document.querySelector('#qstn-'+(challenge+1)+'-answr-'+answer).className = 'custom-control-input is-invalid';
             }
         }
     }
@@ -118,15 +120,25 @@ function showCorrectAnswers() {
             var [answer, option] = questions.used[challenge].answers.choices[chc].name.split('==');
             var selected = $('#qstn-'+(challenge+1)+'-answr-'+chc+' option:selected').val();
             if (slugify(option.trim()) == selected) {
-                document.querySelector('#qstn-'+(challenge+1)+'-answr-'+chc+'').className += ' is-valid';
+                document.querySelector('#qstn-'+(challenge+1)+'-answr-'+chc+'').className = 'custom-select is-valid';
             } else {
-                document.querySelector('#qstn-'+(challenge+1)+'-answr-'+chc+'').className += ' is-invalid';
+                document.querySelector('#qstn-'+(challenge+1)+'-answr-'+chc+'').className = 'custom-select is-invalid';
             }
         }
     }
     if (type == 'input') {
-
+        for (var chc in questions.used[challenge].answers.choices) {
+            var answer = questions.used[challenge].answers.choices[chc].name;
+            console.log('#qstn-'+(challenge+1)+'-answr-'+chc+'');
+            var written = document.querySelector('#qstn-'+(challenge+1)+'-answr-'+chc+'').value;
+            if (slugify(answer.trim()) == slugify(written.trim())) {
+                document.querySelector('#qstn-'+(challenge+1)+'-answr-'+chc+'').className = 'form-control is-valid';
+            } else {
+                console.log('potencial errors');
+            }
+        }
     }
+    errors[challenge].push('Correct answers:' + questions.used[challenge].answers.choices[chc].some(function(el) { return el.name; }).join(', ') + '.');
 }
 
 // Handle mapping answers
