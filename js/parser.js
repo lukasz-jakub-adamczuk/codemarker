@@ -2,33 +2,22 @@
 
 var parser = {
     
-    debug: true,
-
-    question: {},
-    
-    questions: [],
-    
-    setup: null,
-    
-    line: '',
-
-    params: '',
-    
-    answer: '',
-
-    examName: '',
-    
-    paramsFound: false,
-
-    answersFound: false,
-
-    examConfig: {'all': 0, 'ignored': 0},
-    
-    n: 0,
-
-    errors: [],
-    
-    lengths: [],
+    init: function() {
+        this.debug = true;
+        this.question = {};        
+        this.questions = [];        
+        this.setup = null;        
+        this.line = '';
+        this.params = '';        
+        this.answer = '';
+        this.examName = '';        
+        this.paramsFound = false;
+        this.answersFound = false;
+        this.examConfig = {'all': 0, 'ignored': 0};        
+        this.n = 0;
+        this.errors = [];        
+        this.lengths = [];
+    },
     
     parse: function(content) {
         console.log('Parsing challenge questions has been started.');
@@ -48,21 +37,23 @@ var parser = {
     
                 parser.question.params = parser.question.params || {};
     
-                parser.question.answers = parser.question.answers || {};
-                parser.question.answers.correct = parser.question.answers.correct || {};
-                parser.question.answers.wrong = parser.question.answers.wrong || {};
+                parser.question.answers = parser.question.answers || [];
+                // parser.question.answers.correct = parser.question.answers.correct || {};
+                // parser.question.answers.wrong = parser.question.answers.wrong || {};
                 
                 switch(parser.line[0]) {
                     case '+':
                         parser.answer = parser.line.substr(1,).trim();
-                        parser.question.answers.correct[slugify(parser.answer)] = parser.answer;
+                        parser.question.answers.push({'type': 'correct', 'slug': slugify(parser.answer), 'name': parser.answer});
+                        // parser.question.answers.correct[slugify(parser.answer)] = parser.answer;
                         parser.question.counter.correct++;
                         parser.question.length += parser.answer.length;
                         parser.answersFound = true;
                         break;
                     case '-':
                         parser.answer = parser.line.substr(1,).trim();
-                        parser.question.answers.wrong[slugify(parser.answer)] = parser.answer;
+                        parser.question.answers.push({'type': 'wrong', 'slug': slugify(parser.answer), 'name': parser.answer});
+                        // parser.question.answers.wrong[slugify(parser.answer)] = parser.answer;
                         parser.question.counter.wrong++;
                         parser.question.length += parser.answer.length;
                         parser.answersFound = true;
@@ -118,9 +109,9 @@ var parser = {
                                 parser.question.length = 0;
                                 parser.question.counter = {'correct': 0, 'wrong': 0};
                                 parser.question.params = {};
-                                parser.question.answers = {};
-                                parser.question.answers.correct = {};
-                                parser.question.answers.wrong = {};
+                                parser.question.answers = [];
+                                // parser.question.answers.correct = {};
+                                // parser.question.answers.wrong = {};
                                 parser.n++;
                             }
                             // parser.question.name += '<p>' + parser.line + '</p>';

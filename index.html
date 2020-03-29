@@ -1,6 +1,6 @@
 <html>
     <head>
-        <title>CodeMarker</title>
+        <title>LearnWise</title>
         <!-- <link rel="stylesheet" href="bootstrap-4.0.0/dist/css/bootstrap.css"> -->
         <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
@@ -51,22 +51,23 @@
                 <div id="app-properties"></div>
             </div>
         </div>
-        <div class="progresso">
+        <div id="progress" class="progresso" style="display: none;">
             <span></span>
         </div>
-        <div class="challenge container hidden"></div>
-        <div id="exams" class="container hidden">
-            <div class="list"></div>
-        </div>
-        <div id="splash" class="container hidden">
+        <div id="splash" class="container _hidden" style="display: none;">
             <img src="./img/learn-wise-logo.png" alt="">
         </div>
+        <div id="exams" class="container _hidden" style="display: none;">
+            <div class="list"></div>
+        </div>
+        <div id="challenge" class="challenge container _hidden" style="display: none;"></div>
+        <div id="result" class="result container _hidden" style="display: none;"></div>
 
-        <div id="timer">
+        <div id="timer" style="display: none;">
             <span class="timer-content"></span>
         </div>
 
-        <nav id="menu" class="main-nav hidden">
+        <nav id="menu" class="main-nav _hidden" style="display: none;">
             <a id="prev-button" class="button prev disabled"><span>Prev</span></a>
             <a id="start-button" class="button start disabled"><span>Start</span></a>
             <a id="stop-button" class="button stop disabled"><span>Start</span></a>
@@ -132,5 +133,6 @@
         <script src="js/answer.js"></script>
         <script src="js/codeMarker.js"></script>
         <script src="js/main.js"></script>
+        <script src="js/tests.js"></script>
     </body>
 </html>

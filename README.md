@@ -96,14 +96,14 @@ Download sample-exam file, load in application and check how questions have been
 - [ ] redesign and extend show result view
 - [x] click on challenge div (not answer) causes error
 - [ ] navigation by keys works any time
-- [ ] too many questions counted for exam when selected exam (parsed indeed) and then loaded another (parsing new one without reset parser)
+- [x] too many questions counted for exam when selected exam (parsed indeed) and then loaded another (parsing new one without reset parser)
 - [ ] configurable prev and next buttons for left/right edge if screen (mobile)
 - [ ] collect questions answered wrong and use again
 - [ ] pause challenge
 - [ ] pwa
 - [ ] rwd
 - [ ] use all available questions option
-- [ ] swipe support on mobile
+- [x] swipe support on mobile
 - [ ] show wrong questions after submitting
 - [ ] write tests
 - [x] support for text input in questions

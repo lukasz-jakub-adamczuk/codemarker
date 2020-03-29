@@ -1,15 +1,19 @@
 // Handle starting new challenge for user
 function startChallenge(event) {
-    console.log('Start event has been triggered.');
+    console.log('startChallenge() has been used.');
     if (event && event.target.className.indexOf('disabled') != -1) {
         return;
     }
+    console.log('Start event has been triggered.');
     enableKeyEvents();
     hideElement('#exams');
+    // if results has been displayed
+    hideElement('#result');
+    disableAction('stop');
     showElement('.challenge');
     // enable nav buttons
-    enableAction('#next');
-    enableAction('#answers');
+    enableAction('next');
+    enableAction('answers');
     // reset used questions
     initChallenge(properties['quiz.questions.skip_ignored']);
     renderProgress(0);
@@ -29,30 +33,43 @@ function startChallenge(event) {
     }, 1000);
     // event.preventDefault();
 
-    disableAction('#start');
-    disableAction('#print');
+    disableAction('start');
+    disableAction('print');
 }
 
 // Internal function to init challenge
 function initChallenge(skip_ignored) {
-    if (properties['quiz.questions.shuffle']) {
-        questions.all = shuffleArray(questions.all);
-    }
+    // if (properties['quiz.questions.shuffle']) {
+    //     questions.all = shuffleArray(questions.all);
+    // }
     // skip ignored
+    console.log(questions.all.length);
     if (skip_ignored) {
-        questions.used = questions.all.filter(function(elem, index, array) { return elem.params.status != 'ignored'; });
+        questions.used = questions.all.filter(function(elem, index, array) { return elem.params.status != 'ignored'; }).slice(0);
     } else {
-        questions.used = questions.all;
+        questions.used = questions.all.slice(0);
     }
-    var ignored = questions.all.filter(function(elem, index, array) { return elem.params.status == 'ignored'; });
+    console.log(questions.all === questions.used);
+    console.log(questions.all.length);
+    console.log(questions.used.length);
+    var ignored = questions.all.filter(function(elem, index, array) { return elem.params.status == 'ignored'; }).slice(0);
     var questionsForExam;
     if (questions.used.length > allExams[exam].questions) {
         questionsForExam = allExams[exam].questions;
     } else {
         questionsForExam = questions.used.length;
     }
-    questions.used = reorderArray(questions.used.slice(0, questionsForExam));
+    console.warn(questions.all.map(x => x.index));
+    if (properties['quiz.questions.shuffle']) {
+        questions.used = shuffleArray(questions.used);
+    }
+    console.warn(questions.all.map(x => x.index));
+    // questions.used = reorderArray(questions.used);
+    questions.used = questions.used.slice(0, questionsForExam);
     // questions.used = reorderArray(questions.all);
+    
+    console.warn(questions.all.map(x => x.index));
+
     questions.exam = [];
     challenge = 0;
     limit = questions.used.length;
@@ -61,16 +78,24 @@ function initChallenge(skip_ignored) {
 
 // Handle finishing running challenge
 function finishChallenge() {
+    console.log('finishChallenge() has been used.');
+    if (event && event.target.className.indexOf('disabled') != -1) {
+        return;
+    }
+    console.log('Stop event has been triggered.');
     clearInterval(displayTimer);
     // hide nav buttons
-    disableAction('#prev');
-    disableAction('#next');
-    disableAction('#answers');
+    disableAction('prev');
+    disableAction('next');
+    disableAction('answers');
+    disableAction('stop');
     disableKeyEvents();
 
-    enableAction('#start');
+    enableAction('start');
     
-    renderExamResult();
+    
+    // renderExamResult();
+    runSpinner('renderExamResult');
 }
 
 // Handle generating question
@@ -82,12 +107,14 @@ function generateQuestion(q, mode) {
     // var matching = '';
     // var checked = false;
     // var answerClass;
+    // var q.index = challenge;
 
     console.log(q);
+    console.log(q.params);
 
     if (mode != 'print') {
         html += '<div class="challenge-header">';
-        html += '<b class="_text-muted _badge _badge-secondary question-number">Question ' + q.index + '</b>';
+        html += '<b class="_text-muted _badge _badge-secondary question-number">Question ' + (challenge + 1) + '</b>';
         html += (q.params.area ? ' <span class="_badge _badge-secondary tag"> ' + q.params.area + '</span>' : '');
         
         if (q.params.comment) {
@@ -116,7 +143,7 @@ function generateQuestion(q, mode) {
     }
 
     html += '<div class="question-errors">';
-    html += renderErrors(q.index-1, true);
+    html += renderErrors(challenge-1, true);
     html += '</div>';
     
 
@@ -136,6 +163,25 @@ function generateQuestion(q, mode) {
         return html;
     };
     renderElement('.challenge', '<div style="font-size: '+scale+'%;">' + html + '</div>');
+}
+
+
+function printQuestion(q, index) {
+    var html = '';
+    
+    if ('type' in q.params) {
+        if (q.params.type == 'input') {
+            html += printInputQuestion(q, index);
+        }
+        if (q.params.type == 'matching') {
+            html += printMatchingQuestion(q, index);
+        }
+        if (q.params.type == 'single' || q.params.type == 'multiple') {
+            html += printSimpleQuestion(q, index);
+        }
+    }
+  
+    return html;
 }
 
 

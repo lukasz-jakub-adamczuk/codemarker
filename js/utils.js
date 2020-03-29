@@ -64,7 +64,7 @@ function shuffleArray(array) {
 
 function reorderArray(array) {
     for (var i = 0; i < array.length; i++) {
-        array[i].index = i+1;
+        // array[i].index = i+1;
         // array[i].processed = true;
     }
     return array;
@@ -109,17 +109,19 @@ function toggleElement(name) {
 }
 
 function showElement(name) {
-    var el = document.querySelector(name);
-    el.className = el.className.replace('hidden', 'visible');
+    // var el = document.querySelector(name);
+    // el.className = el.className.replace('hidden', 'visible');
+    $(name).show();
 }
 
 function hideElement(name) {
-    var el = document.querySelector(name);
-    el.className = el.className.replace('visible', 'hidden');
+    // var el = document.querySelector(name);
+    // el.className = el.className.replace('visible', 'hidden');
+    $(name).hide();
 }
 
 function enableAction(name) {
-    var el = document.querySelector(name+'-button');
+    var el = document.querySelector('#'+name+'-button');
     if (el.className.indexOf('disabled') == -1) {
         return;
     }
@@ -128,7 +130,7 @@ function enableAction(name) {
 }
 
 function disableAction(name) {
-    var el = document.querySelector(name+'-button');
+    var el = document.querySelector('#'+name+'-button');
     if (el.className.indexOf('enabled') == -1) {
         return;
     }
@@ -176,7 +178,7 @@ function countProgress() {
     var answered = answeredExamQuestions();
     var current = answered.length / questions.used.length * 100;
     if (current === 100) {
-        enableAction('#stop');
+        enableAction('stop');
     }
     renderProgress(current);
 }
@@ -205,3 +207,63 @@ function renderErrors(question, returnHtml = false) {
     }
     renderElement('.question-errors', html);
 }
+
+
+function runSpinner(callback, toShow) {
+    hideElements();
+    showElement('#splash');
+    
+    // hideElement('.result');
+    setTimeout(function() {
+        hideElement('#splash');
+        // showElement('#exams');
+        showElement('#menu');
+        if (callback in window) {
+            window[callback]();
+        }
+    }, 3000);
+}
+
+
+function showElements(elements) {
+    var defaults = ['splash', 'menu', 'exams', 'challenge', 'result', 'progress', 'timer'];
+
+    if (elements == undefined) {
+        elements = defaults;
+    }
+    for (var el in elements) {
+        $('#'+elements[el]).show();
+        console.log('Showing [#'+elements[el]+'] element.');
+    }
+}
+
+function hideElements(elements) {
+    var defaults = ['splash', 'menu', 'exams', 'challenge', 'result', 'progress', 'timer'];
+
+    if (elements == undefined) {
+        elements = defaults;
+    }
+    for (var el in elements) {
+        $('#'+defaults[el]).hide();
+        console.log('Hidding [#'+elements[el]+'] element.');
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

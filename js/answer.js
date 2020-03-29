@@ -5,8 +5,8 @@
 function registerAnswerForSimpleQuestion(event) {
     if (event.target.getAttribute('id')) {
         var label = event.target.getAttribute('id');
-        var question = label.split('qstn-')[1].split('-answr-')[0];
-        var answer = label.split('-answr-')[1];
+        var question = label.split('q')[1].split('a')[0];
+        var answer = label.split('a')[1];
         var type = questions['used'][question-1].params['type'];
 
         if (type == 'single' || type == 'multiple' || type == 'input') {
@@ -48,7 +48,7 @@ function registerAnswerForSimpleQuestion(event) {
             countProgress();
 
             if ((answeredExamQuestions().length) == questions.used.length) {
-                enableAction('#stop');
+                enableAction('stop');
             }
         }
     }
@@ -56,8 +56,8 @@ function registerAnswerForSimpleQuestion(event) {
 // Handle registring answer used to calculate running challenge result
 function registerAnswerForMatchingQuestion(event) {
     var label = event.target.getAttribute('id');
-    var question = label.split('qstn-')[1].split('-answr-')[0];
-    var answer = label.split('-answr-')[1];
+    var question = label.split('q')[1].split('a')[0];
+    var answer = label.split('a')[1];
     var type = questions['used'][question-1].params['type'];
 
     if (type == 'matching') {
@@ -97,67 +97,82 @@ function registerAnswerForMatchingQuestion(event) {
     countProgress();
 
     if ((answeredExamQuestions().length) == questions.used.length) {
-        enableAction('#stop');
+        enableAction('stop');
     }
 }
 
 // Handle showing correct answers on current question
-function showCorrectAnswers() {
+function showCorrectAnswers(event) {
+    console.log('showCorrectAnswers() has been used.');
+    if (event && event.target.className.indexOf('disabled') != -1) {
+        return;
+    }
+    console.log('Help event has been used.');
     var type = questions.used[challenge].params.type;
     if (type == 'single' || type == 'multiple') {
         for (var answer in questions.used[challenge].answers.choices) {
             if (questions.used[challenge].answers.choices[answer].type == 'correct') {
-                document.querySelector('label[for="qstn-'+(challenge+1)+'-answr-'+answer+'"]').className += ' marked-correct';
-                document.querySelector('#qstn-'+(challenge+1)+'-answr-'+answer).className = 'custom-control-input is-valid';
+                document.querySelector('label[for="q'+(challenge+1)+'a'+answer+'"]').className += ' marked-correct';
+                document.querySelector('#q'+(challenge+1)+'a'+answer).className = 'custom-control-input is-valid';
             } else {
-                document.querySelector('label[for="qstn-'+(challenge+1)+'-answr-'+answer+'"]').className += ' marked-wrong';
-                document.querySelector('#qstn-'+(challenge+1)+'-answr-'+answer).className = 'custom-control-input is-invalid';
+                document.querySelector('label[for="q'+(challenge+1)+'a'+answer+'"]').className += ' marked-wrong';
+                document.querySelector('#q'+(challenge+1)+'a'+answer).className = 'custom-control-input is-invalid';
             }
         }
     }
     if (type == 'matching') {
         for (var chc in questions.used[challenge].answers.choices) {
             var [answer, option] = questions.used[challenge].answers.choices[chc].name.split('==');
-            var selected = $('#qstn-'+(challenge+1)+'-answr-'+chc+' option:selected').val();
+            var selected = $('#q'+(challenge+1)+'a'+chc+' option:selected').val();
             if (slugify(option.trim()) == selected) {
-                document.querySelector('#qstn-'+(challenge+1)+'-answr-'+chc+'').className = 'custom-select is-valid';
+                document.querySelector('#q'+(challenge+1)+'a'+chc+'').className = 'custom-select is-valid';
             } else {
-                document.querySelector('#qstn-'+(challenge+1)+'-answr-'+chc+'').className = 'custom-select is-invalid';
+                document.querySelector('#q'+(challenge+1)+'a'+chc+'').className = 'custom-select is-invalid';
             }
         }
     }
     if (type == 'input') {
         for (var chc in questions.used[challenge].answers.choices) {
             var answer = questions.used[challenge].answers.choices[chc].name;
-            console.log('#qstn-'+(challenge+1)+'-answr-'+chc+'');
-            var written = document.querySelector('#qstn-'+(challenge+1)+'-answr-'+chc+'').value;
+            console.log('#q'+(challenge+1)+'a'+chc+'');
+            var written = document.querySelector('#q'+(challenge+1)+'a'+chc+'').value;
             if (slugify(answer.trim()) == slugify(written.trim())) {
-                document.querySelector('#qstn-'+(challenge+1)+'-answr-'+chc+'').className = 'form-control is-valid';
+                document.querySelector('#q'+(challenge+1)+'a'+chc+'').className = 'form-control is-valid';
             } else {
                 console.log('potencial errors');
             }
         }
     }
-    errors[challenge].push('Correct answers:' + questions.used[challenge].answers.choices[chc].some(function(el) { return el.name; }).join(', ') + '.');
+    // errors[challenge].push('Correct answers:' + questions.used[challenge].answers.choices[chc].some(function(el) { return el.name; }).join(', ') + '.');
 }
 
 // Handle mapping answers
-function processAnswers(answers) {
+function processAnswers(question) {
     var result = {'correct': 0, 'wrong': 0, 'choices': [], 'processed': true, 'shuffled': false};
     var types = ['correct', 'wrong'];
     var answer;
-    for (var type of types) {
-        if (answers[type]) {
-            for (var ans in answers[type]) {
-                answer = {
-                    'type': type,
-                    'slug': ans,
-                    'name': answers[type][ans]
-                };
-                result.choices.push(answer);
-                result[type]++;
-            }
-        }
+    result.choices = question.answers;
+    result.correct = question.counter.correct;
+    result.wrong = question.counter.wrong;
+    // for (var type of types) {
+    //     if (question.answers[type]) {
+    //         for (var ans in question.answers[type]) {
+    //             answer = {
+    //                 'type': type,
+    //                 'slug': ans,
+    //                 'name': question.answers[type][ans]
+    //             };
+    //             result.choices.push(answer);
+    //             result[type]++;
+    //         }
+    //     }
+    // }
+    var shuffleAnswers = 'shuffle_answers' in question.params ? question.params.shuffle_answers : 'true';
+    shuffleAnswers = (shuffleAnswers == 'true');
+    console.log(shuffleAnswers);
+    if (properties['quiz.answers.shuffle'] && shuffleAnswers) {
+        result.choices = shuffleArray(result.choices);
+        result.shuffled = true;
     }
     return result;
 }
@@ -168,17 +183,19 @@ function validateExamAnswers() {
     var point;
     var ratio;
 
+    var summary = {'score': 0, 'correct': [], 'wrong': []};
+
     if (questions.exam.length) {
         for (var i = 1; i < questions.exam.length; i++) {
             ratio = 1 / questions.used[i-1].answers.correct;
             point = 0;
             
+            console.log('Ratio for question :' + ratio);
             if (questions.exam[i] != undefined) {
                 // summarize multiple checked answers
                 for (var answer in questions.exam[i]) {
-                    console.log(answer);
-                    if (i in questions.exam
-                        && (questions.exam[i][answer] === true
+                    // console.log(answer);
+                    if ((questions.exam[i][answer] === true
                         && questions.used[i-1].answers.choices[answer].type === 'correct')
                         || (questions.exam[i][answer] !== ''
                         && (slugify(questions.used[i-1].answers.choices[answer].name.split('==')[0].trim())+'-'+questions.exam[i][answer]) === questions.used[i-1].answers.choices[answer].slug
@@ -186,24 +203,35 @@ function validateExamAnswers() {
                         point += ratio;
                     }
                 }
+                console.log('Checking correct answers :' + point);
                 // any incorrect answer makes no points for this question
+                console.log(questions.used[i-1].name);
+                console.log(questions.used[i-1].answers.choices);
+                console.log(questions.exam[i]);
                 if (ratio < 1) {
-                    if (answer in questions.exam[i] 
-                        && questions.exam[i][answer] === true 
-                        && questions.used[i-1].answers.choices[answer].type === 'wrong'
-                        || (questions.exam[i][answer] == ''
-                        || (slugify(questions.used[i-1].answers.choices[answer].name.split('==')[0].trim())+'-'+questions.exam[i][answer]) === questions.used[i-1].answers.choices[answer].slug
-                        || questions.used[i-1].answers.choices[answer].type === 'wrong')) {
-                        point = 0;
+                    for (var answer in questions.exam[i]) {
+                        if (questions.exam[i][answer] === true 
+                            && questions.used[i-1].answers.choices[answer].type === 'wrong'
+                            || (questions.exam[i][answer] == ''
+                            || (slugify(questions.used[i-1].answers.choices[answer].name.split('==')[0].trim())+'-'+questions.exam[i][answer]) === questions.used[i-1].answers.choices[answer].slug
+                            || questions.used[i-1].answers.choices[answer].type === 'wrong')) {
+                            point = 0;
+                        }
                     }
                 }
+                console.log('Checking wrong answers :' + point);
+            }
+            console.log(point);
+            if (point == 1) {
+                summary.correct.push(questions.exam[i]);
+            } else {
+                summary.wrong.push(questions.exam[i]);
             }
             score += point;
         }
         score = score * 100 / questions.used.length;
     }
-
+    summary.score = Math.floor(score);
     
-
-    return Math.floor(score);
+    return summary;
 }

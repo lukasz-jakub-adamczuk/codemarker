@@ -9,14 +9,24 @@ body {
 }
 
 .challenge,
-#exams,
-#splash {
+#exams {
     /* position: absolute; */
     top: 0;
     bottom: 3rem;
     /* height: calc(100% - 3rem); */
     background: #fff;
     /* overflow: scroll; */
+    padding-top: 15px;
+    padding-bottom: 15px;
+    margin-bottom: 3rem;
+}
+#splash,
+._result {
+    position: absolute;
+    top: 0;
+    bottom: 3rem;
+    height: calc(100% - 3rem);
+    background: #fff;
     padding-top: 15px;
     padding-bottom: 15px;
     margin-bottom: 3rem;
@@ -56,6 +66,7 @@ body {
 .question {
     /* font-weight: bold; */
     /* margin-bottom: 1rem; */
+    margin-top: 2rem;
 }
 .question p {
     margin-bottom: .5rem;
@@ -215,6 +226,13 @@ div.hidden {
 }
 
 .result {
+    padding-top: 1rem;
+}
+.result img {
+    padding: 1rem;
+}
+
+.result-image {
     height: 48%;
     background-size: 72% auto;
     background-position: center;
@@ -389,3 +407,9 @@ a {
 .loading-errors .alert:last-child {
     margin-bottom: .5rem;
 }
+/* #myElement {
+    background: silver;
+    height: 300px;
+    text-align: center;
+    font: 30px/300px Helvetica, Arial, sans-serif;
+  } */
