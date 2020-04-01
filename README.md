@@ -51,7 +51,7 @@ Question and answers will be truncated anyway and displayed and HTML. Any additi
 -       Number of spaces doesn't matter again
 ```
 
-It's not mandatory to define answers, but question without answers will be ignored. Parser expects question and answer, params optionally. Until params or answers will be found all rest is treated as one question. Example below has been prepared as question without answers and question without correct anwsers. Finally will be parsed as one multi-line question with no correct answer. System will mark it as `incomplete`.
+It's not mandatory to define answers, but question without answers will be ignored. Parser expects question and answer, params optionally. Until params or answers will be found all rest is treated as one question. Example below has been prepared as question without answers and question without correct anwsers. Finally will be parsed as one multi-line question with no correct answer. System will mark it as `ignored`.
 ```
 This question has no answers
 
@@ -60,36 +60,57 @@ This has no correct answers
 - Choose that
 ```
 
-If you are not sure about correct answer or answers for given question just mark it as `incomplete` manually. This is where params useful. To define such element you need to use JSON object between question and answers, generally. Params starts with `{` (opening curly bracket) character and ends with `}` (closing curly bracket) character. All between are params divided with (`,`) comma character. Each param has *<key>* and *<value>* which need to enclosed with `"` double quotation mark and divided with `:` (colon) character. It's only sounds complicated:
+If you are not sure about correct answer or answers for given question just mark it as `ignored` manually. This is where params useful. To define such element you need to use JSON object between question and answers, generally. Params starts with `{` (opening curly bracket) character and ends with `}` (closing curly bracket) character. All between are params divided with (`,`) comma character. Each param has *<key>* and *<value>* which need to enclosed with `"` double quotation mark and divided with `:` (colon) character. It's only sounds complicated:
 ```
 This question will be ignored
-{"status": "incomplete"}
+{"status": "ignored"}
 + correct answer
 - incorrect answer
 ```
 
-There is more params which can be used to define complex question types. Here is list of all suppoerted params:
+If you want to add some comment for a question there is dedicated param supported in application. Such comments can contain plain text or markdown which will formated as HTML during displaying questions. Comment can be configured with `comment` param and its value which will be presented in modal window. You can find example of question with comment below:
+```
+This question has a comment which could be useful
+{"comment": "This text could be very useful and explain some technical aspects related question and answers. It could has additionally [link to documentation](https://github.com/lukasz-jakub-adamczuk/codemarker#learnwise) or any other resource in internet."}
++ correct answer
+- incorrect answer
+```
+
+Params as JSON object can be defined in multiple lines for better readability. Each param will be parsed with no differences although has been written in multi-lines.
+```
+Question with params in multi-line version:
+{
+    "area": "test",
+    "comment": "This will be comment for question"
+}
++ correct answer
+- incorrect answer
+```
+
+Markdown is supported in questions and answers. This could be useful to emphasize context of question. You can format text in plain text using special characters, which will be replaced after parsing with HTML tags. If you interested how to use just check multiple resources in internet. For example [markdown cheat sheet](https://www.markdownguide.org/cheat-sheet/).
+```
+Question with _italic_ and __bold__ content:
++ __correct__ answer
+- incorrect answer
+```
+
+Full list of supported params has been listed below. There is more params which can be used to define complex question types. Here is list of all suppoerted params:
 - `"area": "any string"` - Defines what the question concerns. Value displayed in question header.
-- `"status": "incomplete"` - Question will be ignored. Status added automatically when question has no correct anwser or answers at all.
+- `"status": "ignored"` - Question will be ignored. Status added automatically when question has no correct anwser or answers at all.
 - `"type": "single"` - Added automatically to each question with single correct answer.
 - `"type": "multiple"` - Added automatically to each question with multiple correct answers.
 - `"type": "input"` - Defines question where answer or answers must be typed. Correct answer or anwsers are needed still.
 - `"type": "matching"` - Defines question where answers must be matched. Each answer must be correct and has `==` (two equal signs) inside, splitting whole anwser on two parts.
-- `"type": "answers"` - Defines how many answers must be selected in question. Applicable for `multiple` type question only.
-- `"type": "comment"` - Adds addional comment for the question.
-
-```
-This question will be ignored
-{"status": "incomplete"}
-+ correct answer starts with plus character
-- incorrect answer starts with minus character
-```
+- `"answers": "3"` - Defines how many answers must be selected in question. Applicable for `multiple` type question only.
+- `"comment": "any text"` - Adds additional comment for the question. Markdown is supported. Comment will displayed in modal window triggered with button.
+- `"image": "url to image"` - Defines image for the question. Image will be displayed in modal window triggered with buttom.
 
 What is missing in file format
 - [ ] Support for multiline answers
 - [ ] Multi-line params definition
 
-Download sample-exam file, load in application and check how questions have been displayed. Experiment with own questions.
+## Sample exam file
+[Check sample-exam](https://raw.githubusercontent.com/lukasz-jakub-adamczuk/codemarker/master/sample-exam.md) file which can be saved locally and loaded in application. Open this exam and experiment with own questions to see how easily this can be done.
 
 ## TODO
 - [ ] display timer based on param
@@ -119,6 +140,7 @@ Download sample-exam file, load in application and check how questions have been
 - [ ] prev and next after time ended
 
 ## Changelogs
+
 ### v0.07
 - [x] extending print mode for question new types
 - [x] matching type question support

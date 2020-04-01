@@ -22,7 +22,7 @@ Here you have second question
 Here you have first line of question.
 
 Next line one can be splitted with new empty line or not.
-This is __completely__ your decision.
+This is completely your decision.
 
 + correct answer
 - incorrect answer
@@ -39,7 +39,7 @@ This has no correct answers
 - Choose that
 
 This question will be ignored
-{"status": "incomplete"}
+{"status": "ignored"}
 + correct answer
 - incorrect answer
 
@@ -48,7 +48,7 @@ This question has a comment which could be useful
 + correct answer
 - incorrect answer
 
-Question with params in multli-line version:
+Question with params in multi-line version:
 {
     "area": "test",
     "comment": "This will be comment for question"
