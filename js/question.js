@@ -167,6 +167,7 @@ function prepareInputQuestion(q, mode) {
     var idx = challenge+1;
 
     id = 'q'+idx+'a0';
+    // id = 'q'+idx+'a'+ans+'';
     // answer = answers.choices[ans].name;
 
     var choices = questions.used[idx-1].answers.choices.map(function(elem, index, array) { return elem.name; });
@@ -178,7 +179,7 @@ function prepareInputQuestion(q, mode) {
         }
     }
 
-    var input = '<input type="text" id="'+id+'" name="aaa" value="'+written+'" class="form-control" />';
+    var input = '<input type="text" id="'+id+'" name="aaa" value="'+written+'" class="form-control" placeholder="Type answer here" />';
 
     console.log();
 
@@ -332,8 +333,11 @@ function printInputQuestion(q, challenge) {
     console.log();
 
     var html = '';
+    var question = q.name;
     
-    html += '<div class="question">' + marked(q.name).replace('<p>', '<p>' + idx + '. ') + '</div>';
+    question.replace('[]', '<strong>'+written+'</strong>');
+    
+    html += '<div class="question">' + marked(question).replace('<p>', '<p>' + idx + '. ') + '</div>';
     if (q.params.image) {
         html += '<img class="question-image" src="' + q.params.image + '" />';
     }

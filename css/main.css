@@ -31,9 +31,9 @@ body {
 }
 #splash,
 ._result {
-    position: absolute;
-    top: 0;
-    bottom: 3rem;
+    /* position: absolute; */
+    /* top: 0; */
+    /* bottom: 3rem; */
     height: calc(100% - 3rem);
     background: #fff;
     padding-top: 15px;

@@ -11,6 +11,7 @@ function startChallenge(event) {
     hideElement('#result');
     disableAction('stop');
     showElement('.challenge');
+    showElement('#timer');
     // enable nav buttons
     enableAction('next');
     enableAction('answers');
