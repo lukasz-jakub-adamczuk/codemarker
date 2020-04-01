@@ -152,8 +152,8 @@ function renderExamResult() {
     html += '<div class="card text-center">';
     // html += '<div class="card text-center col-sm-6 col-md-6  col-lg-8  col-xl-12">';
     html += '   <div class="card-header">';
-    // html +=  allExams[exam].exam + 'Exam this and that';
-    html +=  ' Service Mapping exam result';
+    html +=  allExams[exam].exam + 'exam result';
+    // html +=  ' Service Mapping exam result';
     html += '   </div>';
     html += '   <div class="card-body">';
     html += '       <img src="./img/'+image+'.png" class="col-sm-6">';

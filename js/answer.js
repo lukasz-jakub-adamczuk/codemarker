@@ -190,7 +190,7 @@ function validateExamAnswers() {
             ratio = 1 / questions.used[i-1].answers.correct;
             point = 0;
             
-            console.log('Ratio for question :' + ratio);
+            // console.log('Ratio for question :' + ratio);
             if (questions.exam[i] != undefined) {
                 // summarize multiple checked answers
                 for (var answer in questions.exam[i]) {
@@ -203,11 +203,12 @@ function validateExamAnswers() {
                         point += ratio;
                     }
                 }
-                console.log('Checking correct answers :' + point);
+                // console.log('Checking correct answers :' + point);
+                // console.log(questions.used[i-1].name);
+                // console.log(questions.used[i-1].answers.choices);
+                // console.log(questions.exam[i]);
+
                 // any incorrect answer makes no points for this question
-                console.log(questions.used[i-1].name);
-                console.log(questions.used[i-1].answers.choices);
-                console.log(questions.exam[i]);
                 if (ratio < 1) {
                     for (var answer in questions.exam[i]) {
                         if (questions.exam[i][answer] === true 
@@ -219,9 +220,9 @@ function validateExamAnswers() {
                         }
                     }
                 }
-                console.log('Checking wrong answers :' + point);
+                // console.log('Checking wrong answers :' + point);
             }
-            console.log(point);
+            // console.log(point);
             if (point == 1) {
                 summary.correct.push(questions.exam[i]);
             } else {

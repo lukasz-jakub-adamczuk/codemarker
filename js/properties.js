@@ -9,7 +9,7 @@ var propertiesSetup = {
             {
                 'name': 'quiz.questions.shuffle',
                 'label': 'Shuffle questions.',
-                'value': true
+                'value': false
             }, {
                 'name': 'quiz.answers.shuffle',
                 'label': 'Shuffle available answers.',
@@ -19,6 +19,10 @@ var propertiesSetup = {
                 'label': 'Display letters before answers.',
                 'value': false,
                 'state': 'disabled'
+            }, {
+                'name': 'quiz.answers.help_button',
+                'label': 'Allow using Help button during challenges.',
+                'value': false
             }, {
                 'name': 'quiz.questions.skip_ignored',
                 'label': 'Skip invalid or marked as ignored questions.',
@@ -40,7 +44,7 @@ var propertiesSetup = {
             },{
                 'name': 'app.ui.start_challenge_after_selecting',
                 'label': 'Start challenge after selecting. Print mode cannot be used.',
-                'value': false
+                'value': true
             },{
                 'name': 'app.ui.display_progress',
                 'label': 'Display progress bar during challenge.',
