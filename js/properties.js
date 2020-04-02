@@ -38,8 +38,16 @@ var propertiesSetup = {
                 'label': 'Watch introdution everytime.',
                 'value': true
             },{
+                'name': 'app.ui.animation_before_result',
+                'label': 'Watch animation before displaying exam result.',
+                'value': true
+            },{
                 'name': 'app.ui.start_challenge_after_load_success',
                 'label': 'Start challenge after successfully loading questions from file. Print mode cannot be used.',
+                'value': false
+            },{
+                'name': 'app.ui.start_challenge_after_download_success',
+                'label': 'Start challenge after successfully downloading questions from internet. Print mode cannot be used.',
                 'value': false
             },{
                 'name': 'app.ui.start_challenge_after_selecting',

@@ -96,7 +96,11 @@ function finishChallenge() {
     
     
     // renderExamResult();
-    runSpinner('renderExamResult');
+    if (properties['app.ui.animation_before_result']) {
+        runSpinner('renderExamResult');
+    } else {
+        renderExamResult();
+    }
 }
 
 // Handle generating question

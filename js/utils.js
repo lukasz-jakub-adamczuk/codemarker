@@ -37,8 +37,20 @@ function retrieveQuestions() {
     req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     req.send('code=' + code);
 
+    html = '';
     if (req.status == 200) {
+        html += '<div class="alert alert-info" role="info">Exam file has been downloaded and parsed sucessfully.</div>';
         parseChallenge(req.responseText);
+
+        renderExams();
+    } else {
+        html += '<div class="alert alert-warning" role="alert">' + req.status + '</div>';
+    }
+    renderElement('.downloading-messages', html);
+
+    if (properties['app.ui.start_challenge_after_download_success']) {
+        document.querySelector('#options-tgr').click();
+        startChallenge();
     }
 }
 

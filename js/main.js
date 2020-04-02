@@ -24,6 +24,8 @@ var time;
 
 var letters = 'abcdefghijklmnopqrstuvwxyz'.split('');
 
+// hide menu by default (in case would be opened during page reload and intro running)
+$('#options-tgr').prop('checked', false);
 
 initProperties(propertiesSetup);
 var availableExams = [];
