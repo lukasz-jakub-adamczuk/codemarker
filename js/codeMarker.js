@@ -44,15 +44,15 @@ function initChallenge(skip_ignored) {
     //     questions.all = shuffleArray(questions.all);
     // }
     // skip ignored
-    console.log(questions.all.length);
+    // console.log(questions.all.length);
     if (skip_ignored) {
         questions.used = questions.all.filter(function(elem, index, array) { return elem.params.status != 'ignored'; }).slice(0);
     } else {
         questions.used = questions.all.slice(0);
     }
-    console.log(questions.all === questions.used);
-    console.log(questions.all.length);
-    console.log(questions.used.length);
+    // console.log(questions.all === questions.used);
+    // console.log(questions.all.length);
+    // console.log(questions.used.length);
     var ignored = questions.all.filter(function(elem, index, array) { return elem.params.status == 'ignored'; }).slice(0);
     var questionsForExam;
     if (questions.used.length > allExams[exam].questions) {
@@ -60,16 +60,16 @@ function initChallenge(skip_ignored) {
     } else {
         questionsForExam = questions.used.length;
     }
-    console.warn(questions.all.map(x => x.index));
+    // console.warn(questions.all.map(x => x.index));
     if (properties['quiz.questions.shuffle']) {
         questions.used = shuffleArray(questions.used);
     }
-    console.warn(questions.all.map(x => x.index));
+    // console.warn(questions.all.map(x => x.index));
     // questions.used = reorderArray(questions.used);
     questions.used = questions.used.slice(0, questionsForExam);
     // questions.used = reorderArray(questions.all);
     
-    console.warn(questions.all.map(x => x.index));
+    // console.warn(questions.all.map(x => x.index));
 
     questions.exam = [];
     challenge = 0;
@@ -114,8 +114,8 @@ function generateQuestion(q, mode) {
     // var answerClass;
     // var q.index = challenge;
 
-    console.log(q);
-    console.log(q.params);
+    // console.log(q);
+    // console.log(q.params);
 
     if (mode != 'print') {
         html += '<div class="challenge-header">';
@@ -131,6 +131,10 @@ function generateQuestion(q, mode) {
             // html += '<button type="button" class="btn btn-primary icon comment-icon" data-toggle="modal" data-target="#comment-modal"></button>';
             html += '<span class="icon image-icon" data-toggle="modal" data-target="#image-modal"></span>';
             renderElement('#image-modal .modal-body', '<img class="question-image" src="'+q.params.image+'">');
+        }
+        if (q.params.eqi && q.params.eri) {
+            html += '<span class="icon database-icon" data-toggle="modal" data-target="#database-modal"></span>';
+            renderElement('#database-modal .modal-body', marked('If this question looks broken then check how it looks in Excel file\n\nQuestion in Excel: '+q.params.eqi+'\n\nRow in Excel: '+q.params.eri));
         }
         html += '</div>';
     }
