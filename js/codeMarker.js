@@ -5,6 +5,7 @@ function startChallenge(event) {
         return;
     }
     console.log('Start event has been triggered.');
+    
     enableKeyEvents();
     hideElement('#exams');
     // if results has been displayed
@@ -12,6 +13,12 @@ function startChallenge(event) {
     disableAction('stop');
     showElement('.challenge');
     showElement('#timer');
+    if (properties['app_ui_display_progress']) {
+        showElement('#progress');
+    }
+    if (properties['app_ui_display_timer']) {
+        showElement('#timer');
+    }
     // enable nav buttons
     enableAction('next');
     enableAction('answers');
@@ -36,6 +43,8 @@ function startChallenge(event) {
 
     disableAction('start');
     disableAction('print');
+
+    state = 'challenge_started';
 }
 
 // Internal function to init challenge
@@ -78,8 +87,38 @@ function initChallenge(skip_ignored) {
 }
 
 // Handle finishing running challenge
-function finishChallenge() {
+function finishChallenge(event) {
     console.log('finishChallenge() has been used.');
+    if (event && event.target.className.indexOf('disabled') != -1) {
+        return;
+    }
+    console.log('Stop event has been triggered.');
+    
+    clearInterval(displayTimer);
+    // hide nav buttons
+    disableAction('prev');
+    disableAction('next');
+    disableAction('answers');
+    disableAction('stop');
+    disableKeyEvents();
+
+    enableAction('start');
+    
+    
+    // renderExamResult();
+    if (properties['app_ui_animation_before_result']) {
+        runSpinner('renderExamResult');
+    } else {
+        renderExamResult();
+    }
+
+    state = 'challenge_finished';
+}
+
+// Handle canceling running challenge
+// used to stop challenge without showing results if needed
+function cancelChallenge() {
+    console.log('canelChallenge() has been used.');
     if (event && event.target.className.indexOf('disabled') != -1) {
         return;
     }

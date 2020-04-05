@@ -1,10 +1,14 @@
 'use strict';
 
 // Handle rendering list of available exams
-function renderExams() {
+function renderExams(displayLayer = true) {
     console.log('renderExams() has been used.');
-    // hideElements();
-    showElements(['exams']);
+
+    if (displayLayer) {
+        showElements(['exams']);
+        state = 'exams_rendered';
+    }
+    
 
     var exams = Object.values(allExams);
     var html = '';
@@ -31,6 +35,15 @@ function renderExams() {
     document.querySelectorAll('.delete-icon').forEach(function(elem) {
         elem.addEventListener('click', deleteExam);
     });
+
+    // alert(state);
+
+    // if (['challenge_started', 'challenge_finished', 'exam_result_rendered', 'exam_printed'].includes(state)) {
+    //     // cancelChallenge();
+    //     hideElements(['exams']);
+    // } else {
+    //     state = 'exams_rendered';
+    // }
 }
 
 // Handle preparing single exam on list
@@ -59,7 +72,7 @@ function prepareExam(config, includeWrapper = true) {
 // Handle deleting exam from list
 function deleteExam(event) {
     console.log('deleteExam() has been used.');
-
+    
     // maybe confirmation
     var exam = event.target.getAttribute('data-exam');
 
@@ -81,11 +94,14 @@ function deleteExam(event) {
         }
     }
     event.stopPropagation();
+
+    state = 'exam_deleted';
 }
 
 // Handle selecting exam from available on list
 function selectExam(event) {
     console.log('selectExam() has been used.');
+    
     var node = event.target;
     
     while (node.tagName.toLowerCase() != 'article') {
@@ -107,9 +123,13 @@ function selectExam(event) {
         enableAction('start');
         enableAction('print');
     }
+
+    state = 'exam_selected';
 }
 
 function parseChallenge(content) {
+    console.log('parseChallenge() has been used.');
+    
     parser.init();
     parser.parse(content);
 
@@ -129,6 +149,7 @@ function parseChallenge(content) {
         localStorage.setItem('allExams', JSON.stringify(allExams));
     }
     // triggerAction('start');
+    // state = 'challenge_parsed';
 }
 
 // Handle displaying questions for exam in print mode
@@ -156,6 +177,8 @@ function printExam(event) {
     // hideElement('#show-options');
     disableAction('start');
     disableAction('print');
+
+    state = 'exam_printed';
 }
 
 // Handle rendering result of finished challenge
@@ -243,6 +266,7 @@ function renderExamResult() {
     // renderElement('.result', result + '<p class="advice">' + advice + '</p>' + html);
     renderElement('.result', html);
 
+    state = 'exam_result_rendered';
 }
 
 // Handle exams cleanup

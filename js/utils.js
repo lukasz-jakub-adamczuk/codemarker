@@ -18,7 +18,13 @@ function readSingleFile(e) {
         }
         renderElement('.loading-messages', html);
 
-        renderExams();
+        if (['challenge_started', 'challenge_finished', 'exam_result_rendered', 'exam_printed'].includes(state)) {
+            // cancelChallenge();
+            // hideElements(['exams']);
+            renderExams(false);
+        } else {
+            renderExams();
+        }
     
         if (properties['app_ui_start_challenge_after_load_success']) {
             document.querySelector('#options-tgr').click();
@@ -58,7 +64,13 @@ function retrieveQuestions() {
             setLocalStorageItem('examsHashes', examsHashes);
         }
 
-        renderExams();
+        if (['challenge_started', 'challenge_finished', 'exam_result_rendered', 'exam_printed'].includes(state)) {
+            // cancelChallenge();
+            // hideElements(['exams']);
+            renderExams(false);
+        } else {
+            renderExams();
+        }
         
         // code.value = '';
     } else {
@@ -372,7 +384,7 @@ function hideElements(elements) {
         elements = defaults;
     }
     for (var el in elements) {
-        $('#'+defaults[el]).hide();
+        $('#'+elements[el]).hide();
         console.log('Hidding [#'+elements[el]+'] element.');
     }
 }

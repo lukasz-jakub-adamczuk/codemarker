@@ -4,6 +4,8 @@ const LW_VERSION = 'v0.7 patch-1';
 
 var codeMarker = {};
 
+var state;
+
 var questions = {
     'all': [],
     'used': [],
