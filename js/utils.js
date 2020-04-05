@@ -11,16 +11,16 @@ function readSingleFile(e) {
         var html = '<hr>';
         if (parser.errors.length) {
             for (var error of parser.errors) {
-                html += '<div class="alert alert-warning" role="alert">' + error + '</div>';
+                html += '<div class="alert alert-warning mb-2" role="alert">' + error + '</div>';
             }
         } else {
-            html += '<div class="alert alert-info" role="info">Exam file has been loaded and parsed sucessfully.</div>';
+            html += '<div class="alert alert-info mb-2" role="info">Exam file has been loaded and parsed sucessfully.</div>';
         }
         renderElement('.loading-messages', html);
 
         renderExams();
     
-        if (properties['app.ui.start_challenge_after_load_success']) {
+        if (properties['app_ui_start_challenge_after_load_success']) {
             document.querySelector('#options-tgr').click();
             startChallenge();
         }
@@ -30,28 +30,144 @@ function readSingleFile(e) {
 
 // Handle retriving questions from server
 function retrieveQuestions() {
-    var code = document.getElementById('retrieve-code').value;
+    var code = document.getElementById('retrieve-code');
     var req = new XMLHttpRequest();
 
     req.open('POST', 'https://ash.unixstorm.org/codemarker/cloud/index.php', false); 
     req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    req.send('code=' + code);
+    req.send('code=' + code.value);
 
     html = '';
     if (req.status == 200) {
-        html += '<div class="alert alert-info" role="info">Exam file has been downloaded and parsed sucessfully.</div>';
+        html += '<div class="alert alert-info mb-2" role="info">Exam file has been downloaded and parsed sucessfully.</div>';
+        
         parseChallenge(req.responseText);
 
+        // console.log(allExams[exam]);
+        if (code.value.length != 40) {
+            var examHash = {
+                // 'id': exam.replace('cm-', ''),
+                'id': exam,
+                'generated': allExams[exam].generated,
+                'generatedDate': (new Date(allExams[exam].generated*1)) + '',
+                'hashcode': sha1(code.value)
+            };
+            examsHashes[exam] = examHash;
+
+            // console.log(examsHashes);
+            setLocalStorageItem('examsHashes', examsHashes);
+        }
+
         renderExams();
+        
+        // code.value = '';
     } else {
-        html += '<div class="alert alert-warning" role="alert">' + req.status + '</div>';
+        html += '<div class="alert alert-warning mb-2" role="alert">' + req.status + '</div>';
     }
     renderElement('.downloading-messages', html);
 
-    if (properties['app.ui.start_challenge_after_download_success']) {
+    if (properties['app_ui_start_challenge_after_download_success']) {
         document.querySelector('#options-tgr').click();
         startChallenge();
     }
+}
+
+// Handle checking fresh questions from server
+function checkQuestions(exam) {
+    var req = new XMLHttpRequest();
+
+    req.open('POST', 'https://ash.unixstorm.org/codemarker/cloud/index.php', false); 
+    req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    req.send('hash=' + exam.hashcode);
+
+    console.log('allExams in check question: ' + allExams[exam.id].generated);
+    console.log('hashes in check question:   ' + exam.generated);
+
+    html = '';
+    console.log(req);
+    if (req.status == 200) {
+        // html += '<div class="alert alert-info mb-2" role="info">Fresh exam has been looking for.</div>';
+        
+        // var exam = 'cm-pa';
+        var timestamp = req.responseText * 1;
+
+        console.log(typeof exam.generated);
+        console.log(typeof timestamp);
+
+        if (exam.generated < timestamp) {
+            // html += '<div class="alert alert-info mb-2" role="info">Fresh exam has been found.</div>';
+            html += '<i class="icon sync-icon" data-hash="'+exam.hashcode+'"></i>';
+     
+            $('#'+exam.id.replace('cm-', '')+' div h5').append(html);
+
+            // console.log('#'+exam.id.replace('cm-', '')+' div h5 i');
+            // console.log(document.querySelector('#'+exam.id.replace('cm-', '')+' div h5 i'));
+
+            document.querySelector('#'+exam.id.replace('cm-', '')+' div h5 i').addEventListener('click', syncExam);
+        }
+        // $('#'+exam.id.replace('cm-', '')+' div h5 i')[0].click(syncExam);
+
+        console.log('Exam on server: ' + (new Date(timestamp)) + ' ['+timestamp+']');
+        console.log('Exam locally:   ' + (new Date(exam.generated*1)) + ' ['+exam.generated+']');
+    } else {
+        html += '<div class="alert alert-warning mb-2" role="alert">' + req.status + '</div>';
+    }
+}
+
+// Handle checking fresh questions from server
+function syncExam(event) {
+    console.log('syncExam() has been used.');
+    // var node = event.target;
+
+    // maybe confirmation
+    var hash = event.target.getAttribute('data-hash');
+
+    var req = new XMLHttpRequest();
+
+    req.open('POST', 'https://ash.unixstorm.org/codemarker/cloud/index.php', false); 
+    req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    req.send('code=' + hash);
+
+    html = '';
+    if (req.status == 200) {
+        html += '<div class="alert alert-info mb-2" role="info">Updated.</div>';
+        
+        // req.responseText);
+        parseChallenge(req.responseText);
+
+        console.log(allExams[exam]);
+        // if (code.value.length != 40) {
+        var examHash = {
+            'id': exam,
+            'generated': allExams[exam].generated,
+            'generatedDate': (new Date(allExams[exam].generated)*1) + '',
+            'hashcode': hash
+        };
+        examsHashes[exam] = examHash;
+        console.log(examsHashes);
+
+        console.log('allExams in sync: ' + allExams[exam].generated);
+        console.log('hashes in sync:   ' + examsHashes[exam].generated);
+        // if ('localStorage' in window) {
+        //     localStorage.setItem('examsHashes', JSON.stringify(examsHashes));
+        // }
+        setLocalStorageItem('examsHashes', examsHashes);
+        // }
+        console.log(examsHashes);
+
+        $('#'+exam.replace('cm-', '')).html(prepareExam(allExams[exam], false));
+        
+        // code.value = '';
+    } else {
+        html += '<div class="alert alert-warning mb-2" role="alert">' + req.status + '</div>';
+    }
+    // renderElement('.downloading-messages', html);
+
+    // if (properties['app_ui_start_challenge_after_download_success']) {
+    //     document.querySelector('#options-tgr').click();
+    //     startChallenge();
+    // }
+    event.stopPropagation();
 }
 
 // Handle shuffling array
@@ -197,7 +313,7 @@ function countProgress() {
 
 // Internal function to render current progress value
 function renderProgress(value) {
-    if (properties['app.ui.display_progress']) {
+    if (properties['app_ui_display_progress']) {
         document.querySelector('.progresso span').style = 'width: ' + value + '%;';
     }
 }
@@ -211,7 +327,7 @@ function renderErrors(question, returnHtml = false) {
     var html = '';
     if (errors[question]) {
         for (var error of errors[question]) {
-            html += '<div class="alert alert-danger" role="alert">'+error+'</div>';
+            html += '<div class="alert alert-danger mb-2" role="alert">'+error+'</div>';
         }
     }
     if (returnHtml) {
@@ -261,17 +377,46 @@ function hideElements(elements) {
     }
 }
 
+function getLocalStorageItem(item, parse = true) {
+    if ('localStorage' in window) {
+        if (item in localStorage) {
+            var value = localStorage.getItem(item);
+            value = parse ? JSON.parse(value) : value;
+            console.log('Value has been get from localStorage['+item+'] item.');
+            return value;
+        }
+    }
+}
 
+function setLocalStorageItem(item, value, stringify = true) {
+    if ('localStorage' in window) {
+        value = stringify ? JSON.stringify(value) : value;
+        localStorage.setItem(item, value);
+        console.log('Value has been set in localStorage['+item+'] item.');
+    }
+}
 
+function removeLocalStorageItem(item) {
+    if ('localStorage' in window) {
+        if (item in localStorage) {
+            localStorage.removeItem(item);
+            console.log('localStorage['+item+'] item has been removed.');
+        }
+    }
+}
 
-
-
-
-
-
-
-
-
+function checkAppVersion() {
+    if ('localStorage' in window) {
+        if ('learnwise' in localStorage) {
+            if (getLocalStorageItem('learnwise', false) == LW_VERSION) {
+                $('#version strong')[0].textContent = LW_VERSION;
+            }
+        } else {
+            var html = '<div class="alert alert-warning mb-2" role="alert">Application available online has new features. Your local version is outdated. Reset all settings using button placed below.</div>';
+            renderElement('.version-messages', html);
+        }
+    }
+}
 
 
 

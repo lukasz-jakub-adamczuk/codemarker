@@ -135,6 +135,8 @@ What is missing in file format
 - [x] support for param comment
 - [ ] displays letters before answers
 - [ ] complete file parsing errors handling
+- [x] deleting exams from list
+- [x] reset to default settings
 
 ## TOFIX
 - [ ] prev and next after time ended

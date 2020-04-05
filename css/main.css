@@ -377,16 +377,41 @@ div.hidden {
     background-position: 50% 50%;
     background-repeat: no-repeat;
     border-radius: .25rem;
-    background-color: #eee;
+    /* background-color: #eee; */
 }
 .comment-icon {
+    background-color: #eee;
     background-image: url('../img/IcoMoon-Free-master/SVG/108-bubble.svg');
 }
 .image-icon {
+    background-color: #eee;
     background-image: url('../img/IcoMoon-Free-master/SVG/014-image.svg');
 }
 .database-icon {
+    background-color: #eee;
     background-image: url('../img/IcoMoon-Free-master/SVG/101-database.svg');
+}
+.delete-icon {
+    background-image: url('../img/IcoMoon-Free-master/SVG/173-bin.svg');
+    opacity: .2;
+    width: 2rem;
+    float: right;
+}
+.delete-icon:hover {
+    background-image: url('../img/IcoMoon-Free-master/SVG/173-bin-red.svg');
+    opacity: 1;
+}
+.sync-icon {
+    opacity: .2;
+    background-image: url('../img/IcoMoon-Free-master/SVG/303-loop2.svg');
+}
+.sync-icon:hover {
+    opacity: 1;
+}
+
+.exam-name {
+    align-self: center;
+    line-height: 1.62;
 }
 
 

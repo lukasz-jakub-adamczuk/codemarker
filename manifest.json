@@ -11,6 +11,6 @@
       "sizes": "512x512"
     }
   ],
-  // "start_url": "./codemarker/"
-  "start_url": "/"
+  // "start_url": "./"
+  "start_url": "https://lukasz-jakub-adamczuk.github.io/codemarker/"
 }

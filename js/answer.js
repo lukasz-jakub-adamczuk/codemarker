@@ -170,7 +170,7 @@ function processAnswers(question) {
     var shuffleAnswers = 'shuffle_answers' in question.params ? question.params.shuffle_answers : 'true';
     shuffleAnswers = (shuffleAnswers == 'true');
     console.log(shuffleAnswers);
-    if (properties['quiz.answers.shuffle'] && shuffleAnswers) {
+    if (properties['quiz_answers_shuffle'] && shuffleAnswers) {
         result.choices = shuffleArray(result.choices);
         result.shuffled = true;
     }

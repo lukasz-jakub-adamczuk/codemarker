@@ -9,53 +9,105 @@ function renderExams() {
     var exams = Object.values(allExams);
     var html = '';
     if (!('localStorage' in window)) {
-        html += '<div class="alert alert-warning" role="alert">Changing options is disabled, because your browser does not support localStorage.</div>';
+        html += '<div class="alert alert-warning mb-2" role="alert">Changing options is disabled, because your browser does not support localStorage.</div>';
     }
     // print available exams or warning
     if (exams.length) {
         html += '<div class="list-group">';
         for (var i in exams) {
-            html += '<span id="'+exams[i].exam+'" class="list-group-item list-group-item-action flex-column align-items-start">'
-                + '<div class="d-flex w-100 justify-content-between">'
-                + '<h5 class="mb-1">'+exams[i].exam.split('-').join(' ').toUpperCase()+'</h5>'
-                + '<small>'+(exams[i].all - exams[i].ignored > exams[i].questions ? exams[i].questions : exams[i].all - exams[i].ignored)+' questions in '+exams[i].duration+'min</small>'
-                + '</div>'
-                + '<p class="mb-1">'+exams[i].description+'</p>'
-                + '<small>'+exams[i].all+' questions found'+(exams[i].ignored > 0 ? ', but ' + exams[i].ignored + ' ignored or incomplete' : '')+'</small>'
-            + '</span>';
+            html += prepareExam(exams[i]);
         }
         html += '</div>';
     } else {
-        html += '<div class="alert alert-warning" role="alert">You need to load first challenge exam. Use application menu at bottom.</div>';
+        html += '<div class="alert alert-warning mb-2" role="alert">You need to load first challenge exam. Use application menu at bottom.</div>';
     }
     renderElement('#exams .list', html);
+
+    // checking updates for questions
+    for (var hash in examsHashes) {
+        checkQuestions(examsHashes[hash]);
+    }
+
+    document.querySelectorAll('.delete-icon').forEach(function(elem) {
+        elem.addEventListener('click', deleteExam);
+    });
+}
+
+// Handle preparing single exam on list
+function prepareExam(config, includeWrapper = true) {
+    var html = '';
+    html += includeWrapper ? '<article id="'+config.exam+'" class="list-group-item list-group-item-action flex-column align-items-start">' : '';
+    html += '<div class="d-flex w-100 justify-content-between">'
+        + '<h5 class="mb-1 d-flex align-items-start">'
+        + '<span class="exam-name">'+config.exam.split('-').join(' ').toUpperCase()+'</span>'
+        // + '<i class="icon sync-icon" data-exam="'+config.exam+'"></i>'
+        + '</h5>'
+        // + '<small>'+(config.all - config.ignored > config.questions ? config.questions : config.all - config.ignored)+' questions in '+config.duration+'min</small>'
+        + '<small>'+(config.questions)+' questions in '+config.duration+'min</small>'
+        + '</div>'
+        + '<i class="icon delete-icon" data-exam="'+config.exam+'"></i>'
+        + '<p class="mb-1">'+config.description+'</p>'
+        // + '<small>'+config.all+' questions found'+(config.ignored > 0 ? ', but ' +config.ignored+ ' ignored or incomplete' : '')+'</small>'
+        // + '<small>Notifications <span class="badge badge-secondary">4</span></small>'
+        + 'Found <span class="badge badge-secondary">'+config.all+'</span> '
+        + 'Valid <span class="badge badge-success">'+(config.all-config.ignored)+'</span> '
+        + 'Invalid <span class="badge badge-danger">'+config.ignored+'</span> ';
+    html += includeWrapper ? '</article>' : '';
+    return html;
+}
+
+// Handle deleting exam from list
+function deleteExam(event) {
+    console.log('deleteExam() has been used.');
+
+    // maybe confirmation
+    var exam = event.target.getAttribute('data-exam');
+
+    $('#'+exam).fadeOut(1000, function() {
+        $(this).remove();
+        console.log('Exam has been deleted.');
+    });
+
+    if ('localStorage' in window) {
+        if ('allExams' in localStorage) {
+            // allExams = JSON.parse(localStorage.getItem('allExams'));
+            delete(allExams['cm-'+exam]);
+            localStorage.setItem('allExams', JSON.stringify(allExams));
+            console.log('allExams in localStorage has been updated.');
+        }
+        if ('cm-'+exam in localStorage) {
+            localStorage.removeItem('cm-'+exam);
+            console.log('Exam in localStorage has been deleted.');
+        }
+    }
+    event.stopPropagation();
 }
 
 // Handle selecting exam from available on list
 function selectExam(event) {
+    console.log('selectExam() has been used.');
     var node = event.target;
     
-    while (node.tagName.toLowerCase() != 'span') {
+    while (node.tagName.toLowerCase() != 'article') {
         node = node.parentNode;
     }
     exam = 'cm-' + node.getAttribute('id');
 
     // console.log(exam);
     // console.log(localStorage.getItem(exam));
-    console.warn(questions.all.map(x => x.index));
+    // console.warn(questions.all.map(x => x.index));
     // if (questions.all.length == 0) {
         parseChallenge(localStorage.getItem(exam));
     // }
-    console.warn(questions.all.map(x => x.index));
+    // console.warn(questions.all.map(x => x.index));
 
-    if (properties['app.ui.start_challenge_after_selecting']) {
+    if (properties['app_ui_start_challenge_after_selecting']) {
         startChallenge();
     } else {
         enableAction('start');
         enableAction('print');
     }
 }
-
 
 function parseChallenge(content) {
     parser.init();
@@ -87,7 +139,7 @@ function printExam(event) {
     }
 
     console.log('Print event has been triggered.');
-    initChallenge(properties['print.questions.skip_ignored']);
+    initChallenge(properties['print_questions.skip_ignore_']);
     // generate first questions
     // generateQuestion(questions.used[challenge]);
     hideElement('#exams');
@@ -191,4 +243,43 @@ function renderExamResult() {
     // renderElement('.result', result + '<p class="advice">' + advice + '</p>' + html);
     renderElement('.result', html);
 
+}
+
+// Handle exams cleanup
+function removeAllExams(event) {
+    console.log('removeAllExams() has been used.');
+
+    var html = '';
+    for (var exam in allExams) {
+        removeLocalStorageItem(exam);
+    }
+    removeLocalStorageItem('allExams');
+    removeLocalStorageItem('examsHashes');
+    
+    html += 'All exams have been removed.';
+    console.log('All exams and related variables have been removed.');
+    
+    questions = {
+        'all': [],
+        'used': [],
+        'exam': [],
+        'ignored': []
+    };
+    challenge = undefined;
+    limit = undefined;
+    displayTimer = undefined;
+    
+    keyEventEnabled = false;
+    
+    allExams = {};
+    examsHashes = {};
+    availableExams = [];
+    
+    errors = [];
+    
+    exam = undefined;
+    time = undefined;
+
+    renderExams();
+    renderElement('.settings-messages', html);
 }

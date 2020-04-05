@@ -66,7 +66,7 @@ function prepareSimpleQuestion(q, mode) {
         } else {
             checked = false;
         }
-        if (properties['quiz.answers.print_letters']) {
+        if (properties['quiz_answers_print_letters']) {
             letter = '<span class="answer-letter">'+letters[ans].toUpperCase()+'.</span>';
         }
         // correct answer
@@ -76,7 +76,7 @@ function prepareSimpleQuestion(q, mode) {
         }
         if (answers.choices.length - answers.wrong > 1) {
             // multi choice
-            if (mode != 'print' || (mode == 'print' && answers.choices[ans].type == 'correct') || (mode == 'print' && properties['print.answers.print_incorrect'] && answers.choices[ans].type == 'wrong')) {
+            if (mode != 'print' || (mode == 'print' && answers.choices[ans].type == 'correct') || (mode == 'print' && properties['print_answers.print_incorrect'] && answers.choices[ans].type == 'wron_')) {
                 html += '<div class="custom-control custom-checkbox">'+letter
                     +'<input type="checkbox" id="'+id+'" name="customCheckbox" class="custom-control-input" value="'+slugify(answer)+'"'+(checked ? ' checked' : '')+'>'
                     +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+answer+'</label>'
@@ -84,7 +84,7 @@ function prepareSimpleQuestion(q, mode) {
             }
         } else {
             // single choice
-            if (mode != 'print' || (mode == 'print' && answers.choices[ans].type == 'correct') || (mode == 'print' && properties['print.answers.print_incorrect'] && answers.choices[ans].type == 'wrong')) {
+            if (mode != 'print' || (mode == 'print' && answers.choices[ans].type == 'correct') || (mode == 'print' && properties['print_answers.print_incorrect'] && answers.choices[ans].type == 'wron_')) {
                 html += '<div class="custom-control custom-radio">'+letter
                     +'<input type="radio" id="'+id+'" name="customRadio" class="custom-control-input" value="'+slugify(answer)+'"'+(checked ? ' checked' : '')+'>'
                     +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+answer+'</label>'
@@ -223,7 +223,7 @@ function printSimpleQuestion(q, challenge) {
             checked = false;
             inputState = 'unchecked';
         }
-        if (properties['quiz.answers.print_letters']) {
+        if (properties['quiz_answers_print_letters']) {
             letter = '<span class="answer-letter">'+letters[ans].toUpperCase()+'.</span>';
         }
         // correct answer
@@ -233,7 +233,7 @@ function printSimpleQuestion(q, challenge) {
 
         if (answers.choices.length - answers.wrong > 1) {
             // multi choice
-            if (answers.choices[ans].type == 'correct' || (properties['print.answers.print_incorrect'] && answers.choices[ans].type == 'wrong')) {
+            if (answers.choices[ans].type == 'correct' || (properties['print_answers.print_incorrect'] && answers.choices[ans].type == 'wron_')) {
                 html += '<div class="custom-control custom-checkbox">'+letter
                     +'<input type="checkbox" id="'+id+'" name="'+id+'" class="custom-control-input '+inputState+'" value="'+slugify(answer)+'"'+(checked ? ' checked="checked"' : '')+' >'
                     +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+answer+'</label>'
@@ -241,7 +241,7 @@ function printSimpleQuestion(q, challenge) {
             }
         } else {
             // single choice
-            if (answers.choices[ans].type == 'correct' || (properties['print.answers.print_incorrect'] && answers.choices[ans].type == 'wrong')) {
+            if (answers.choices[ans].type == 'correct' || (properties['print_answers.print_incorrect'] && answers.choices[ans].type == 'wron_')) {
                 html += '<div class="custom-control custom-radio">'+letter
                     +'<input type="radio" id="'+id+'" name="'+id+'" class="custom-control-input '+inputState+'" value="'+slugify(answer)+'"'+(checked ? ' checked="checked"' : '')+' >'
                     +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+answer+'</label>'

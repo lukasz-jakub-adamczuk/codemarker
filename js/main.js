@@ -1,5 +1,7 @@
 'use strict';
 
+const LW_VERSION = 'v0.7 patch-1';
+
 var codeMarker = {};
 
 var questions = {
@@ -16,6 +18,8 @@ var keyEventEnabled = false;
 
 // var initialSetup = {};
 var allExams = {};
+var examsHashes = {};
+var availableExams = [];
 
 var errors = [];
 
@@ -27,30 +31,29 @@ var letters = 'abcdefghijklmnopqrstuvwxyz'.split('');
 // hide menu by default (in case would be opened during page reload and intro running)
 $('#options-tgr').prop('checked', false);
 
-initProperties(propertiesSetup);
-var availableExams = [];
+// checking online version with local
+checkAppVersion();
 
+// init properties with default values
+initProperties(propertiesSetup);
+
+// load user preferences from localStorage
 if ('localStorage' in window) {
     // properties
     if (localStorage.getItem('properties')) {
         properties = JSON.parse(localStorage.getItem('properties'));
     }
-    // exams
-    
-    // if ('initialSetup' in localStorage) {
-    //     initialSetup = JSON.parse(localStorage.getItem('initialSetup'));
-    // }
+    // available exams
     if ('allExams' in localStorage) {
         allExams = JSON.parse(localStorage.getItem('allExams'));
     }
-    // for (var prop in localStorage) {
-    //     if (prop.substr(0, 2) == 'cm') {
-    //         availableExams.push(prop);
-    //     }
-    // }
+    // hashes for exams retrived from server
+    if ('examsHashes' in localStorage) {
+        examsHashes = JSON.parse(localStorage.getItem('examsHashes'));
+    }
 }
 
-if (properties['app.ui.introduction_enabled']) {
+if (properties['app_ui_introduction_enabled']) {
     runSpinner('renderExams');
 } else {
     skipIntro();
@@ -64,24 +67,26 @@ renderProperties(propertiesSetup);
 // adding events
 
 // options
-document.querySelector('#file-input').addEventListener('change', readSingleFile, false);
-document.querySelector('#load').addEventListener('click', function() { document.querySelector('#file-input').click(); }, false);
-document.querySelector('#retrieve').addEventListener('click', retrieveQuestions, false);
-document.querySelector('#app-properties').addEventListener('click', manageProperty, true);
+document.querySelector('#file-input').addEventListener('change', readSingleFile);
+document.querySelector('#load').addEventListener('click', function() { document.querySelector('#file-input').click(); });
+document.querySelector('#retrieve').addEventListener('click', retrieveQuestions);
+document.querySelector('#app-properties').addEventListener('click', manageProperty);
+document.querySelector('#default-settings').addEventListener('click', resetAllSettings);
+document.querySelector('#remove-exams').addEventListener('click', removeAllExams);
 
 
 // challenge
-document.querySelector('#exams .list').addEventListener('click', selectExam, true);
-document.querySelector('.challenge').addEventListener('click', registerAnswerForSimpleQuestion, false);
-document.querySelector('.challenge').addEventListener('change', registerAnswerForMatchingQuestion, false);
+document.querySelector('#exams .list').addEventListener('click', selectExam);  // true
+document.querySelector('.challenge').addEventListener('click', registerAnswerForSimpleQuestion);
+document.querySelector('.challenge').addEventListener('change', registerAnswerForMatchingQuestion);
 
-document.querySelector('#start-button').addEventListener('click', startChallenge, false);
-document.querySelector('#stop-button').addEventListener('click', finishChallenge, false);
-document.querySelector('#print-button').addEventListener('click', printExam, false);
+document.querySelector('#start-button').addEventListener('click', startChallenge);
+document.querySelector('#stop-button').addEventListener('click', finishChallenge);
+document.querySelector('#print-button').addEventListener('click', printExam);
 
-document.querySelector('#prev-button').addEventListener('click', prevQuestion, false);
-document.querySelector('#next-button').addEventListener('click', nextQuestion, false);
-document.querySelector('#answers-button').addEventListener('click', showCorrectAnswers, false);
+document.querySelector('#prev-button').addEventListener('click', prevQuestion);
+document.querySelector('#next-button').addEventListener('click', nextQuestion);
+document.querySelector('#answers-button').addEventListener('click', showCorrectAnswers);
 
 
 
@@ -153,7 +158,7 @@ mc.on("swiperight", function(ev) {
 });
 
 function renderTimer() {
-    if (properties['app.ui.display_timer']) {
+    if (properties['app_ui_display_timer']) {
         var hours   = Math.floor(time / 3600);
         var minutes = Math.floor((time - (hours*3600)) / 60);
         var seconds = Math.floor(time - (hours*3600) - (minutes*60));

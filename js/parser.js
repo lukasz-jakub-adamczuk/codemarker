@@ -3,7 +3,7 @@
 var parser = {
     
     init: function() {
-        this.debug = true;
+        this.debug = false;
         this.question = {};        
         this.questions = [];        
         this.setup = null;        
@@ -62,7 +62,11 @@ var parser = {
                         parser.params += parser.line;
                         parser.paramsFound = true;
                         if (parser.line.trim().substr(-1) == '}') {
-                            parser.question.params = JSON.parse(parser.line);
+                            // parser.question.params = parser.line;
+                            parser.question.params = JSON.parse(parser.params);
+                            parser.debug ? console.log('Exam params before and after parsing:') : '';
+                            parser.debug ? console.log(parser.params) : '';
+                            parser.debug ? console.log(parser.question.params) : '';
                             parser.paramsFound = false;
                             parser.params = '';
                         }
@@ -81,9 +85,10 @@ var parser = {
                         if (parser.paramsFound) {
                             parser.params += parser.line;
                             if (parser.line.trim().substr(-1) == '}') {
-                                console.log('Exam params before parsing: ' + parser.question.params);
-                                console.log(parser.question.params);
                                 parser.question.params = JSON.parse(parser.params);
+                                parser.debug ? console.log('Exam params before and after parsing:') : '';
+                                parser.debug ? console.log(parser.params) : '';
+                                parser.debug ? console.log(parser.question.params) : '';
                                 parser.paramsFound = false;
                                 parser.params = '';
                             }

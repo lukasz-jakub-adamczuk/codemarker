@@ -16,7 +16,7 @@ function startChallenge(event) {
     enableAction('next');
     enableAction('answers');
     // reset used questions
-    initChallenge(properties['quiz.questions.skip_ignored']);
+    initChallenge(properties['quiz_questions_skip_ignored']);
     renderProgress(0);
     // generate first questions
     generateQuestion(questions.used[challenge]);
@@ -28,7 +28,7 @@ function startChallenge(event) {
     displayTimer = setInterval(function() {
         time--;
         renderTimer();
-        if (properties['app.ui.display_timer'] && time <= 0) {
+        if (properties['app_ui_display_timer'] && time <= 0) {
             finishChallenge();
         }
     }, 1000);
@@ -40,7 +40,7 @@ function startChallenge(event) {
 
 // Internal function to init challenge
 function initChallenge(skip_ignored) {
-    // if (properties['quiz.questions.shuffle']) {
+    // if (properties['quiz_questions_shuffle']) {
     //     questions.all = shuffleArray(questions.all);
     // }
     // skip ignored
@@ -61,7 +61,7 @@ function initChallenge(skip_ignored) {
         questionsForExam = questions.used.length;
     }
     // console.warn(questions.all.map(x => x.index));
-    if (properties['quiz.questions.shuffle']) {
+    if (properties['quiz_questions_shuffle']) {
         questions.used = shuffleArray(questions.used);
     }
     // console.warn(questions.all.map(x => x.index));
@@ -96,7 +96,7 @@ function finishChallenge() {
     
     
     // renderExamResult();
-    if (properties['app.ui.animation_before_result']) {
+    if (properties['app_ui_animation_before_result']) {
         runSpinner('renderExamResult');
     } else {
         renderExamResult();

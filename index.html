@@ -34,17 +34,26 @@
                 <p class="opts-header">About</p>
                 <div class="list-group">
                     <div id="version" class="list-group-item list-group-item-action flex-column align-items-start">
-                        <span>Learn Wise: <strong>v0.07</strong></span>
+                        <span>Learn Wise: <strong data-version="0.7">v0.07</strong></span>
+                        <div class="version-messages"></div>
                     </div>
-                    <div id="version" class="list-group-item list-group-item-action flex-column align-items-start">
+                    <div id="source-code" class="list-group-item list-group-item-action flex-column align-items-start">
                         <span>Source code: <a href="https://github.com/lukasz-jakub-adamczuk/codemarker#codemarker">GitHub</a></span>
+                    </div>
+                    <div class="list-group-item list-group-item-action flex-column align-items-start">
+                        <span>Use this action to back with current options to default settings.</span>
+                        <div class="mb-2">
+                            <button id="default-settings" class="btn btn-primary">Reset all settings</button>
+                            <button id="remove-exams" class="btn btn-primary">Remove all exams</button>
+                        </div>
+                        <div class="settings-messages"></div>
                     </div>
                 </div>
                 <p class="opts-header">Upload file</p>
                 <div class="list-group">
                     <div id="version" class="list-group-item list-group-item-action flex-column align-items-start">
                         <span>Use this option to load questions from your computer or mobile. File content must be in <a href="https://github.com/lukasz-jakub-adamczuk/codemarker#exam-format">special format</a> to be parsed with application.</span>
-                        <div class="input-group mb-3">
+                        <div class="input-group mb-2">
                             <button id="load" class="btn btn-primary">Load your questions</button>
                         </div>
                         <div class="loading-messages"></div>
@@ -54,7 +63,7 @@
                 <div class="list-group">
                     <div id="version" class="list-group-item list-group-item-action flex-column align-items-start">
                         <span>Use this option to load prepared questions from LearnWise cloud storage.</span>
-                        <div class="input-group mb-3">
+                        <div class="input-group mb-2">
                             <input id="retrieve-code" type="text" class="form-control" placeholder="use code" aria-label="use code" aria-describedby="retrieve">
                             <div class="input-group-append">
                                 <button id="retrieve" class="btn btn-primary" type="button">Retrieve</button>
@@ -159,6 +168,7 @@
 
         <script src="js/hammer.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+        <script src="js/sha1.js"></script>
         <script src="js/parser.js"></script>
         <script src="js/utils.js"></script>
         <script src="js/properties.js"></script>
