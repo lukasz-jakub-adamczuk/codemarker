@@ -51,7 +51,7 @@ This question has a comment which could be useful
 Question with params in multi-line version:
 {
     "area": "test",
-    "comment": "This will be comment for question"
+    "comment": "This will be\ncomment for question"
 }
 + correct answer
 - incorrect answer

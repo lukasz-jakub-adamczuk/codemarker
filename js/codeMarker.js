@@ -5,63 +5,57 @@ function startChallenge(event) {
         return;
     }
     console.log('Start event has been triggered.');
-    
-    enableKeyEvents();
-    hideElement('#exams');
-    // if results has been displayed
-    hideElement('#result');
-    disableAction('stop');
-    showElement('.challenge');
-    showElement('#timer');
-    if (properties['app_ui_display_progress']) {
-        showElement('#progress');
-    }
-    if (properties['app_ui_display_timer']) {
-        showElement('#timer');
-    }
-    // enable nav buttons
-    enableAction('next');
-    enableAction('answers');
+
     // reset used questions
-    initChallenge(properties['quiz_questions_skip_ignored']);
-    renderProgress(0);
-    // generate first questions
-    generateQuestion(questions.used[challenge]);
-    
-    // start timer
-    time = allExams[exam].duration * 60;
-    renderTimer();
-    // start interval
-    displayTimer = setInterval(function() {
-        time--;
-        renderTimer();
-        if (properties['app_ui_display_timer'] && time <= 0) {
-            finishChallenge();
+    if (initChallenge(properties['quiz_questions_skip_ignored'])) {
+        enableKeyEvents();
+        hideElement('#exams');
+        // if results has been displayed
+        hideElement('#result');
+        disableAction('stop');
+        showElement('.challenge');
+        showElement('#timer');
+        if (properties['app_ui_display_progress']) {
+            showElement('#progress');
         }
-    }, 1000);
-    // event.preventDefault();
+        if (properties['app_ui_display_timer']) {
+            showElement('#timer');
+        }
+        // enable nav buttons
+        enableAction('next');
+        enableAction('answers');
+        renderProgress(0);
+        // generate first questions
+        generateQuestion(questions.used[challenge]);
+        
+        // start timer
+        time = allExams[exam].duration * 60;
+        renderTimer();
+        // start interval
+        displayTimer = setInterval(function() {
+            time--;
+            renderTimer();
+            if (properties['app_ui_display_timer'] && time <= 0) {
+                finishChallenge();
+            }
+        }, 1000);
+        // event.preventDefault();
 
-    disableAction('start');
-    disableAction('print');
+        disableAction('start');
+        disableAction('print');
 
-    state = 'challenge_started';
+        state = 'challenge_started';
+    }
 }
 
 // Internal function to init challenge
 function initChallenge(skip_ignored) {
-    // if (properties['quiz_questions_shuffle']) {
-    //     questions.all = shuffleArray(questions.all);
-    // }
-    // skip ignored
-    // console.log(questions.all.length);
     if (skip_ignored) {
         questions.used = questions.all.filter(function(elem, index, array) { return elem.params.status != 'ignored'; }).slice(0);
     } else {
         questions.used = questions.all.slice(0);
     }
-    // console.log(questions.all === questions.used);
-    // console.log(questions.all.length);
-    // console.log(questions.used.length);
+    
     var ignored = questions.all.filter(function(elem, index, array) { return elem.params.status == 'ignored'; }).slice(0);
     var questionsForExam;
     if (questions.used.length > allExams[exam].questions) {
@@ -69,21 +63,17 @@ function initChallenge(skip_ignored) {
     } else {
         questionsForExam = questions.used.length;
     }
-    // console.warn(questions.all.map(x => x.index));
     if (properties['quiz_questions_shuffle']) {
         questions.used = shuffleArray(questions.used);
     }
-    // console.warn(questions.all.map(x => x.index));
-    // questions.used = reorderArray(questions.used);
     questions.used = questions.used.slice(0, questionsForExam);
-    // questions.used = reorderArray(questions.all);
     
-    // console.warn(questions.all.map(x => x.index));
-
     questions.exam = [];
     challenge = 0;
     limit = questions.used.length;
     errors = [];
+
+    return limit;
 }
 
 // Handle finishing running challenge
@@ -131,43 +121,22 @@ function cancelChallenge() {
     disableAction('stop');
     disableKeyEvents();
 
-    enableAction('start');
-    
-    
-    // renderExamResult();
-    if (properties['app_ui_animation_before_result']) {
-        runSpinner('renderExamResult');
-    } else {
-        renderExamResult();
-    }
 }
 
 // Handle generating question
 function generateQuestion(q, mode) {
-    // var answers;
     var html = '';
-    // var id = '';
-    // var answer = '';
-    // var matching = '';
-    // var checked = false;
-    // var answerClass;
-    // var q.index = challenge;
-
-    // console.log(q);
-    // console.log(q.params);
-
+    
     if (mode != 'print') {
         html += '<div class="challenge-header">';
         html += '<b class="_text-muted _badge _badge-secondary question-number">Question ' + (challenge + 1) + '</b>';
         html += (q.params.area ? ' <span class="_badge _badge-secondary tag"> ' + q.params.area + '</span>' : '');
         
         if (q.params.comment) {
-            // html += '<button type="button" class="btn btn-primary icon comment-icon" data-toggle="modal" data-target="#comment-modal"></button>';
             html += '<span class="icon comment-icon" data-toggle="modal" data-target="#comment-modal"></span>';
             renderElement('#comment-modal .modal-body', marked(q.params.comment));
         }
         if (q.params.image) {
-            // html += '<button type="button" class="btn btn-primary icon comment-icon" data-toggle="modal" data-target="#comment-modal"></button>';
             html += '<span class="icon image-icon" data-toggle="modal" data-target="#image-modal"></span>';
             renderElement('#image-modal .modal-body', '<img class="question-image" src="'+q.params.image+'">');
         }
@@ -194,23 +163,10 @@ function generateQuestion(q, mode) {
     html += renderErrors(challenge-1, true);
     html += '</div>';
     
-
-    var scale = 100;
-    // scale question
-    // if (q.length > 512) {
-    //     scale = 100;
-    // } else if (q.length > 256 && q.length <= 512) {
-    //     scale = 125;
-    // } else {
-    //     scale = 150;
-    // }
-
-    
-
     if (mode == 'print') {
         return html;
     };
-    renderElement('.challenge', '<div style="font-size: '+scale+'%;">' + html + '</div>');
+    renderElement('.challenge', html);
 }
 
 

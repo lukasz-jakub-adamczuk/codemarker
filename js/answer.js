@@ -149,24 +149,10 @@ function showCorrectAnswers(event) {
 // Handle mapping answers
 function processAnswers(question) {
     var result = {'correct': 0, 'wrong': 0, 'choices': [], 'processed': true, 'shuffled': false};
-    var types = ['correct', 'wrong'];
-    var answer;
     result.choices = question.answers;
     result.correct = question.counter.correct;
     result.wrong = question.counter.wrong;
-    // for (var type of types) {
-    //     if (question.answers[type]) {
-    //         for (var ans in question.answers[type]) {
-    //             answer = {
-    //                 'type': type,
-    //                 'slug': ans,
-    //                 'name': question.answers[type][ans]
-    //             };
-    //             result.choices.push(answer);
-    //             result[type]++;
-    //         }
-    //     }
-    // }
+
     var shuffleAnswers = 'shuffle_answers' in question.params ? question.params.shuffle_answers : 'true';
     shuffleAnswers = (shuffleAnswers == 'true');
     console.log(shuffleAnswers);
@@ -182,6 +168,7 @@ function validateExamAnswers() {
     var score = 0;
     var point;
     var ratio;
+    var matches;
 
     var summary = {'score': 0, 'correct': [], 'wrong': []};
 
@@ -190,17 +177,19 @@ function validateExamAnswers() {
             ratio = 1 / questions.used[i-1].answers.correct;
             point = 0;
             
-            
             if (questions.exam[i] != undefined) {
                 console.log('\nQuestion: ' + questions.used[i-1].name);
                 console.log('Ratio:    ' + ratio);
                 // summarize multiple checked answers
                 for (var answer in questions.exam[i]) {
+                    if (questions.used[i-1].answers.choices[answer].name.indexOf('==') != -1) {
+                        matches = questions.used[i-1].answers.choices[answer].name.split('==').map(val => slugify(val.trim()));
+                    }
                     // console.log(answer);
                     if ((questions.exam[i][answer] === true
                         && questions.used[i-1].answers.choices[answer].type === 'correct')
                         || (questions.exam[i][answer] !== ''
-                        && (slugify(questions.used[i-1].answers.choices[answer].name.split('==')[0].trim())+'-'+questions.exam[i][answer]) === questions.used[i-1].answers.choices[answer].slug
+                        && matches[0]+'-'+questions.exam[i][answer] === matches[0]+'-'+matches[1]
                         && questions.used[i-1].answers.choices[answer].type === 'correct')
                         || (questions.exam[i][answer] !== ''
                         && questions.used[i-1].answers.choices[answer].slug === slugify((questions.exam[i][answer] + '').trim())
@@ -209,20 +198,19 @@ function validateExamAnswers() {
                     }
                 }
                 console.log('Checking correct answers :' + point);
-                // console.log('Checking correct answers :' + point);
-                // console.log(questions.used[i-1].name);
-                // console.log(questions.used[i-1].answers.choices);
-                // console.log(questions.exam[i]);
-
-                // any incorrect answer makes no points for this question
-                // if (ratio < 1 && questions.used[i-1].params.type == 'matching') {
                 if (ratio < 1) {
                     for (var answer in questions.exam[i]) {
-                        if ((questions.exam[i][answer] === true 
-                            && questions.used[i-1].answers.choices[answer].type === 'wrong')
-                            || (questions.exam[i][answer] == ''
-                            || (slugify(questions.used[i-1].answers.choices[answer].name.split('==')[0].trim())+'-'+questions.exam[i][answer]) !== questions.used[i-1].answers.choices[answer].slug)) {
-                            point = 0;
+                        if (questions.used[i-1].answers.choices[answer].name.indexOf('==') != -1) {
+                            matches = questions.used[i-1].answers.choices[answer].name.split('==').map(val => slugify(val.trim()));
+                            if (matches[0]+'-'+questions.exam[i][answer] !== matches[0]+'-'+matches[1]) {
+                                point = 0;
+                            }
+                        } else {
+                            if ((questions.exam[i][answer] === true 
+                                && questions.used[i-1].answers.choices[answer].type === 'wrong')
+                                || questions.exam[i][answer] == '') {
+                                point = 0;
+                            }
                         }
                     }
                 }

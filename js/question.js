@@ -79,7 +79,7 @@ function prepareSimpleQuestion(q, mode) {
             if (mode != 'print' || (mode == 'print' && answers.choices[ans].type == 'correct') || (mode == 'print' && properties['print_answers.print_incorrect'] && answers.choices[ans].type == 'wron_')) {
                 html += '<div class="custom-control custom-checkbox">'+letter
                     +'<input type="checkbox" id="'+id+'" name="customCheckbox" class="custom-control-input" value="'+slugify(answer)+'"'+(checked ? ' checked' : '')+'>'
-                    +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+answer+'</label>'
+                    +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+marked(answer)+'</label>'
                 +'</div>';
             }
         } else {
@@ -87,7 +87,7 @@ function prepareSimpleQuestion(q, mode) {
             if (mode != 'print' || (mode == 'print' && answers.choices[ans].type == 'correct') || (mode == 'print' && properties['print_answers.print_incorrect'] && answers.choices[ans].type == 'wron_')) {
                 html += '<div class="custom-control custom-radio">'+letter
                     +'<input type="radio" id="'+id+'" name="customRadio" class="custom-control-input" value="'+slugify(answer)+'"'+(checked ? ' checked' : '')+'>'
-                    +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+answer+'</label>'
+                    +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+marked(answer)+'</label>'
                 +'</div>';
             }
         }
@@ -133,7 +133,7 @@ function prepareMatchingQuestion(q, mode) {
 
         html += '<div class="matching-control">'
             // +'<input type="radio" id="'+id+'" name="customRadio" class="custom-control-input" value="'+slugify(answer)+'"'+(checked ? ' checked' : '')+'>'
-            +'<label class="matching-control-label" for="'+id+'">'+answer+'</label>'
+            +'<label class="matching-control-label" for="'+id+'">'+marked(answer)+'</label>'
             +'<select class="custom-select" id="'+id+'" name="'+slugify(answer)+'">';
             html +='<option value="">choose answer</option>'
             // for (var mtch in answers.choices) {
@@ -149,7 +149,7 @@ function prepareMatchingQuestion(q, mode) {
                     selected = ' selected';
                 }
 
-                html +='<option value="'+slugify(match.answer)+'"'+selected+'>' + match.answer + '</option>'
+                html +='<option value="'+slugify(match.answer)+'"'+selected+'>' + marked(match.answer) + '</option>'
             }
             html +='</select>'
         +'</div>';
@@ -236,7 +236,7 @@ function printSimpleQuestion(q, challenge) {
             if (answers.choices[ans].type == 'correct' || (properties['print_answers.print_incorrect'] && answers.choices[ans].type == 'wron_')) {
                 html += '<div class="custom-control custom-checkbox">'+letter
                     +'<input type="checkbox" id="'+id+'" name="'+id+'" class="custom-control-input '+inputState+'" value="'+slugify(answer)+'"'+(checked ? ' checked="checked"' : '')+' >'
-                    +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+answer+'</label>'
+                    +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+marked(answer)+'</label>'
                 +'</div>';
             }
         } else {
@@ -244,7 +244,7 @@ function printSimpleQuestion(q, challenge) {
             if (answers.choices[ans].type == 'correct' || (properties['print_answers.print_incorrect'] && answers.choices[ans].type == 'wron_')) {
                 html += '<div class="custom-control custom-radio">'+letter
                     +'<input type="radio" id="'+id+'" name="'+id+'" class="custom-control-input '+inputState+'" value="'+slugify(answer)+'"'+(checked ? ' checked="checked"' : '')+' >'
-                    +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+answer+'</label>'
+                    +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+marked(answer)+'</label>'
                 +'</div>';
             }
         }
@@ -299,7 +299,7 @@ function printMatchingQuestion(q, challenge) {
                     selected = ' selected';
                 }
 
-                html +='<option value="'+slugify(match.answer)+'"'+selected+'>' + match.answer + '</option>'
+                html +='<option value="'+slugify(match.answer)+'"'+selected+'>' + marked(match.answer) + '</option>'
             }
             html +='</select>'
         +'</div>';

@@ -1,6 +1,6 @@
 'use strict';
 
-const LW_VERSION = 'v0.7 patch-1';
+const LW_VERSION = 'v0.07 patch-1';
 
 var codeMarker = {};
 

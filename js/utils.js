@@ -43,7 +43,7 @@ function retrieveQuestions() {
     req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     req.send('code=' + code.value);
 
-    html = '';
+    var html = '';
     if (req.status == 200) {
         html += '<div class="alert alert-info mb-2" role="info">Exam file has been downloaded and parsed sucessfully.</div>';
         

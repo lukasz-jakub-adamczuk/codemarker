@@ -3,7 +3,7 @@
 var parser = {
     
     init: function() {
-        this.debug = false;
+        this.debug = true;
         this.question = {};        
         this.questions = [];        
         this.setup = null;        

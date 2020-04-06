@@ -48,8 +48,10 @@ function renderExams(displayLayer = true) {
 
 // Handle preparing single exam on list
 function prepareExam(config, includeWrapper = true) {
+    var valid = config.all-config.ignored;
     var html = '';
     html += includeWrapper ? '<article id="'+config.exam+'" class="list-group-item list-group-item-action flex-column align-items-start">' : '';
+    html += (valid == 0 ? '<div class="alert alert-warning mb-2" role="alert">Challenge cannot be started, because has no valid questions.</div>' : '');
     html += '<div class="d-flex w-100 justify-content-between">'
         + '<h5 class="mb-1 d-flex align-items-start">'
         + '<span class="exam-name">'+config.exam.split('-').join(' ').toUpperCase()+'</span>'
@@ -63,7 +65,7 @@ function prepareExam(config, includeWrapper = true) {
         // + '<small>'+config.all+' questions found'+(config.ignored > 0 ? ', but ' +config.ignored+ ' ignored or incomplete' : '')+'</small>'
         // + '<small>Notifications <span class="badge badge-secondary">4</span></small>'
         + 'Found <span class="badge badge-secondary">'+config.all+'</span> '
-        + 'Valid <span class="badge badge-success">'+(config.all-config.ignored)+'</span> '
+        + 'Valid <span class="badge badge-success">'+(valid)+'</span> '
         + 'Invalid <span class="badge badge-danger">'+config.ignored+'</span> ';
     html += includeWrapper ? '</article>' : '';
     return html;
@@ -81,18 +83,12 @@ function deleteExam(event) {
         console.log('Exam has been deleted.');
     });
 
-    if ('localStorage' in window) {
-        if ('allExams' in localStorage) {
-            // allExams = JSON.parse(localStorage.getItem('allExams'));
-            delete(allExams['cm-'+exam]);
-            localStorage.setItem('allExams', JSON.stringify(allExams));
-            console.log('allExams in localStorage has been updated.');
-        }
-        if ('cm-'+exam in localStorage) {
-            localStorage.removeItem('cm-'+exam);
-            console.log('Exam in localStorage has been deleted.');
-        }
-    }
+    removeLocalStorageItem('cm-'+exam);
+    delete(allExams['cm-'+exam]);
+    setLocalStorageItem('allExams', allExams, true);
+    delete(examsHashes['cm-'+exam]);
+    setLocalStorageItem('exaHashes', examsHashes, true);
+
     event.stopPropagation();
 
     state = 'exam_deleted';
@@ -184,6 +180,9 @@ function printExam(event) {
 // Handle rendering result of finished challenge
 function renderExamResult() {
     console.log('renderExamResult() has been used.');
+    
+    hideElements(['challenge', 'progress', 'timer']);
+    
     showElement('.result');
 
 
