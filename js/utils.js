@@ -88,8 +88,8 @@ function checkQuestions(exam) {
     req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     req.send('hash=' + exam.hashcode);
 
-    console.log('allExams in check question: ' + allExams[exam.id].generated);
-    console.log('hashes in check question:   ' + exam.generated);
+    // console.log('allExams in check question: ' + allExams[exam.id].generated);
+    // console.log('hashes in check question:   ' + exam.generated);
 
     html = '';
     console.log(req);
