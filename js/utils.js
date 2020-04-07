@@ -50,7 +50,6 @@ function retrieveQuestions() {
         // console.log(allExams[exam]);
         if (code.value.length != 40) {
             var examHash = {
-                // 'id': exam.replace('cm-', ''),
                 'id': exam,
                 'generated': allExams[exam].generated,
                 'generatedDate': (new Date(allExams[exam].generated*1)) + '',
@@ -88,9 +87,6 @@ function checkQuestions(exam) {
     req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     req.send('hash=' + exam.hashcode);
 
-    // console.log('allExams in check question: ' + allExams[exam.id].generated);
-    // console.log('hashes in check question:   ' + exam.generated);
-
     html = '';
     console.log(req);
     if (req.status == 200) {
@@ -103,9 +99,6 @@ function checkQuestions(exam) {
 
             document.querySelector('#'+exam.id.replace('cm-', '')+' div h5 i').addEventListener('click', syncExam);
         }
-
-        console.log('Exam on server: ' + (new Date(timestamp)) + ' ['+timestamp+']');
-        console.log('Exam locally:   ' + (new Date(exam.generated*1)) + ' ['+exam.generated+']');
     } else {
         html += '<div class="alert alert-warning mb-2" role="alert">' + req.status + '</div>';
     }
@@ -162,14 +155,6 @@ function shuffleArray(array) {
         array[randomIndex] = temporaryValue;
     }
   
-    return array;
-}
-
-function reorderArray(array) {
-    for (var i = 0; i < array.length; i++) {
-        // array[i].index = i+1;
-        // array[i].processed = true;
-    }
     return array;
 }
 
