@@ -19,8 +19,6 @@ function readSingleFile(e) {
         renderElement('.loading-messages', html);
 
         if (['challenge_started', 'challenge_finished', 'exam_result_rendered', 'exam_printed'].includes(state)) {
-            // cancelChallenge();
-            // hideElements(['exams']);
             renderExams(false);
         } else {
             renderExams();
@@ -65,14 +63,12 @@ function retrieveQuestions() {
         }
 
         if (['challenge_started', 'challenge_finished', 'exam_result_rendered', 'exam_printed'].includes(state)) {
-            // cancelChallenge();
-            // hideElements(['exams']);
             renderExams(false);
         } else {
             renderExams();
         }
         
-        // code.value = '';
+        code.value = '';
     } else {
         html += '<div class="alert alert-warning mb-2" role="alert">' + req.status + '</div>';
     }
@@ -98,26 +94,15 @@ function checkQuestions(exam) {
     html = '';
     console.log(req);
     if (req.status == 200) {
-        // html += '<div class="alert alert-info mb-2" role="info">Fresh exam has been looking for.</div>';
-        
-        // var exam = 'cm-pa';
         var timestamp = req.responseText * 1;
 
-        console.log(typeof exam.generated);
-        console.log(typeof timestamp);
-
         if (exam.generated < timestamp) {
-            // html += '<div class="alert alert-info mb-2" role="info">Fresh exam has been found.</div>';
             html += '<i class="icon sync-icon" data-hash="'+exam.hashcode+'"></i>';
      
             $('#'+exam.id.replace('cm-', '')+' div h5').append(html);
 
-            // console.log('#'+exam.id.replace('cm-', '')+' div h5 i');
-            // console.log(document.querySelector('#'+exam.id.replace('cm-', '')+' div h5 i'));
-
             document.querySelector('#'+exam.id.replace('cm-', '')+' div h5 i').addEventListener('click', syncExam);
         }
-        // $('#'+exam.id.replace('cm-', '')+' div h5 i')[0].click(syncExam);
 
         console.log('Exam on server: ' + (new Date(timestamp)) + ' ['+timestamp+']');
         console.log('Exam locally:   ' + (new Date(exam.generated*1)) + ' ['+exam.generated+']');
@@ -129,7 +114,6 @@ function checkQuestions(exam) {
 // Handle checking fresh questions from server
 function syncExam(event) {
     console.log('syncExam() has been used.');
-    // var node = event.target;
 
     // maybe confirmation
     var hash = event.target.getAttribute('data-hash');
@@ -140,15 +124,10 @@ function syncExam(event) {
     req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     req.send('code=' + hash);
 
-    html = '';
     if (req.status == 200) {
-        html += '<div class="alert alert-info mb-2" role="info">Updated.</div>';
-        
-        // req.responseText);
         parseChallenge(req.responseText);
 
         console.log(allExams[exam]);
-        // if (code.value.length != 40) {
         var examHash = {
             'id': exam,
             'generated': allExams[exam].generated,
@@ -156,29 +135,13 @@ function syncExam(event) {
             'hashcode': hash
         };
         examsHashes[exam] = examHash;
-        console.log(examsHashes);
-
-        console.log('allExams in sync: ' + allExams[exam].generated);
-        console.log('hashes in sync:   ' + examsHashes[exam].generated);
-        // if ('localStorage' in window) {
-        //     localStorage.setItem('examsHashes', JSON.stringify(examsHashes));
-        // }
         setLocalStorageItem('examsHashes', examsHashes);
-        // }
-        console.log(examsHashes);
-
-        $('#'+exam.replace('cm-', '')).html(prepareExam(allExams[exam], false));
         
-        // code.value = '';
+        $('#'+exam.replace('cm-', '')).html(prepareExam(allExams[exam], false));
+        console.log('OK');
     } else {
-        html += '<div class="alert alert-warning mb-2" role="alert">' + req.status + '</div>';
+        console.log(req.status);
     }
-    // renderElement('.downloading-messages', html);
-
-    // if (properties['app_ui_start_challenge_after_download_success']) {
-    //     document.querySelector('#options-tgr').click();
-    //     startChallenge();
-    // }
     event.stopPropagation();
 }
 
@@ -429,10 +392,4 @@ function checkAppVersion() {
         }
     }
 }
-
-
-
-
-
-
 
