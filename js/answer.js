@@ -3,13 +3,22 @@
 
 // Handle registring answer used to calculate running challenge result
 function registerAnswerForSimpleQuestion(event) {
-    if (event.target.getAttribute('id')) {
+    // console.log(event.target.name);
+    var name = event.target.name;
+    if (name == 'marker') {
+        var label = event.target.getAttribute('id');
+        var question = label.split('-')[1];
+        questions.marked[question] = event.target.checked;
+        console.log(questions.marked[question]);
+    }
+    if (name == 'answer') {
         var label = event.target.getAttribute('id');
         var question = label.split('q')[1].split('a')[0];
         var answer = label.split('a')[1];
         var type = questions['used'][question-1].params['type'];
 
         if (type == 'single' || type == 'multiple' || type == 'input') {
+            console.log('registerAnswerForSimpleQuestion() has been used.');
             if (!(question in questions.exam)) {
                 questions.exam[question] = {};
             }
@@ -43,53 +52,58 @@ function registerAnswerForSimpleQuestion(event) {
                     console.log(errors);
                 }
             }
-            renderErrors(question-1);
+            
+        }
 
-            countProgress();
-
-            if ((answeredExamQuestions().length) == questions.used.length) {
-                enableAction('stop');
+        if (type == 'matching') {
+            console.log('Register answer for matching question.');
+    
+            errors[question-1] = [];
+    
+            var choice = event.target.getAttribute('name');
+            var match = $('#' + event.target.getAttribute('id') + ' option:selected')[0].value;
+    
+            questions.exam[question] = questions.exam[question] || {};
+            // questions.exam[question][answer] = choice + '-' + match;
+            questions.exam[question][answer] = match;
+    
+            var selected = [];
+            $('select option:selected').each(function(idx, itm) { if (itm.value != '') selected.push(itm.value) });
+            console.log(selected);
+            if (Object.values(questions.exam[question]).some(el => el == '')) {
+                errors[question-1].push('You have to match each answer.');
             }
+            if ((new Set(selected).size) < selected.length) {
+                errors[question-1].push('You cannot use single answer many times.');
+            }
+    
+            // renderErrors(question-1);
+        }
+        if (type == 'input') {
+            console.log('Register answer for input question.');
+    
+            questions.exam[question] = questions.exam[question] || {};
+            questions.exam[question][0] = event.target.value;
+        }
+
+        renderErrors(question-1);
+
+        countProgress();
+
+        if ((answeredExamQuestions().length) == questions.used.length) {
+            enableAction('stop');
         }
     }
 }
 // Handle registring answer used to calculate running challenge result
 function registerAnswerForMatchingQuestion(event) {
+    console.log('registerAnswerForSimpleQuestion() has been used.');
     var label = event.target.getAttribute('id');
     var question = label.split('q')[1].split('a')[0];
     var answer = label.split('a')[1];
     var type = questions['used'][question-1].params['type'];
 
-    if (type == 'matching') {
-        console.log('Register answer for matching question.');
-
-        errors[question-1] = [];
-
-        var choice = event.target.getAttribute('name');
-        var match = $('#' + event.target.getAttribute('id') + ' option:selected')[0].value;
-
-        questions.exam[question] = questions.exam[question] || {};
-        // questions.exam[question][answer] = choice + '-' + match;
-        questions.exam[question][answer] = match;
-
-        var selected = [];
-        $('select option:selected').each(function(idx, itm) { if (itm.value != '') selected.push(itm.value) });
-        console.log(selected);
-        if (Object.values(questions.exam[question]).some(el => el == '')) {
-            errors[question-1].push('You have to match each answer.');
-        }
-        if ((new Set(selected).size) < selected.length) {
-            errors[question-1].push('You cannot use single answer many times.');
-        }
-
-        renderErrors(question-1);
-    }
-    if (type == 'input') {
-        console.log('Register answer for input question.');
-
-        questions.exam[question] = questions.exam[question] || {};
-        questions.exam[question][0] = event.target.value;
-    }
+    
         
     console.log('Registered answer:');
     console.log(questions.exam[question]);
@@ -230,3 +244,4 @@ function validateExamAnswers() {
     
     return summary;
 }
+

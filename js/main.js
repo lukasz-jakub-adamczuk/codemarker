@@ -10,7 +10,9 @@ var questions = {
     'all': [],
     'used': [],
     'exam': [],
-    'ignored': []
+    'ignored': [],
+    'marked': [],
+    'answered': []
 };
 var challenge;
 var limit;
@@ -79,8 +81,8 @@ document.querySelector('#remove-exams').addEventListener('click', removeAllExams
 
 // challenge
 document.querySelector('#exams .list').addEventListener('click', selectExam);  // true
-document.querySelector('.challenge').addEventListener('click', registerAnswerForSimpleQuestion);
-document.querySelector('.challenge').addEventListener('change', registerAnswerForMatchingQuestion);
+// document.querySelector('.challenge').addEventListener('click', registerAnswerForSimpleQuestion);
+document.querySelector('.challenge').addEventListener('change', registerAnswerForSimpleQuestion);
 
 document.querySelector('#start-button').addEventListener('click', startChallenge);
 document.querySelector('#stop-button').addEventListener('click', finishChallenge);

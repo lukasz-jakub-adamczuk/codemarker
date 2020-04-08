@@ -66,7 +66,12 @@ function initChallenge(skip_ignored) {
     if (properties['quiz_questions_shuffle']) {
         questions.used = shuffleArray(questions.used);
     }
-    questions.used = questions.used.slice(0, questionsForExam);
+    if (!properties['quiz_questions_use_all']) {
+    //     questions.used = questions.used.slice(0);
+    // } else {
+        questions.used = questions.used.slice(0, questionsForExam);
+    }
+    
     
     questions.exam = [];
     challenge = 0;
@@ -124,48 +129,58 @@ function cancelChallenge() {
 }
 
 // Handle generating question
-function generateQuestion(q, mode) {
+function generateQuestion(q) {
     var html = '';
     
-    if (mode != 'print') {
-        html += '<div class="challenge-header">';
-        html += '<b class="_text-muted _badge _badge-secondary question-number">Question ' + (challenge + 1) + '</b>';
-        html += (q.params.area ? ' <span class="_badge _badge-secondary tag"> ' + q.params.area + '</span>' : '');
-        
-        if (q.params.comment) {
-            html += '<span class="icon comment-icon" data-toggle="modal" data-target="#comment-modal"></span>';
-            renderElement('#comment-modal .modal-body', marked(q.params.comment));
-        }
-        if (q.params.image) {
-            html += '<span class="icon image-icon" data-toggle="modal" data-target="#image-modal"></span>';
-            renderElement('#image-modal .modal-body', '<img class="question-image" src="'+q.params.image+'">');
-        }
-        if (q.params.eqi && q.params.eri) {
-            html += '<span class="icon database-icon" data-toggle="modal" data-target="#database-modal"></span>';
-            renderElement('#database-modal .modal-body', marked('If this question looks broken then check how it looks in Excel file\n\nQuestion in Excel: '+q.params.eqi+'\n\nRow in Excel: '+q.params.eri));
-        }
-        html += '</div>';
+    html += '<div class="challenge-header">';
+    html += '<b class="_text-muted _badge _badge-secondary question-number">Question ' + (challenge + 1) + '</b>';
+    html += (q.params.area ? ' <span class="_badge _badge-secondary tag"> ' + q.params.area + '</span>' : '');
+    
+    if (q.params.comment) {
+        html += '<span class="icon comment-icon" data-toggle="modal" data-target="#comment-modal"></span>';
+        renderElement('#comment-modal .modal-body', marked(q.params.comment));
     }
+    if (q.params.image) {
+        html += '<span class="icon image-icon" data-toggle="modal" data-target="#image-modal"></span>';
+        renderElement('#image-modal .modal-body', '<img class="question-image" src="'+q.params.image+'">');
+    }
+    if (q.params.eqi && q.params.eri) {
+        html += '<span class="icon database-icon" data-toggle="modal" data-target="#database-modal"></span>';
+        renderElement('#database-modal .modal-body', marked('If this question looks broken then check how it looks in Excel file\n\nQuestion in Excel: '+q.params.eqi+'\n\nRow in Excel: '+q.params.eri));
+    }
+    html += '</div>';
     
     if ('type' in q.params) {
         if (q.params.type == 'input') {
-            html += prepareInputQuestion(q, mode);
+            html += prepareInputQuestion(q);
         }
         if (q.params.type == 'matching') {
-            html += prepareMatchingQuestion(q, mode);
+            html += prepareMatchingQuestion(q);
         }
         if (q.params.type == 'single' || q.params.type == 'multiple') {
-            html += prepareSimpleQuestion(q, mode);
+            html += prepareSimpleQuestion(q);
         }
     }
 
+    if (properties['quiz_questions_mark_for_review']) {
+        // default value
+        questions.marked[challenge] = questions.marked[challenge] || false; 
+        var checked = questions.marked[challenge];
+        html += '<div class="mark-for-review">';
+        html += '<div class="custom-control custom-checkbox">'
+                    +'<input type="checkbox" id="review-'+challenge+'" name="marker" class="custom-control-input" value=""'+(checked ? ' checked' : '')+'>'
+                    +'<label class="custom-control-label" for="review-'+challenge+'">Mark question for review</label>'
+                +'</div>';
+        html += '</div>';
+    }
+
     html += '<div class="question-errors">';
-    html += renderErrors(challenge-1, true);
+    html += renderErrors(challenge, true);
     html += '</div>';
     
-    if (mode == 'print') {
-        return html;
-    };
+    // if (mode == 'print') {
+    //     return html;
+    // };
     renderElement('.challenge', html);
 }
 

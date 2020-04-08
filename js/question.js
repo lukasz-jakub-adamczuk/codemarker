@@ -44,7 +44,7 @@ function nextQuestion(event) {
     enableAction('prev');
 }
 
-function prepareSimpleQuestion(q, mode) {
+function prepareSimpleQuestion(q) {
     var id, answer, checked, answerClass, letter = '';
     if (!q.answers.processed) {
         q.answers = processAnswers(q);
@@ -52,11 +52,12 @@ function prepareSimpleQuestion(q, mode) {
     var answers = q.answers;
     var idx = challenge+1;
     var html = '';
-    if (mode == 'print') {
-        html += '<div class="question">' + marked(q.name).replace('<p>', '<p>' + idx + '. ') + '</div>';
-    } else {
+    // if (mode == 'print') {
+    //     html += '<div class="question">' + marked(q.name).replace('<p>', '<p>' + idx + '. ') + '</div>';
+    // } else {
         html += '<div class="question">' + marked(q.name) + '</div>';
-    }
+    // }
+    // html += '<div class="row">';
     html += '<div class="answers">';
     for (var ans in answers.choices) {
         id = 'q'+idx+'a'+ans+'';
@@ -71,32 +72,34 @@ function prepareSimpleQuestion(q, mode) {
         }
         // correct answer
         answerClass = '';
-        if (mode == 'print') {
-            answerClass = answers.choices[ans].type == 'wrong' ? ' marked-wrong' : ' marked-correct';
-        }
+        // if (mode == 'print') {
+        //     answerClass = answers.choices[ans].type == 'wrong' ? ' marked-wrong' : ' marked-correct';
+        // }
         if (answers.choices.length - answers.wrong > 1) {
             // multi choice
-            if (mode != 'print' || (mode == 'print' && answers.choices[ans].type == 'correct') || (mode == 'print' && properties['print_answers.print_incorrect'] && answers.choices[ans].type == 'wron_')) {
-                html += '<div class="custom-control custom-checkbox">'+letter
-                    +'<input type="checkbox" id="'+id+'" name="customCheckbox" class="custom-control-input" value="'+slugify(answer)+'"'+(checked ? ' checked' : '')+'>'
-                    +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+marked(answer)+'</label>'
+            // if (mode != 'print' || (mode == 'print' && answers.choices[ans].type == 'correct') || (mode == 'print' && properties['print_answers.print_incorrect'] && answers.choices[ans].type == 'wrong')) {
+            // if (mode != 'print' || (mode == 'print' && answers.choices[ans].type == 'correct') || (mode == 'print' && properties['print_answers.print_incorrect'] && answers.choices[ans].type == 'wrong')) {
+                html += '<div class="custom-control custom-checkbox">'
+                    +'<input type="checkbox" id="'+id+'" name="answer" class="custom-control-input" value="'+slugify(answer)+'"'+(checked ? ' checked' : '')+'>'
+                    +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+letter+marked(answer)+'</label>'
                 +'</div>';
-            }
+            // }
         } else {
             // single choice
-            if (mode != 'print' || (mode == 'print' && answers.choices[ans].type == 'correct') || (mode == 'print' && properties['print_answers.print_incorrect'] && answers.choices[ans].type == 'wron_')) {
-                html += '<div class="custom-control custom-radio">'+letter
-                    +'<input type="radio" id="'+id+'" name="customRadio" class="custom-control-input" value="'+slugify(answer)+'"'+(checked ? ' checked' : '')+'>'
-                    +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+marked(answer)+'</label>'
+            // if (mode != 'print' || (mode == 'print' && answers.choices[ans].type == 'correct') || (mode == 'print' && properties['print_answers.print_incorrect'] && answers.choices[ans].type == 'wrong')) {
+                html += '<div class="custom-control custom-radio">'
+                    +'<input type="radio" id="'+id+'" name="answer" class="custom-control-input" value="'+slugify(answer)+'"'+(checked ? ' checked' : '')+'>'
+                    +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+letter+marked(answer)+'</label>'
                 +'</div>';
-            }
+            // }
         }
     }
+    // html += '</div>';
     html += '</div>';
     return html;
 }
 
-function prepareMatchingQuestion(q, mode) {
+function prepareMatchingQuestion(q) {
     var id, answer, choice, selected, answerClass;
     if (!q.answers.processed) {
         q.answers = processAnswers(q);
@@ -105,11 +108,11 @@ function prepareMatchingQuestion(q, mode) {
     var idx = challenge+1;
     var html = '';
     var matching = '';
-    if (mode == 'print') {
-        html += '<div class="question">' + marked(q.name).replace('<p>', '<p>' + idx + '. ') + '</div>';
-    } else {
+    // if (mode == 'print') {
+    //     html += '<div class="question">' + marked(q.name).replace('<p>', '<p>' + idx + '. ') + '</div>';
+    // } else {
         html += '<div class="question">' + marked(q.name) + '</div>';
-    }
+    // }
     
     // prepare choices for matching
     var choices = [];
@@ -127,14 +130,15 @@ function prepareMatchingQuestion(q, mode) {
         
         // correct answer
         answerClass = '';
-        if (mode == 'print') {
-            answerClass = answers.choices[ans].type == 'wrong' ? ' marked-wrong' : ' marked-correct';
-        }
+        // if (mode == 'print') {
+        //     answerClass = answers.choices[ans].type == 'wrong' ? ' marked-wrong' : ' marked-correct';
+        // }
 
         html += '<div class="matching-control">'
             // +'<input type="radio" id="'+id+'" name="customRadio" class="custom-control-input" value="'+slugify(answer)+'"'+(checked ? ' checked' : '')+'>'
             +'<label class="matching-control-label" for="'+id+'">'+marked(answer)+'</label>'
-            +'<select class="custom-select" id="'+id+'" name="'+slugify(answer)+'">';
+            // +'<select class="custom-select" id="'+id+'" name="'+slugify(answer)+'">';
+            +'<select class="custom-select" id="'+id+'" name="answer">';
             html +='<option value="">choose answer</option>'
             // for (var mtch in answers.choices) {
             //     matching = answers.choices[mtch].name.split('==')[1].trim();
@@ -158,7 +162,7 @@ function prepareMatchingQuestion(q, mode) {
     return html;
 }
 
-function prepareInputQuestion(q, mode) {
+function prepareInputQuestion(q) {
     var id, answer, choice, written, answerClass;
     if (!q.answers.processed) {
         q.answers = processAnswers(q);
@@ -179,16 +183,16 @@ function prepareInputQuestion(q, mode) {
         }
     }
 
-    var input = '<input type="text" id="'+id+'" name="aaa" value="'+written+'" class="form-control" placeholder="Type answer here" />';
+    var input = '<input type="text" id="'+id+'" name="answer" value="'+written+'" class="form-control" placeholder="Type answer here" />';
 
     console.log();
 
     var html = '';
-    if (mode == 'print') {
-        html += '<div class="question">' + marked(q.name).replace('<p>', '<p>' + idx + '. ') + '</div>';
-    } else {
+    // if (mode == 'print') {
+    //     html += '<div class="question">' + marked(q.name).replace('<p>', '<p>' + idx + '. ') + '</div>';
+    // } else {
         html += '<div class="question">' + marked(q.name).replace('[]', input) + '</div>';
-    }
+    // }
 
 
     return html;
@@ -233,18 +237,18 @@ function printSimpleQuestion(q, challenge) {
 
         if (answers.choices.length - answers.wrong > 1) {
             // multi choice
-            if (answers.choices[ans].type == 'correct' || (properties['print_answers.print_incorrect'] && answers.choices[ans].type == 'wron_')) {
-                html += '<div class="custom-control custom-checkbox">'+letter
+            if (answers.choices[ans].type == 'correct' || (properties['print_answers.print_incorrect'] && answers.choices[ans].type == 'wrong')) {
+                html += '<div class="custom-control custom-checkbox">'
                     +'<input type="checkbox" id="'+id+'" name="'+id+'" class="custom-control-input '+inputState+'" value="'+slugify(answer)+'"'+(checked ? ' checked="checked"' : '')+' >'
-                    +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+marked(answer)+'</label>'
+                    +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+letter+marked(answer)+'</label>'
                 +'</div>';
             }
         } else {
             // single choice
-            if (answers.choices[ans].type == 'correct' || (properties['print_answers.print_incorrect'] && answers.choices[ans].type == 'wron_')) {
-                html += '<div class="custom-control custom-radio">'+letter
+            if (answers.choices[ans].type == 'correct' || (properties['print_answers.print_incorrect'] && answers.choices[ans].type == 'wrong')) {
+                html += '<div class="custom-control custom-radio">'
                     +'<input type="radio" id="'+id+'" name="'+id+'" class="custom-control-input '+inputState+'" value="'+slugify(answer)+'"'+(checked ? ' checked="checked"' : '')+' >'
-                    +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+marked(answer)+'</label>'
+                    +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+letter+marked(answer)+'</label>'
                 +'</div>';
             }
         }

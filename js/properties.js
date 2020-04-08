@@ -18,14 +18,23 @@ var propertiesSetup = {
                 'name': 'quiz_answers_print_letters',
                 'label': 'Display letters before answers.',
                 'value': false,
+                'state': 'enabled'
+            }, {
+                'name': 'quiz_questions_mark_for_review',
+                'label': 'Allow marking questions for review. <span class="badge badge-primary">Soon</span>',
+                'value': false,
                 'state': 'disabled'
             }, {
                 'name': 'quiz_answers_help_button',
                 'label': 'Allow using Help button during challenges.',
                 'value': true
             }, {
+                'name': 'quiz_questions_use_all',
+                'label': 'Use all available questions. <span class="badge badge-primary">New</span>',
+                'value': false
+            }, {
                 'name': 'quiz_questions_skip_ignored',
-                'label': 'Skip invalid or marked as ignored questions.',
+                'label': 'Skip invalid or ignored questions.',
                 'value': true
             }
         ]
@@ -37,27 +46,32 @@ var propertiesSetup = {
                 'name': 'app_ui_introduction_enabled',
                 'label': 'Watch introdution everytime.',
                 'value': true
-            },{
+            }, {
                 'name': 'app_ui_animation_before_result',
                 'label': 'Watch animation before displaying exam result.',
                 'value': true
-            },{
+            }, {
                 'name': 'app_ui_start_challenge_after_load_success',
                 'label': 'Start challenge after successfully loading questions from file. Print mode cannot be used.',
                 'value': false
-            },{
+            }, {
                 'name': 'app_ui_start_challenge_after_download_success',
                 'label': 'Start challenge after successfully downloading questions from internet. Print mode cannot be used.',
                 'value': false
-            },{
+            }, {
                 'name': 'app_ui_start_challenge_after_selecting',
                 'label': 'Start challenge after selecting. Print mode cannot be used.',
                 'value': false
-            },{
+            }, {
+                'name': 'app_ui_display_nav_below_questions',
+                'label': 'Display additional navigation below questions. <span class="badge badge-primary">Soon</span>',
+                'value': false,
+                'state': 'disabled'
+            }, {
                 'name': 'app_ui_display_progress',
                 'label': 'Display progress bar during challenge.',
                 'value': true
-            },{
+            }, {
                 'name': 'app_ui_display_timer',
                 'label': 'Display time during challenge.',
                 'value': true
@@ -68,11 +82,11 @@ var propertiesSetup = {
         'label': 'Print mode',
         'opts': [
             {
-                'name': 'print_questions.skip_ignore_',
+                'name': 'print_questions_skip_ignored',
                 'label': 'Skip invalid or marked as ignored questions.',
                 'value': true
-            },{
-                'name': 'print_answers.print_incorrec_',
+            }, {
+                'name': 'print_answers_print_incorrect',
                 'label': 'Print incorrect (less visible) answers',
                 'value': false
             }
@@ -120,6 +134,9 @@ function prepareProperty(property) {
         + '<div class="custom-control custom-switch">'
         + '<input type="checkbox" class="custom-control-input" id="' + property.name + '"' + (properties[property.name] ? 'checked' : '') + disabled + '>'
         + '<label class="custom-control-label" for="' + property.name + '">' + property.label + '</label>'
+        + '<div id="prop-' + property.name + '-errors">'
+        + (property.name in properties ? '' : '<div class="alert alert-warning mb-2" role="alert">Property value not detected locally. Use switch to set correct value or Reset all settings.</div>')
+        + '</div>'
         + '</div>'
         + '</span>';
     return html;
@@ -143,6 +160,9 @@ function manageProperty(event) {
             localStorage.setItem('properties', JSON.stringify(properties));
         }
     }
+    var html = (name in properties ? '' : '<div class="alert alert-warning mb-2" role="alert">Property value not detected locally. Use switch to set correct value or Reset all settings.</div>');
+
+    renderElement('#'+node.getAttribute('id')+'-errors', html);
 }
 
 // Handle changing value of property

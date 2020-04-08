@@ -448,6 +448,11 @@ a {
 .loading-errors .alert:last-child {
     margin-bottom: .5rem;
 }
+
+.mark-for-review {
+    margin-top: 2rem;
+}
+
 /* #myElement {
     background: silver;
     height: 300px;

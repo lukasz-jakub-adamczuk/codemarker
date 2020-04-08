@@ -268,6 +268,36 @@ function renderExamResult() {
     state = 'exam_result_rendered';
 }
 
+// Handle rendering review for running challenge
+function renderReviewResult() {
+    console.log('renderExamResult() has been used.');
+
+    hideElements(['challenge']);
+    
+    showElement('.result');
+
+    var column = Math.ceil(questions.used.length / 3);
+    console.log(column);
+    
+    var html = '';
+    html += '<div class="container">';
+    html += '<div class="row">';
+    for (var q in questions.used) {
+        q = parseInt(q);
+        if (q % column == 0) {
+            html += '<div class="col-sm"><div>';
+        }
+        html += '<div>'+(q+1)+'.</div>';
+        if ((q+1) % column == 0) {
+            html += '</div></div>';
+        }
+    }
+    html += '</div>';
+    html += '</div>';
+
+    renderElement('.result', html);
+}
+
 // Handle exams cleanup
 function removeAllExams(event) {
     console.log('removeAllExams() has been used.');
@@ -286,7 +316,9 @@ function removeAllExams(event) {
         'all': [],
         'used': [],
         'exam': [],
-        'ignored': []
+        'ignored': [],
+        'marked': [],
+        'answered': []
     };
     challenge = undefined;
     limit = undefined;
