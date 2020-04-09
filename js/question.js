@@ -76,7 +76,8 @@ function prepareSimpleQuestion(q, idx) {
             checked = false;
         }
         if (properties['quiz_answers_print_letters']) {
-            letter = '<span class="answer-letter">'+letters[ans].toUpperCase()+'.</span>';
+            letter = ''+letters[ans].toUpperCase()+'. ';
+            // letter = '<span class="answer-letter">'+letters[ans].toUpperCase()+'.</span>';
         }
         // correct answer
         answerClass = '';
@@ -89,7 +90,7 @@ function prepareSimpleQuestion(q, idx) {
             // if (mode != 'print' || (mode == 'print' && answers.choices[ans].type == 'correct') || (mode == 'print' && properties['print_answers.print_incorrect'] && answers.choices[ans].type == 'wrong')) {
                 html += '<div class="custom-control custom-checkbox">'
                     +'<input type="checkbox" id="'+id+'" name="answer" class="custom-control-input" value="'+slugify(answer)+'"'+(checked ? ' checked' : '')+'>'
-                    +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+letter+marked(answer)+'</label>'
+                    +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+marked(letter+answer)+'</label>'
                 +'</div>';
             // }
         } else {
@@ -97,7 +98,7 @@ function prepareSimpleQuestion(q, idx) {
             // if (mode != 'print' || (mode == 'print' && answers.choices[ans].type == 'correct') || (mode == 'print' && properties['print_answers.print_incorrect'] && answers.choices[ans].type == 'wrong')) {
                 html += '<div class="custom-control custom-radio">'
                     +'<input type="radio" id="'+id+'" name="answer" class="custom-control-input" value="'+slugify(answer)+'"'+(checked ? ' checked' : '')+'>'
-                    +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+letter+marked(answer)+'</label>'
+                    +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+marked(letter+answer)+'</label>'
                 +'</div>';
             // }
         }
@@ -248,7 +249,7 @@ function printSimpleQuestion(q, challenge) {
             if (answers.choices[ans].type == 'correct' || (properties['print_answers.print_incorrect'] && answers.choices[ans].type == 'wrong')) {
                 html += '<div class="custom-control custom-checkbox">'
                     +'<input type="checkbox" id="'+id+'" name="'+id+'" class="custom-control-input '+inputState+'" value="'+slugify(answer)+'"'+(checked ? ' checked="checked"' : '')+' >'
-                    +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+letter+marked(answer)+'</label>'
+                    +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+marked(letter+answer)+'</label>'
                 +'</div>';
             }
         } else {
@@ -256,7 +257,7 @@ function printSimpleQuestion(q, challenge) {
             if (answers.choices[ans].type == 'correct' || (properties['print_answers.print_incorrect'] && answers.choices[ans].type == 'wrong')) {
                 html += '<div class="custom-control custom-radio">'
                     +'<input type="radio" id="'+id+'" name="'+id+'" class="custom-control-input '+inputState+'" value="'+slugify(answer)+'"'+(checked ? ' checked="checked"' : '')+' >'
-                    +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+letter+marked(answer)+'</label>'
+                    +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+marked(letter+answer)+'</label>'
                 +'</div>';
             }
         }

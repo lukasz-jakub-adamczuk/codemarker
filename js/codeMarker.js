@@ -130,9 +130,13 @@ function cancelChallenge() {
 
 // Handle generating question
 function generateQuestion(q, idx) {
-    var idx = idx || challenge;
+    console.log('idx in param: '+ idx);
+    var idx = idx === 0 ? 0 : idx || challenge;
+    console.log('idx in var: '+ idx);
     var html = '';
+    console.log('challenge in var: '+ challenge);
     challenge = idx;
+    console.log('challenge in var: '+ challenge);
     
     html += '<div class="challenge-header">';
     html += '<b class="_text-muted _badge _badge-secondary question-number">Question ' + (idx + 1) + ' <span class="_text-muted">/ '+questions.used.length+'</span></b>';
