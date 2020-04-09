@@ -94,7 +94,6 @@ document.querySelector('#answers-button').addEventListener('click', showCorrectA
 
 
 
-
 var arrows = {
     'left': 37,
     'up': 38,

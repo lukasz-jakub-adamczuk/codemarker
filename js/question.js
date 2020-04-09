@@ -11,7 +11,7 @@ function prevQuestion(event) {
     if (challenge > 0) {
         challenge--;
         generateQuestion(questions.used[challenge]);
-        event.preventDefault();
+        // event.preventDefault();
     }
 
     if (challenge == 0) {
@@ -19,7 +19,11 @@ function prevQuestion(event) {
     } else {
         enableAction('prev');
     }
-    enableAction('next');
+    if (challenge == limit-1) {
+        disableAction('next');
+    } else {
+        enableAction('next');
+    }
 }
 
 // Handle next question for running challenge
@@ -33,24 +37,28 @@ function nextQuestion(event) {
     if (challenge < limit-1) {
         challenge++;
         generateQuestion(questions.used[challenge]);
-        event.preventDefault();
+        // event.preventDefault();
     }
 
+    if (challenge == 0) {
+        disableAction('prev');
+    } else {
+        enableAction('prev');
+    }
     if (challenge == limit-1) {
         disableAction('next');
     } else {
         enableAction('next');
     }
-    enableAction('prev');
 }
 
-function prepareSimpleQuestion(q) {
+function prepareSimpleQuestion(q, idx) {
     var id, answer, checked, answerClass, letter = '';
     if (!q.answers.processed) {
         q.answers = processAnswers(q);
     }
     var answers = q.answers;
-    var idx = challenge+1;
+    // var idx = idx || challenge+1;
     var html = '';
     // if (mode == 'print') {
     //     html += '<div class="question">' + marked(q.name).replace('<p>', '<p>' + idx + '. ') + '</div>';
@@ -99,7 +107,7 @@ function prepareSimpleQuestion(q) {
     return html;
 }
 
-function prepareMatchingQuestion(q) {
+function prepareMatchingQuestion(q, idx) {
     var id, answer, choice, selected, answerClass;
     if (!q.answers.processed) {
         q.answers = processAnswers(q);
@@ -162,13 +170,13 @@ function prepareMatchingQuestion(q) {
     return html;
 }
 
-function prepareInputQuestion(q) {
+function prepareInputQuestion(q, idx) {
     var id, answer, choice, written, answerClass;
     if (!q.answers.processed) {
         q.answers = processAnswers(q);
     }
     var answers = q.answers;
-    var idx = challenge+1;
+    // var idx = challenge+1;
 
     id = 'q'+idx+'a0';
     // id = 'q'+idx+'a'+ans+'';

@@ -15,20 +15,6 @@ var propertiesSetup = {
                 'label': 'Shuffle available answers.',
                 'value': true
             }, {
-                'name': 'quiz_answers_print_letters',
-                'label': 'Display letters before answers.',
-                'value': false,
-                'state': 'enabled'
-            }, {
-                'name': 'quiz_questions_mark_for_review',
-                'label': 'Allow marking questions for review. <span class="badge badge-primary">Soon</span>',
-                'value': false,
-                'state': 'disabled'
-            }, {
-                'name': 'quiz_answers_help_button',
-                'label': 'Allow using Help button during challenges.',
-                'value': true
-            }, {
                 'name': 'quiz_questions_use_all',
                 'label': 'Use all available questions. <span class="badge badge-primary">New</span>',
                 'value': false
@@ -63,10 +49,22 @@ var propertiesSetup = {
                 'label': 'Start challenge after selecting. Print mode cannot be used.',
                 'value': false
             }, {
+                'name': 'quiz_questions_mark_for_review',
+                'label': 'Allow marking questions for review. <span class="badge badge-primary">New</span>',
+                'value': false
+            }, {
+                'name': 'quiz_answers_help_button',
+                'label': 'Allow using Help button during challenges.',
+                'value': true
+            }, {
                 'name': 'app_ui_display_nav_below_questions',
-                'label': 'Display additional navigation below questions. <span class="badge badge-primary">Soon</span>',
+                'label': 'Display additional navigation below questions. <span class="badge badge-primary">New</span>',
+                'value': false
+            }, {
+                'name': 'quiz_answers_print_letters',
+                'label': 'Display letters before answers.',
                 'value': false,
-                'state': 'disabled'
+                'state': 'enabled'
             }, {
                 'name': 'app_ui_display_progress',
                 'label': 'Display progress bar during challenge.',

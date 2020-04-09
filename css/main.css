@@ -416,6 +416,16 @@ div.hidden {
     line-height: 1.62;
 }
 
+.additional-navigation .btn {
+    margin: .25rem;
+}
+#additional-prev {
+    float: left;
+}
+#additional-next {
+    float: right;
+}
+
 
 a {
     color: #a48b66;

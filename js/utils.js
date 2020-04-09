@@ -43,40 +43,44 @@ function retrieveQuestions() {
 
     var html = '';
     if (req.status == 200) {
-        html += '<div class="alert alert-info mb-2" role="info">Exam file has been downloaded and parsed sucessfully.</div>';
-        
-        parseChallenge(req.responseText);
-
-        // console.log(allExams[exam]);
-        if (code.value.length != 40) {
-            var examHash = {
-                'id': exam,
-                'generated': allExams[exam].generated,
-                'generatedDate': (new Date(allExams[exam].generated*1)) + '',
-                'hashcode': sha1(code.value)
-            };
-            examsHashes[exam] = examHash;
-
-            // console.log(examsHashes);
-            setLocalStorageItem('examsHashes', examsHashes);
-        }
-
-        if (['challenge_started', 'challenge_finished', 'exam_result_rendered', 'exam_printed'].includes(state)) {
-            renderExams(false);
+        if (req.responseText == 'Not found.') {
+            html += '<div class="alert alert-danger mb-2" role="alert">Invalid code.</div>';
         } else {
-            renderExams();
-        }
+            html += '<div class="alert alert-info mb-2" role="info">Exam file has been downloaded and parsed sucessfully.</div>';
         
-        code.value = '';
+            parseChallenge(req.responseText);
+
+            // console.log(allExams[exam]);
+            if (code.value.length != 40) {
+                var examHash = {
+                    'id': exam,
+                    'generated': allExams[exam].generated,
+                    'generatedDate': (new Date(allExams[exam].generated*1)) + '',
+                    'hashcode': sha1(code.value)
+                };
+                examsHashes[exam] = examHash;
+
+                // console.log(examsHashes);
+                setLocalStorageItem('examsHashes', examsHashes);
+            }
+
+            if (['challenge_started', 'challenge_finished', 'exam_result_rendered', 'exam_printed'].includes(state)) {
+                renderExams(false);
+            } else {
+                renderExams();
+            }
+            
+            code.value = '';
+
+            if (properties['app_ui_start_challenge_after_download_success']) {
+                document.querySelector('#options-tgr').click();
+                startChallenge();
+            }
+        }
     } else {
         html += '<div class="alert alert-warning mb-2" role="alert">' + req.status + '</div>';
     }
     renderElement('.downloading-messages', html);
-
-    if (properties['app_ui_start_challenge_after_download_success']) {
-        document.querySelector('#options-tgr').click();
-        startChallenge();
-    }
 }
 
 // Handle checking fresh questions from server

@@ -129,11 +129,13 @@ function cancelChallenge() {
 }
 
 // Handle generating question
-function generateQuestion(q) {
+function generateQuestion(q, idx) {
+    var idx = idx || challenge;
     var html = '';
+    challenge = idx;
     
     html += '<div class="challenge-header">';
-    html += '<b class="_text-muted _badge _badge-secondary question-number">Question ' + (challenge + 1) + '</b>';
+    html += '<b class="_text-muted _badge _badge-secondary question-number">Question ' + (idx + 1) + ' <span class="_text-muted">/ '+questions.used.length+'</span></b>';
     html += (q.params.area ? ' <span class="_badge _badge-secondary tag"> ' + q.params.area + '</span>' : '');
     
     if (q.params.comment) {
@@ -152,30 +154,49 @@ function generateQuestion(q) {
     
     if ('type' in q.params) {
         if (q.params.type == 'input') {
-            html += prepareInputQuestion(q);
+            html += prepareInputQuestion(q, idx+1);
         }
         if (q.params.type == 'matching') {
-            html += prepareMatchingQuestion(q);
+            html += prepareMatchingQuestion(q, idx+1);
         }
         if (q.params.type == 'single' || q.params.type == 'multiple') {
-            html += prepareSimpleQuestion(q);
+            html += prepareSimpleQuestion(q, idx+1);
         }
     }
 
     if (properties['quiz_questions_mark_for_review']) {
         // default value
-        questions.marked[challenge] = questions.marked[challenge] || false; 
-        var checked = questions.marked[challenge];
+        questions.marked[idx] = questions.marked[idx] || false; 
+        var checked = questions.marked[idx];
         html += '<div class="mark-for-review">';
         html += '<div class="custom-control custom-checkbox">'
-                    +'<input type="checkbox" id="review-'+challenge+'" name="marker" class="custom-control-input" value=""'+(checked ? ' checked' : '')+'>'
-                    +'<label class="custom-control-label" for="review-'+challenge+'">Mark question for review</label>'
+                    +'<input type="checkbox" id="review-'+idx+'" name="marker" class="custom-control-input" value=""'+(checked ? ' checked' : '')+'>'
+                    +'<label class="custom-control-label" for="review-'+idx+'">Mark question for review</label>'
                 +'</div>';
         html += '</div>';
     }
 
     html += '<div class="question-errors">';
-    html += renderErrors(challenge, true);
+    html += renderErrors(idx, true);
+    html += '</div>';
+
+    html += '<div class="additional-navigation">';
+    if (properties['app_ui_display_nav_below_questions']) {
+        html += '<div class="clearfix mb-3">';
+        if (challenge != 0) {
+            html += '<button id="additional-prev" onclick="javascript:prevQuestion();" class="btn btn-secondary">Prev</button>';
+        }
+        if (challenge != limit-1) {
+            html += '<button id="additional-next" onclick="javascript:nextQuestion();" class="btn btn-secondary">Next</button>';
+        }
+        html += '</div>';
+    }
+    if (properties['quiz_questions_mark_for_review']) {
+        html += '<div class="text-right">'
+                    +'<button id="additional-review" onclick="javascript:renderReviewResult();" class="btn btn-secondary">Review exam</button>'
+                    +'<button id="additional-stop" onclick="javascript:finishChallenge();" class="btn btn-secondary">Submit exam</button>'
+                +'</div>';
+    }
     html += '</div>';
     
     // if (mode == 'print') {

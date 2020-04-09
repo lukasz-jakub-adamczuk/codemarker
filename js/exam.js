@@ -268,6 +268,14 @@ function renderExamResult() {
     state = 'exam_result_rendered';
 }
 
+function backToChallenge(id) {
+    hideElements(['result']);
+
+    generateQuestion(questions.used[id], parseInt(id));
+
+    showElements(['challenge']);
+}
+
 // Handle rendering review for running challenge
 function renderReviewResult() {
     console.log('renderExamResult() has been used.');
@@ -277,23 +285,39 @@ function renderReviewResult() {
     showElement('.result');
 
     var column = Math.ceil(questions.used.length / 3);
-    console.log(column);
     
     var html = '';
+    var answered = questions.exam.filter(el => el != undefined).length;
+    var missing = questions.used.length - answered;
+    var marked = questions.marked.filter(el => el == true).length;
+
     html += '<div class="container">';
+    html += '<div>Answered in total: <strong>'+answered+'</strong></div>';
+    html += '<div>Missing answers:   <strong>'+missing+'</strong></div>';
+    html += '<div>Marked for review: <strong>'+marked+'</strong></div>';
     html += '<div class="row">';
     for (var q in questions.used) {
         q = parseInt(q);
         if (q % column == 0) {
-            html += '<div class="col-sm"><div>';
+            html += '<div class="col-sm-4">';
         }
-        html += '<div>'+(q+1)+'.</div>';
+        var answers = [];
+        for (var ans in questions.exam[q+1]) {
+            if (questions.exam[q+1][ans] == true) {
+                answers.push(letters[ans].toUpperCase());
+            }
+        }
+        var markedForReview = questions.marked[q] ? '*' : '';
+        html += '';
+        html += '<div><a id="r'+q+'" href="#" data-id="'+q+'" onclick="javascript:backToChallenge(this.getAttribute(\'data-id\'));" class="review-question text-secondary">'+(q+1)+'. '+answers.join(', ')+' '+markedForReview+'</a></div>';
         if ((q+1) % column == 0) {
-            html += '</div></div>';
+            html += '</div>';
         }
     }
     html += '</div>';
-    html += '</div>';
+    html += '</ul>';
+
+    // html += '<button id="additional-review" onclick="javascript:backToChallenge(challenge);" class="btn btn-secondary">back to challenge</button>';
 
     renderElement('.result', html);
 }
