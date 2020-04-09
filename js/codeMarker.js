@@ -185,22 +185,26 @@ function generateQuestion(q, idx) {
     html += '</div>';
 
     html += '<div class="additional-navigation">';
+    html += '<div class="row">';
+    html += '<div class="col text-right mb-3">';
     if (properties['app_ui_display_nav_below_questions']) {
-        html += '<div class="clearfix mb-3">';
+        // html += '<div class="col-sm-12 col-md-4 text-right mb-3">';
         if (challenge != 0) {
             html += '<button id="additional-prev" onclick="javascript:prevQuestion();" class="btn btn-secondary">Prev</button>';
         }
         if (challenge != limit-1) {
             html += '<button id="additional-next" onclick="javascript:nextQuestion();" class="btn btn-secondary">Next</button>';
         }
-        html += '</div>';
+        // html += '</div>';
     }
     if (properties['quiz_questions_mark_for_review']) {
-        html += '<div class="text-right">'
-                    +'<button id="additional-review" onclick="javascript:renderReviewResult();" class="btn btn-secondary">Review exam</button>'
-                    +'<button id="additional-stop" onclick="javascript:finishChallenge();" class="btn btn-secondary">Submit exam</button>'
-                +'</div>';
+        // html += '<div class="col-sm-12 col-md-8 text-right">'
+        html += '<button id="additional-review" onclick="javascript:renderReviewResult();" class="btn btn-secondary">Review exam</button>';
+        html += '<button id="additional-stop" onclick="javascript:finishChallenge();" class="btn btn-secondary">Submit exam</button>';
+                // +'</div>';
     }
+    html += '</div>';
+    html += '</div>';
     html += '</div>';
     
     // if (mode == 'print') {

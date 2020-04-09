@@ -20,10 +20,11 @@ body {
 }
 
 .challenge,
-#exams {
+#exams,
+.result {
     /* position: absolute; */
-    top: 0;
-    bottom: 3rem;
+    /* top: 0; */
+    /* bottom: 3rem; */
     /* height: calc(100% - 3rem); */
     background: #fff;
     /* overflow: scroll; */
@@ -415,15 +416,17 @@ div.hidden {
     align-self: center;
     line-height: 1.62;
 }
-
+.additional-navigation {
+    /* text-align: center; */
+}
 .additional-navigation .btn {
     margin: .25rem;
 }
 #additional-prev {
-    float: left;
+    /* float: left; */
 }
 #additional-next {
-    float: right;
+    /* float: right; */
 }
 
 

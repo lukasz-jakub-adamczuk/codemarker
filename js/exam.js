@@ -226,7 +226,7 @@ function renderExamResult() {
     html += '<div class="card text-center">';
     // html += '<div class="card text-center col-sm-6 col-md-6  col-lg-8  col-xl-12">';
     html += '   <div class="card-header">';
-    html +=  allExams[exam].exam + 'exam result';
+    html +=  allExams[exam].exam.toUpperCase() + ' exam result';
     // html +=  ' Service Mapping exam result';
     html += '   </div>';
     html += '   <div class="card-body">';
