@@ -1,0 +1,22 @@
+{
+  "name": "codemarker",
+  "version": "1.0.0",
+  "description": "App for learning",
+  "main": "index.html",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lukasz-jakub-adamczuk/codemarker.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lukasz-jakub-adamczuk/codemarker/issues"
+  },
+  "homepage": "https://github.com/lukasz-jakub-adamczuk/codemarker#readme"
+}
