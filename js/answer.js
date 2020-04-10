@@ -1,5 +1,9 @@
 'use strict';
 
+var Answer = {
+    name: '',
+    slug: '',
+}
 
 // Handle registring answer used to calculate running challenge result
 function registerAnswerForSimpleQuestion(event) {

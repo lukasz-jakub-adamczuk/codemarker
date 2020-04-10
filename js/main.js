@@ -30,6 +30,8 @@ var errors = [];
 var exam;
 var time;
 
+var properties = {};
+
 var letters = 'abcdefghijklmnopqrstuvwxyz'.split('');
 
 // hide menu by default (in case would be opened during page reload and intro running)
@@ -39,7 +41,8 @@ $('#options-tgr').prop('checked', false);
 checkAppVersion();
 
 // init properties with default values
-initProperties(propertiesSetup);
+// initProperties(propertiesSetup);
+Properties.init(propertiesSetup);
 
 // load user preferences from localStorage
 if ('localStorage' in window) {
@@ -64,8 +67,8 @@ if (properties['app_ui_introduction_enabled']) {
 }
 
 
-
-renderProperties(propertiesSetup);
+// renderProperties(propertiesSetup);
+Properties.render(propertiesSetup);
 
 
 // adding events
@@ -74,7 +77,7 @@ renderProperties(propertiesSetup);
 document.querySelector('#file-input').addEventListener('change', readSingleFile);
 document.querySelector('#load').addEventListener('click', function() { document.querySelector('#file-input').click(); });
 document.querySelector('#retrieve').addEventListener('click', retrieveQuestions);
-document.querySelector('#app-properties').addEventListener('click', manageProperty);
+document.querySelector('#app-properties').addEventListener('click', Property.manage);
 document.querySelector('#default-settings').addEventListener('click', resetAllSettings);
 document.querySelector('#remove-exams').addEventListener('click', removeAllExams);
 

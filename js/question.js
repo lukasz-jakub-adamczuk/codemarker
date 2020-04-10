@@ -1,5 +1,20 @@
 'use strict';
 
+// var Question = {};
+function Question(name, params, answers) {
+    this.name = name;
+    this.params = params;
+    this.answers = answers;
+}
+// };
+//     name: '',
+    
+
+var q1 = new Question('aaa test', 'params', ['answers']);
+
+var q2 = new Question('bbbb test', {}, ['aaa', 'vvv']);
+
+
 // Handle previous question for running challenge
 function prevQuestion(event) {
     console.log('prevQuestion() has been used.');
@@ -158,9 +173,9 @@ function prepareMatchingQuestion(q, idx) {
                 if (idx in questions.exam && ans in questions.exam[idx] && questions.exam[idx][ans] == slugify(match.answer)) {
                     selected = ' selected';
                 }
-                if (mode == 'print' && choice == match.answer) {
-                    selected = ' selected';
-                }
+                // if (mode == 'print' && choice == match.answer) {
+                    // selected = ' selected';
+                // }
 
                 html +='<option value="'+slugify(match.answer)+'"'+selected+'>' + marked(match.answer) + '</option>'
             }

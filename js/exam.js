@@ -1,5 +1,9 @@
 'use strict';
 
+var Exam = {
+    name: ''
+}
+
 // Handle rendering list of available exams
 function renderExams(displayLayer = true) {
     console.log('renderExams() has been used.');
@@ -87,7 +91,7 @@ function deleteExam(event) {
     delete(allExams['cm-'+exam]);
     setLocalStorageItem('allExams', allExams, true);
     delete(examsHashes['cm-'+exam]);
-    setLocalStorageItem('exaHashes', examsHashes, true);
+    setLocalStorageItem('examsHashes', examsHashes, true);
 
     event.stopPropagation();
 
@@ -126,16 +130,16 @@ function selectExam(event) {
 function parseChallenge(content) {
     console.log('parseChallenge() has been used.');
     
-    parser.init();
-    parser.parse(content);
+    Parser.init();
+    Parser.parse(content);
 
-    questions.all = parser.questions;
-    exam = 'cm-' + parser.examConfig.exam;
+    questions.all = Parser.questions;
+    exam = 'cm-' + Parser.examConfig.exam;
     // console.log(exam);
 
     // console.log(allExams);
     // console.log(allExams[exam]);
-    allExams[exam] = parser.examConfig;
+    allExams[exam] = Parser.examConfig;
     
     // store exam in localStorage for the future
     if ('localStorage' in window) {

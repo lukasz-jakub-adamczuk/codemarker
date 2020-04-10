@@ -1,6 +1,6 @@
 'use strict'
 
-var parser = {
+var Parser = {
     
     init: function() {
         this.debug = true;
@@ -21,108 +21,108 @@ var parser = {
     
     parse: function(content) {
         console.log('Parsing challenge questions has been started.');
-        parser.debug ? console.log(content) : '';
+        this.debug ? console.log(content) : '';
         var parts = content.split('\n');
         for (var i = 0; i < parts.length; i++) {
-            parser.line = parts[i].trim();
-            if (parser.line != '') {
-                parser.debug ? console.log(parser.line) : '';
+            this.line = parts[i].trim();
+            if (this.line != '') {
+                this.debug ? console.log(this.line) : '';
                 // init
-                parser.params = parser.params || '';
+                this.params = this.params || '';
 
-                parser.question.name = parser.question.name || '';
-                parser.question.length = parser.question.length || 0;
-                parser.question.counter = parser.question.counter || {'correct': 0, 'wrong': 0};
-                parser.question.processed = false;
+                this.question.name = this.question.name || '';
+                this.question.length = this.question.length || 0;
+                this.question.counter = this.question.counter || {'correct': 0, 'wrong': 0};
+                this.question.processed = false;
     
-                parser.question.params = parser.question.params || {};
+                this.question.params = this.question.params || {};
     
-                parser.question.answers = parser.question.answers || [];
-                // parser.question.answers.correct = parser.question.answers.correct || {};
-                // parser.question.answers.wrong = parser.question.answers.wrong || {};
+                this.question.answers = this.question.answers || [];
+                // this.question.answers.correct = this.question.answers.correct || {};
+                // this.question.answers.wrong = this.question.answers.wrong || {};
                 
-                switch(parser.line[0]) {
+                switch(this.line[0]) {
                     case '+':
-                        parser.answer = parser.line.substr(1,).trim();
-                        parser.question.answers.push({'type': 'correct', 'slug': slugify(parser.answer), 'name': parser.answer});
-                        // parser.question.answers.correct[slugify(parser.answer)] = parser.answer;
-                        parser.question.counter.correct++;
-                        parser.question.length += parser.answer.length;
-                        parser.answersFound = true;
+                        this.answer = this.line.substr(1,).trim();
+                        this.question.answers.push({'type': 'correct', 'slug': slugify(this.answer), 'name': this.answer});
+                        // this.question.answers.correct[slugify(this.answer)] = this.answer;
+                        this.question.counter.correct++;
+                        this.question.length += this.answer.length;
+                        this.answersFound = true;
                         break;
                     case '-':
-                        parser.answer = parser.line.substr(1,).trim();
-                        parser.question.answers.push({'type': 'wrong', 'slug': slugify(parser.answer), 'name': parser.answer});
-                        // parser.question.answers.wrong[slugify(parser.answer)] = parser.answer;
-                        parser.question.counter.wrong++;
-                        parser.question.length += parser.answer.length;
-                        parser.answersFound = true;
+                        this.answer = this.line.substr(1,).trim();
+                        this.question.answers.push({'type': 'wrong', 'slug': slugify(this.answer), 'name': this.answer});
+                        // this.question.answers.wrong[slugify(this.answer)] = this.answer;
+                        this.question.counter.wrong++;
+                        this.question.length += this.answer.length;
+                        this.answersFound = true;
                         break;
                     case '{':
-                        parser.params += parser.line;
-                        parser.paramsFound = true;
-                        if (parser.line.trim().substr(-1) == '}') {
-                            // parser.question.params = parser.line;
-                            parser.question.params = JSON.parse(parser.params);
-                            parser.debug ? console.log('Exam params before and after parsing:') : '';
-                            parser.debug ? console.log(parser.params) : '';
-                            parser.debug ? console.log(parser.question.params) : '';
-                            parser.paramsFound = false;
-                            parser.params = '';
+                        this.params += this.line;
+                        this.paramsFound = true;
+                        if (this.line.trim().substr(-1) == '}') {
+                            // this.question.params = this.line;
+                            this.question.params = JSON.parse(this.params);
+                            this.debug ? console.log('Exam params before and after parsing:') : '';
+                            this.debug ? console.log(this.params) : '';
+                            this.debug ? console.log(this.question.params) : '';
+                            this.paramsFound = false;
+                            this.params = '';
                         }
                         break;
                     case '#':
-                        parser.setup = parser.line.substr(1,).trim().split(':');
-                        if (parser.setup.length > 1) {
-                            // if (parser.setup[0] == 'exam') {
-                            //     parser.examConfig['name'] = 'cm-' + parser.setup[1].trim();
+                        this.setup = this.line.substr(1,).trim().split(':');
+                        if (this.setup.length > 1) {
+                            // if (this.setup[0] == 'exam') {
+                            //     this.examConfig['name'] = 'cm-' + this.setup[1].trim();
                             // } else {
-                                parser.examConfig[parser.setup[0]] = parser.setup[1].trim();
+                                this.examConfig[this.setup[0]] = this.setup[1].trim();
                             // }
                         }
                         break;
                     default:
-                        if (parser.paramsFound) {
-                            parser.params += parser.line;
-                            if (parser.line.trim().substr(-1) == '}') {
-                                parser.question.params = JSON.parse(parser.params);
-                                parser.debug ? console.log('Exam params before and after parsing:') : '';
-                                parser.debug ? console.log(parser.params) : '';
-                                parser.debug ? console.log(parser.question.params) : '';
-                                parser.paramsFound = false;
-                                parser.params = '';
+                        if (this.paramsFound) {
+                            this.params += this.line;
+                            if (this.line.trim().substr(-1) == '}') {
+                                this.question.params = JSON.parse(this.params);
+                                this.debug ? console.log('Exam params before and after parsing:') : '';
+                                this.debug ? console.log(this.params) : '';
+                                this.debug ? console.log(this.question.params) : '';
+                                this.paramsFound = false;
+                                this.params = '';
                             }
                         } else {
-                            if (parser.answersFound) {
-                                if (!('type' in parser.question.params)) {
-                                    parser.question.params.type = parser.question.counter.correct == 1 ? 'single' : 'multiple';
+                            if (this.answersFound) {
+                                if (!('type' in this.question.params)) {
+                                    this.question.params.type = this.question.counter.correct == 1 ? 'single' : 'multiple';
                                 }
                                 // no correct answers
-                                if (parser.question.counter.correct == 0) {
-                                    parser.question.params.status = 'ignored';
+                                if (this.question.counter.correct == 0) {
+                                    this.question.params.status = 'ignored';
                                 }
-                                if (parser.question.params.status == 'ignored') {
-                                    parser.examConfig.ignored++;
+                                if (this.question.params.status == 'ignored') {
+                                    this.examConfig.ignored++;
                                 }
-                                parser.answersFound = false;
+                                this.answersFound = false;
                                 // adding found question to 
-                                parser.questions[parser.n] = parser.question;
-                                parser.lengths.push(parser.question.length);
+                                this.questions[this.n] = this.question;
+                                this.lengths.push(this.question.length);
                                 // init new question
-                                parser.question = {};
-                                parser.question.name = '';
-                                parser.question.length = 0;
-                                parser.question.counter = {'correct': 0, 'wrong': 0};
-                                parser.question.params = {};
-                                parser.question.answers = [];
-                                // parser.question.answers.correct = {};
-                                // parser.question.answers.wrong = {};
-                                parser.n++;
+                                this.question = {};
+                                this.question.name = '';
+                                this.question.length = 0;
+                                this.question.counter = {'correct': 0, 'wrong': 0};
+                                this.question.params = {};
+                                this.question.answers = [];
+                                // this.question.answers.correct = {};
+                                // this.question.answers.wrong = {};
+                                this.n++;
                             }
-                            // parser.question.name += '<p>' + parser.line + '</p>';
-                            parser.question.name += parser.line + "\n\n";
-                            parser.question.length += parser.line.length;
-                            parser.question.index = parser.n;
+                            // this.question.name += '<p>' + this.line + '</p>';
+                            this.question.name += this.line + "\n\n";
+                            this.question.length += this.line.length;
+                            this.question.index = this.n;
                         }
                         break;
                 }
@@ -131,41 +131,41 @@ var parser = {
         // this actions needs to be done for last question because during loop parsing
         // have been skipped as last line of question is answer and each question
         // is added to list when next is found
-        if (!('type' in parser.question.params)) {
-            parser.question.params.type = parser.question.counter.correct == 1 ? 'single' : 'multiple';
+        if (!('type' in this.question.params)) {
+            this.question.params.type = this.question.counter.correct == 1 ? 'single' : 'multiple';
         }
         // no correct answers
-        if (parser.question.counter.correct == 0) {
-            parser.question.params.status = 'ignored';
+        if (this.question.counter.correct == 0) {
+            this.question.params.status = 'ignored';
         }
-        if (parser.question.params.status == 'ignored') {
-            parser.examConfig.ignored++;
+        if (this.question.params.status == 'ignored') {
+            this.examConfig.ignored++;
         }
-        parser.questions[parser.n] = parser.question;
-        parser.examConfig.all = parser.questions.length;
-        parser.debug ? console.log(parser) : '';
+        this.questions[this.n] = this.question;
+        this.examConfig.all = this.questions.length;
+        this.debug ? console.log(this) : '';
         // setup dafault for exam config if such missing in file
-        if (!('exam' in parser.examConfig)) {
-            parser.examConfig.exam = 'sample-exam';
-            parser.errors.push('Name of exam has been set to <strong>'+parser.examConfig.exam+'</strong>, because <strong>exam</strong> param was missing in file.');
+        if (!('exam' in this.examConfig)) {
+            this.examConfig.exam = 'sample-exam';
+            this.errors.push('Name of exam has been set to <strong>'+this.examConfig.exam+'</strong>, because <strong>exam</strong> param was missing in file.');
         }
-        if (!('questions' in parser.examConfig)) {
-            parser.examConfig.questions = parser.questions.length;
-            parser.errors.push('All available '+parser.examConfig.questions+' questions have been used for exam. If want other value then set <strong>questions</strong> param in file.');
+        if (!('questions' in this.examConfig)) {
+            this.examConfig.questions = this.questions.length;
+            this.errors.push('All available '+this.examConfig.questions+' questions have been used for exam. If want other value then set <strong>questions</strong> param in file.');
         }
-        if (!('duration' in parser.examConfig)) {
-            parser.examConfig.duration = parser.examConfig.questions * 2;
-            parser.errors.push('Duration has been calculated to <strong>'+parser.examConfig.duration+'</strong>, because <strong>duration</strong> param was missing in file.');
+        if (!('duration' in this.examConfig)) {
+            this.examConfig.duration = this.examConfig.questions * 2;
+            this.errors.push('Duration has been calculated to <strong>'+this.examConfig.duration+'</strong>, because <strong>duration</strong> param was missing in file.');
         }
-        if (!('pass' in parser.examConfig)) {
-            parser.examConfig.pass = 80;
-            parser.errors.push('Passing threshold of exam has been set to <strong>'+parser.examConfig.pass+'%</strong>, because <strong>pass</strong> param was missing in file.');
+        if (!('pass' in this.examConfig)) {
+            this.examConfig.pass = 80;
+            this.errors.push('Passing threshold of exam has been set to <strong>'+this.examConfig.pass+'%</strong>, because <strong>pass</strong> param was missing in file.');
         }
-        if (!('description' in parser.examConfig)) {
-            parser.examConfig.description = 'Exam description has been generated automatically. If you want to change this text then add <strong>description</strong> param in file.';
-            parser.errors.push('Description of exam was missing in file.');
+        if (!('description' in this.examConfig)) {
+            this.examConfig.description = 'Exam description has been generated automatically. If you want to change this text then add <strong>description</strong> param in file.';
+            this.errors.push('Description of exam was missing in file.');
         }
-        console.log(parser.examConfig);
+        console.log(this.examConfig);
         console.log('Parsing challenge questions has been ended.');
     }
 }
