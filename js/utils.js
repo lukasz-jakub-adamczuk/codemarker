@@ -1,5 +1,23 @@
 // Handle reading exam from file system
+function loadQuestions() {
+    // var spinner = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> ';
+    // $(this).prepend(spinner);
+
+    document.querySelector('#file-input').click();
+
+    var promise = new Promise(function(resolve, reject) {
+
+    });
+}
+
 function readSingleFile(e) {
+    // clear messages if any
+    if ($('.loading-messages').length) {
+        renderElement('.loading-messages', '');
+    }
+    var spinner = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> ';
+    $('#load').prepend(spinner);
+
     var file = e.target.files[0];
     if (!file) {
         return;
@@ -18,6 +36,8 @@ function readSingleFile(e) {
         }
         renderElement('.loading-messages', html);
 
+        $('#load').children('.spinner-border').remove();       
+
         if (['challenge_started', 'challenge_finished', 'exam_result_rendered', 'exam_printed'].includes(state)) {
             renderExams(false);
         } else {
@@ -32,55 +52,69 @@ function readSingleFile(e) {
     reader.readAsText(file);
 }
 
+
 // Handle retriving questions from server
 function retrieveQuestions() {
+    var spinner = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> ';
+    $(this).prepend(spinner);
     var code = document.getElementById('retrieve-code');
-    var req = new XMLHttpRequest();
-
-    req.open('POST', 'https://ash.unixstorm.org/codemarker/cloud/index.php', false); 
-    req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    req.send('code=' + code.value);
-
     var html = '';
-    if (req.status == 200) {
-        if (req.responseText == 'Not found.') {
-            html += '<div class="alert alert-danger mb-2" role="alert">Invalid code.</div>';
-        } else {
-            html += '<div class="alert alert-info mb-2" role="info">Exam file has been downloaded and parsed sucessfully.</div>';
-        
-            parseChallenge(req.responseText);
-
-            // console.log(allExams[exam]);
-            if (code.value.length != 40) {
-                var examHash = {
-                    'id': exam,
-                    'generated': allExams[exam].generated,
-                    'generatedDate': (new Date(allExams[exam].generated*1)) + '',
-                    'hashcode': sha1(code.value)
-                };
-                examsHashes[exam] = examHash;
-
-                // console.log(examsHashes);
-                setLocalStorageItem('examsHashes', examsHashes);
-            }
-
-            if (['challenge_started', 'challenge_finished', 'exam_result_rendered', 'exam_printed'].includes(state)) {
-                renderExams(false);
-            } else {
-                renderExams();
-            }
-            
-            code.value = '';
-
-            if (properties['app_ui_start_challenge_after_download_success']) {
-                document.querySelector('#options-tgr').click();
-                startChallenge();
-            }
-        }
+    
+    if (code.value == '') {
+        html += '<div class="alert alert-danger mb-2" role="alert">Empty code.</div>';
+        renderElement('.downloading-messages', html);
     } else {
-        html += '<div class="alert alert-warning mb-2" role="alert">' + req.status + '</div>';
+        var req = new XMLHttpRequest();
+        req.open('POST', 'https://ash.unixstorm.org/codemarker/cloud/index.php', false); 
+        req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        req.send('code=' + code.value);
+
+        // clear messages if any
+        if ($('.downloading-messages').length) {
+            renderElement('.downloading-messages', '');
+        }
+        
+        if (req.status == 200) {
+            if (req.responseText == 'Not found.') {
+                html += '<div class="alert alert-danger mb-2" role="alert">Invalid code.</div>';
+            } else {
+                html += '<div class="alert alert-info mb-2" role="info">Exam file has been downloaded and parsed sucessfully.</div>';
+            
+                parseChallenge(req.responseText);
+
+                // console.log(allExams[exam]);
+                if (code.value.length != 40) {
+                    var examHash = {
+                        'id': exam,
+                        'generated': allExams[exam].generated,
+                        'generatedDate': (new Date(allExams[exam].generated*1)) + '',
+                        'hashcode': sha1(code.value)
+                    };
+                    examsHashes[exam] = examHash;
+
+                    // console.log(examsHashes);
+                    setLocalStorageItem('examsHashes', examsHashes);
+                }
+
+                if (['challenge_started', 'challenge_finished', 'exam_result_rendered', 'exam_printed'].includes(state)) {
+                    renderExams(false);
+                } else {
+                    renderExams();
+                }
+                
+                code.value = '';
+
+                if (properties['app_ui_start_challenge_after_download_success']) {
+                    document.querySelector('#options-tgr').click();
+                    startChallenge();
+                }
+            }
+        } else {
+            html += '<div class="alert alert-warning mb-2" role="alert">' + req.status + '</div>';
+        }
+        renderElement('.downloading-messages', html);
     }
-    renderElement('.downloading-messages', html);
+    $(this).children('.spinner-border').remove();
 }
 
 // Handle checking fresh questions from server
@@ -379,6 +413,18 @@ function checkAppVersion() {
             var html = '<div class="alert alert-warning mb-2" role="alert">Application available online has new features. Your local version is outdated. Reset all settings using button placed below.</div>';
             renderElement('.version-messages', html);
         }
+    }
+}
+
+function renderMessage(message, type, element, autoclose = false) {
+    var type = type || 'alert';
+    var template = '<div class="alert alert-'+type+' mb-2" role="alert">'+message+'</div>'
+    
+    document.querySelector(element).innerHTML = template;
+    if (autoclose) {
+        setTimeout(function() {
+            $(element).children('div').fadeOut().remove();
+        }, 3000);
     }
 }
 

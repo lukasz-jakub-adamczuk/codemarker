@@ -434,8 +434,15 @@ a {
     color: #a48b66;
 }
 
+.btn {
+    /* padding-left: 2rem;
+    padding-right: 2rem; */
+}
+
 .btn-primary,
-.btn-primary:hover {
+.btn-primary:hover,
+.btn-primary.focus,
+.btn-primary:focus {
     background-color: #a48b66;
     border-color: #a48b66;
 }

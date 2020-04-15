@@ -79,7 +79,7 @@ Properties.render(propertiesSetup);
 
 // options
 document.querySelector('#file-input').addEventListener('change', readSingleFile);
-document.querySelector('#load').addEventListener('click', function() { document.querySelector('#file-input').click(); });
+document.querySelector('#load').addEventListener('click', loadQuestions);
 document.querySelector('#retrieve').addEventListener('click', retrieveQuestions);
 document.querySelector('#app-properties').addEventListener('click', Property.manage);
 document.querySelector('#default-settings').addEventListener('click', resetAllSettings);
