@@ -85,9 +85,15 @@ function initChallenge(skip_ignored) {
 function finishChallenge(event) {
     console.log('finishChallenge() has been used.');
     if (event && event.target.className.indexOf('disabled') != -1) {
+        renderMessage('Exam cannot be sumitted until all questions will be answered.', 'warning', '.question-messages', true);
         return;
     }
     console.log('Stop event has been triggered.');
+
+    if (questions.exam.filter(el => el != undefined).length != limit) {
+        renderMessage('Exam cannot be sumitted until all questions will be answered.', 'warning', '.question-messages', true);
+        return;
+    }
     
     clearInterval(displayTimer);
     // hide nav buttons
@@ -183,7 +189,7 @@ function generateQuestion(q, idx) {
     html += '<div class="question-errors">';
     html += renderErrors(idx, true);
     html += '</div>';
-
+    
     html += '<div class="additional-navigation">';
     html += '<div class="row">';
     html += '<div class="col text-right mb-3">';
@@ -206,6 +212,8 @@ function generateQuestion(q, idx) {
     html += '</div>';
     html += '</div>';
     html += '</div>';
+
+    html += '<div class="question-messages"></div>';
     
     // if (mode == 'print') {
     //     return html;
