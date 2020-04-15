@@ -1,19 +1,15 @@
 'use strict'
 
 var assert = require('assert');
-describe('Array', function() {
-    describe('#indexOf()', function() {
-        it('should return -1 when the value is not present', function() {
-            assert.equal([1, 2, 3].indexOf(4), -1);
+describe('Parser', function() {
+    describe('#init()', function() {
+        it.skip('should initialise variables with default values', function() {
+            
         });
     });
-});
-
-var assert = require('assert');
-describe('Array', function() {
-    describe('#indexOf()', function() {
-        it('should return -1 when the value is not present', function() {
-            assert.equal([1, 2, 3].indexOf(4), -1);
+    describe('#parse()', function() {
+        it.skip('should parse content to questions', function() {
+            
         });
     });
 });
