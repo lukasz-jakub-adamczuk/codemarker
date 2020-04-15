@@ -1,9 +1,19 @@
 'use strict'
 
+import {Property} from './property.js';
+
 var Properties = (function() {
     'use strict';
 
     var list = {};
+
+    function items() {
+        return list;
+    };
+
+    function has(name) {
+        return name in list;
+    };
 
     function get(name) {
         if (name in list) {
@@ -27,6 +37,15 @@ var Properties = (function() {
         }
     };
 
+    function sync(properties) {
+        if (properties) {
+            for (var prop in properties) {
+                list[prop] = new Property(properties[prop]);
+            }
+        }
+    };
+
+    // Handle rendering list of available properties
     function render(setup) {
         var html = '';
         if (!('localStorage' in window)) {
@@ -46,73 +65,19 @@ var Properties = (function() {
     }
 
     return {
+        items: items,
+        has: has,
         get: get,
         set: set,
         init: init,
+        sync: sync,
         render: render
     };
 })();
 
 
-// Handle rendering list of available properties
-function renderProperties(setup) {
-    // print available exams
-    var html = '';
-    if (!('localStorage' in window)) {
-        html += '<div class="alert alert-warning mb-2" role="alert">Changing options is disabled, because your browser does not support localStorage.</div>';
-    }
-    for (var section in setup) {
-        if (setup[section].opts.length) {
-            html += '<p class="opts-header">' + setup[section].label + '</p>';
-            html += '<div class="list-group">';
-            for (var p in setup[section].opts) {
-                html += prepareProperty(setup[section].opts[p]);
-            }
-            html += '</div>';
-        }
-    }
-    renderElement('#app-properties', html);
-}
+export {Properties};
 
-// Internal function to handle single property rendering
-function prepareProperty(property) {
-    var disabled = 'localStorage' in window ? '' : ' disabled';
-    disabled = 'state' in property && property.state == 'disabled' ? ' disabled' : disabled;
-    var html = '<span id="prop-' + property.name + '" class="list-group-item list-group-item-action flex-column align-items-start">'
-        // + '<p class="mb-1">' + property.label + '</p>'
-        + '<div class="custom-control custom-switch">'
-        + '<input type="checkbox" class="custom-control-input" id="' + property.name + '"' + (properties[property.name] ? 'checked' : '') + disabled + '>'
-        + '<label class="custom-control-label" for="' + property.name + '">' + property.label + '</label>'
-        + '<div id="prop-' + property.name + '-errors">'
-        + (property.name in properties ? '' : '<div class="alert alert-warning mb-2" role="alert">Property value not detected locally. Use switch to set correct value or Reset all settings.</div>')
-        + '</div>'
-        + '</div>'
-        + '</span>';
-    return html;
-}
-
-// Handle changing value of property
-function manageProperty(event) {
-    console.log('manageProperty() has been used.');
-    
-    var node = event.target;
-    while (node.tagName.toLowerCase() != 'span') {
-        node = node.parentNode;
-    }
-    var name = node.getAttribute('id').substring(5);
-
-    if (name) {
-        console.log(name);
-        properties[name] = document.querySelector('#'+name).checked;
-        console.log('Application property [' + name + '] has been set to [' + properties[name] + '] value.');
-        if ('localStorage' in window) {
-            localStorage.setItem('properties', JSON.stringify(properties));
-        }
-    }
-    var html = (name in properties ? '' : '<div class="alert alert-warning mb-2" role="alert">Property value not detected locally. Use switch to set correct value or Reset all settings.</div>');
-
-    renderElement('#'+node.getAttribute('id')+'-errors', html);
-}
 
 // Handle changing value of property
 function resetAllSettings(event) {

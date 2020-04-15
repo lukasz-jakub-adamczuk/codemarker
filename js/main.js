@@ -1,5 +1,7 @@
 'use strict';
 
+import {Properties} from './properties.js';
+
 const LW_VERSION = 'v0.07 patch-1';
 
 var codeMarker = {};
@@ -43,6 +45,8 @@ checkAppVersion();
 // init properties with default values
 // initProperties(propertiesSetup);
 Properties.init(propertiesSetup);
+
+Properties.sync(getLocalStorageItem('Properties', true));
 
 // load user preferences from localStorage
 if ('localStorage' in window) {
