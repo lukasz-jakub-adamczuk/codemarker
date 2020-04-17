@@ -59,6 +59,11 @@ function retrieveQuestions() {
     $(this).prepend(spinner);
     var code = document.getElementById('retrieve-code');
     var html = '';
+
+    // clear messages if any
+    if ($('.downloading-messages').length) {
+        renderElement('.downloading-messages', '');
+    }
     
     if (code.value == '') {
         html += '<div class="alert alert-danger mb-2" role="alert">Empty code.</div>';
@@ -67,50 +72,52 @@ function retrieveQuestions() {
         var req = new XMLHttpRequest();
         req.open('POST', 'https://ash.unixstorm.org/codemarker/cloud/index.php', false); 
         req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        req.send('code=' + code.value);
+        try {
+            req.send('code=' + code.value);
 
-        // clear messages if any
-        if ($('.downloading-messages').length) {
-            renderElement('.downloading-messages', '');
-        }
-        
-        if (req.status == 200) {
-            if (req.responseText == 'Not found.') {
-                html += '<div class="alert alert-danger mb-2" role="alert">Invalid code.</div>';
-            } else {
-                html += '<div class="alert alert-info mb-2" role="info">Exam file has been downloaded and parsed sucessfully.</div>';
-            
-                parseChallenge(req.responseText);
-
-                // console.log(allExams[exam]);
-                if (code.value.length != 40) {
-                    var examHash = {
-                        'id': exam,
-                        'generated': allExams[exam].generated,
-                        'generatedDate': (new Date(allExams[exam].generated*1)) + '',
-                        'hashcode': sha1(code.value)
-                    };
-                    examsHashes[exam] = examHash;
-
-                    // console.log(examsHashes);
-                    setLocalStorageItem('examsHashes', examsHashes);
-                }
-
-                if (['challenge_started', 'challenge_finished', 'exam_result_rendered', 'exam_printed'].includes(state)) {
-                    renderExams(false);
+            if (req.status == 200) {
+                if (req.responseText == 'Not found.') {
+                    html += '<div class="alert alert-danger mb-2" role="alert">Invalid code.</div>';
                 } else {
-                    renderExams();
-                }
+                    html += '<div class="alert alert-info mb-2" role="info">Exam file has been downloaded and parsed sucessfully.</div>';
                 
-                code.value = '';
-
-                if (properties['app_ui_start_challenge_after_download_success']) {
-                    document.querySelector('#options-tgr').click();
-                    startChallenge();
+                    parseChallenge(req.responseText);
+    
+                    // console.log(allExams[exam]);
+                    if (code.value.length != 40) {
+                        var examHash = {
+                            'id': exam,
+                            'generated': allExams[exam].generated,
+                            'generatedDate': (new Date(allExams[exam].generated*1)) + '',
+                            'hashcode': sha1(code.value)
+                        };
+                        examsHashes[exam] = examHash;
+    
+                        // console.log(examsHashes);
+                        setLocalStorageItem('examsHashes', examsHashes);
+                    }
+    
+                    if (['challenge_started', 'challenge_finished', 'exam_result_rendered', 'exam_printed'].includes(state)) {
+                        renderExams(false);
+                    } else {
+                        renderExams();
+                    }
+                    
+                    code.value = '';
+    
+                    if (properties['app_ui_start_challenge_after_download_success']) {
+                        document.querySelector('#options-tgr').click();
+                        startChallenge();
+                    }
                 }
+            } else {
+                html += '<div class="alert alert-warning mb-2" role="alert">' + req.status + '</div>';
             }
-        } else {
-            html += '<div class="alert alert-warning mb-2" role="alert">' + req.status + '</div>';
+        } catch (exception) {
+            if (exception.name == 'NetworkError') {
+                console.log('There was a network error.');
+                html += '<div class="alert alert-danger mb-2" role="alert">' + exception.message + '</div>';
+            }
         }
         renderElement('.downloading-messages', html);
     }
@@ -123,22 +130,29 @@ function checkQuestions(exam) {
 
     req.open('POST', 'https://ash.unixstorm.org/codemarker/cloud/index.php', false); 
     req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    req.send('hash=' + exam.hashcode);
+    try {
+        req.send('hash=' + exam.hashcode);
 
-    html = '';
-    console.log(req);
-    if (req.status == 200) {
-        var timestamp = req.responseText * 1;
+        html = '';
+        console.log(req);
+        if (req.status == 200) {
+            var timestamp = req.responseText * 1;
 
-        if (exam.generated < timestamp) {
-            html += '<i class="icon sync-icon" data-hash="'+exam.hashcode+'"></i>';
-     
-            $('#'+exam.id.replace('cm-', '')+' div h5').append(html);
+            if (exam.generated < timestamp) {
+                html += '<i class="icon sync-icon" data-hash="'+exam.hashcode+'"></i>';
+        
+                $('#'+exam.id.replace('cm-', '')+' div h5').append(html);
 
-            document.querySelector('#'+exam.id.replace('cm-', '')+' div h5 i').addEventListener('click', syncExam);
+                document.querySelector('#'+exam.id.replace('cm-', '')+' div h5 i').addEventListener('click', syncExam);
+            }
+        } else {
+            html += '<div class="alert alert-warning mb-2" role="alert">' + req.status + '</div>';
         }
-    } else {
-        html += '<div class="alert alert-warning mb-2" role="alert">' + req.status + '</div>';
+    } catch (exception) {
+        if (exception.name == 'NetworkError') {
+            console.log('There was a network error.');
+            // html += '<div class="alert alert-warning mb-2" role="alert">' + exception.message + '</div>';
+        }
     }
 }
 
@@ -153,25 +167,32 @@ function syncExam(event) {
 
     req.open('POST', 'https://ash.unixstorm.org/codemarker/cloud/index.php', false); 
     req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    req.send('code=' + hash);
+    try {
+        req.send('code=' + hash);
 
-    if (req.status == 200) {
-        parseChallenge(req.responseText);
+        if (req.status == 200) {
+            parseChallenge(req.responseText);
 
-        console.log(allExams[exam]);
-        var examHash = {
-            'id': exam,
-            'generated': allExams[exam].generated,
-            'generatedDate': (new Date(allExams[exam].generated)*1) + '',
-            'hashcode': hash
-        };
-        examsHashes[exam] = examHash;
-        setLocalStorageItem('examsHashes', examsHashes);
-        
-        $('#'+exam.replace('cm-', '')).html(prepareExam(allExams[exam], false));
-        console.log('OK');
-    } else {
-        console.log(req.status);
+            console.log(allExams[exam]);
+            var examHash = {
+                'id': exam,
+                'generated': allExams[exam].generated,
+                'generatedDate': (new Date(allExams[exam].generated)*1) + '',
+                'hashcode': hash
+            };
+            examsHashes[exam] = examHash;
+            setLocalStorageItem('examsHashes', examsHashes);
+            
+            $('#'+exam.replace('cm-', '')).html(prepareExam(allExams[exam], false));
+            console.log('OK');
+        } else {
+            console.log(req.status);
+        }
+    } catch (exception) {
+        if (exception.name == 'NetworkError') {
+            console.log('There was a network error.');
+            // html += '<div class="alert alert-warning mb-2" role="alert">' + exception.message + '</div>';
+        }
     }
     event.stopPropagation();
 }
