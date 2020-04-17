@@ -16,11 +16,7 @@ describe("Property", function() {
   });
 
   it("should return property value", function() {
-    
     expect(property.getValue()).toEqual(value);
-
-    //demonstrates use of custom matcher
-    // expect(player).toBePlaying(song);
   });
 
 });

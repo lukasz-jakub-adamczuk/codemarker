@@ -1,6 +1,6 @@
 'use strict'
 
-import {Property} from './property.js';
+// import {Property} from './property.js';
 
 var Properties = (function() {
     'use strict';
@@ -76,7 +76,7 @@ var Properties = (function() {
 })();
 
 
-export {Properties};
+// export {Properties};
 
 
 // Handle changing value of property

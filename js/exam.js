@@ -1,7 +1,14 @@
 'use strict';
 
-var Exam = {
-    name: ''
+function Exam(params) {
+    this.name = params.name;
+    this.description = params.description;
+    this.params = params.params;
+    this.questions = [];
+}
+
+Exam.prototype.delete = function() {
+
 }
 
 // Handle rendering list of available exams

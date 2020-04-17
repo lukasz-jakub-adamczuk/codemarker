@@ -1,18 +1,10 @@
 'use strict';
 
-// var Question = {};
 function Question(name, params, answers) {
     this.name = name;
     this.params = params;
     this.answers = answers;
 }
-// };
-//     name: '',
-    
-
-var q1 = new Question('aaa test', 'params', ['answers']);
-
-var q2 = new Question('bbbb test', {}, ['aaa', 'vvv']);
 
 
 // Handle previous question for running challenge

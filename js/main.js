@@ -1,12 +1,12 @@
 'use strict';
 
-import {Properties} from './properties.js';
+// import {Properties} from './properties.js';
 
 const LW_VERSION = 'v0.07 patch-1';
 
 var codeMarker = {};
 
-var state;
+// var state;
 
 var questions = {
     'all': [],
@@ -23,8 +23,8 @@ var displayTimer;
 var keyEventEnabled = false;
 
 // var initialSetup = {};
-var allExams = {};
-var examsHashes = {};
+// var allExams = {};
+// var examsHashes = {};
 var availableExams = [];
 
 var errors = [];
@@ -32,7 +32,7 @@ var errors = [];
 var exam;
 var time;
 
-var properties = {};
+// var properties = {};
 
 var letters = 'abcdefghijklmnopqrstuvwxyz'.split('');
 
@@ -126,44 +126,18 @@ window.addEventListener('keydown', function(event) {
     }
 });
 
-var challengeLayer = document.getElementById('#challenge');
+// var challengeLayer = document.getElementById('#challenge');
 
-// var hammertime = new Hammer(document.getElementById('#challenge'), {});
-// var mc = new Hammer(challengeLayer);
-
-// // listen to events...
-// mc.on("panleft panright tap press", function(ev) {
-//     challengeLayer.textContent = ev.type +" gesture detected.";
-// });
-// hammertime.on('panleft', function(ev) {
-//     console.log(ev);
-//     prevQuestion();
-// });
-// hammertime.on('panright', function(ev) {
-//     console.log(ev);
-//     nextQuestion();
-// });
-
-
-// var myElement = document.getElementById('myElement');
 var myElement = document.querySelector('body');
 
-// create a simple instance
-// by default, it only adds horizontal recognizers
 var mc = new Hammer(myElement);
 
-// listen to events...
-// mc.on("panleft panright tap press", function(ev) {
-//     myElement.textContent = ev.type +" gesture detected.";
-// });
 mc.on("swipeleft", function(ev) {
     console.log(ev.type);
-    // prevQuestion();
     nextQuestion(ev);
 });
 mc.on("swiperight", function(ev) {
     console.log(ev.type);
-    // nextQuestion();
     prevQuestion(ev);
 });
 
