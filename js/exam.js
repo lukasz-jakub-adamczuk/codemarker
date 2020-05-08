@@ -148,6 +148,47 @@ function parseChallenge(content) {
     // state = 'challenge_parsed';
 }
 
+// Handle storing exam
+function storeExam() {
+    var examStorage = {};
+    examStorage['questions'] = questions;
+    examStorage['challenge'] = challenge;
+    examStorage['limit'] = limit;
+    examStorage['displayTimer'] = displayTimer;
+    // examStorage['allExams'] = allExams;
+    // examStorage['examsHashes'] = examsHashes;
+    // examStorage['availableExams'] = availableExams;
+    
+    examStorage['errors'] = errors;
+    examStorage['exam'] = exam;
+    examStorage['time'] = time;
+    setLocalStorageItem('examStorage', examStorage);
+    console.log('Exam has been saved in localStorage.')
+}
+
+// Handle restoring exam if terminated
+function restoreExam() {
+    var examStorage = getLocalStorageItem('examStorage');
+    var answer = confirm('Do you want to restore saved exam?');
+
+    if (properties['quiz_auto_restoration'] || answer) {
+        console.log('Exam has been restored.');
+        questions = examStorage['questions'];
+        challenge = examStorage['challenge'];
+        limit = examStorage['limit'];
+        displayTimer = examStorage['displayTimer'];
+        // allExams = examStorage['allExams'];
+        // examsHashes = examStorage['examsHashes'];
+        // availableExams = examStorage['availableExams'];
+        
+        errors = examStorage['errors'];
+        exam = examStorage['exam'];
+        time = examStorage['time'];
+        startChallenge(null, false);
+        // removeLocalStorageItem('examStorage');
+    }
+}
+
 // Handle displaying questions for exam in print mode
 function printExam(event) {
     console.log('printExam() has been used.');

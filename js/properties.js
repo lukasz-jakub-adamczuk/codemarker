@@ -22,6 +22,10 @@ var propertiesSetup = {
                 'name': 'quiz_questions_skip_ignored',
                 'label': 'Skip invalid or ignored questions.',
                 'value': true
+            }, {
+                'name': 'quiz_auto_restoration',
+                'label': 'Auto-restoring saved exam. <span class="badge badge-primary">New</span>',
+                'value': false
             }
         ]
     },

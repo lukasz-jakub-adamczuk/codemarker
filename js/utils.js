@@ -5,9 +5,9 @@ function loadQuestions() {
 
     document.querySelector('#file-input').click();
 
-    var promise = new Promise(function(resolve, reject) {
+    // var promise = new Promise(function(resolve, reject) {
 
-    });
+    // });
 }
 
 function readSingleFile(e) {

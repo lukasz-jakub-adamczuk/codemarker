@@ -67,6 +67,12 @@ if (properties['app_ui_introduction_enabled']) {
 
 renderProperties(propertiesSetup);
 
+setTimeout(function() {
+    if (getLocalStorageItem('examStorage')) {
+        restoreExam();
+    }
+}, 3000);
+
 
 // adding events
 

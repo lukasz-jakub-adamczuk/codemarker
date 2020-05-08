@@ -1,5 +1,5 @@
 // Handle starting new challenge for user
-function startChallenge(event) {
+function startChallenge(event, newExam = true) {
     console.log('startChallenge() has been used.');
     if (event && event.target.className.indexOf('disabled') != -1) {
         return;
@@ -7,7 +7,7 @@ function startChallenge(event) {
     console.log('Start event has been triggered.');
 
     // reset used questions
-    if (initChallenge(properties['quiz_questions_skip_ignored'])) {
+    if (initChallenge(properties['quiz_questions_skip_ignored'], newExam)) {
         enableKeyEvents();
         hideElement('#exams');
         // if results has been displayed
@@ -24,7 +24,8 @@ function startChallenge(event) {
         // enable nav buttons
         enableAction('next');
         enableAction('answers');
-        renderProgress(0);
+        // renderProgress(0);
+        countProgress();
         // generate first questions
         generateQuestion(questions.used[challenge]);
         
@@ -49,7 +50,7 @@ function startChallenge(event) {
 }
 
 // Internal function to init challenge
-function initChallenge(skip_ignored) {
+function initChallenge(skip_ignored, newExam = true) {
     if (skip_ignored) {
         questions.used = questions.all.filter(function(elem, index, array) { return elem.params.status != 'ignored'; }).slice(0);
     } else {
@@ -72,11 +73,12 @@ function initChallenge(skip_ignored) {
         questions.used = questions.used.slice(0, questionsForExam);
     }
     
-    
-    questions.exam = [];
-    challenge = 0;
-    limit = questions.used.length;
-    errors = [];
+    if (newExam) {
+        questions.exam = [];
+        challenge = 0;
+        limit = questions.used.length;
+        errors = [];
+    }
 
     return limit;
 }
@@ -136,6 +138,8 @@ function cancelChallenge() {
 
 // Handle generating question
 function generateQuestion(q, idx) {
+    storeExam();
+    console.log('challenge: '+ challenge);
     console.log('idx in param: '+ idx);
     var idx = idx === 0 ? 0 : idx || challenge;
     console.log('idx in var: '+ idx);

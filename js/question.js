@@ -70,7 +70,7 @@ function prepareSimpleQuestion(q, idx) {
     for (var ans in answers.choices) {
         id = 'q'+idx+'a'+ans+'';
         answer = answers.choices[ans].name;
-        if (idx in questions.exam && ans in questions.exam[idx] && questions.exam[idx][ans] == true) {
+        if (idx in questions.exam && questions.exam[idx] != null && ans in questions.exam[idx] && questions.exam[idx][ans] == true) {
             checked = true;
         } else {
             checked = false;
@@ -193,8 +193,6 @@ function prepareInputQuestion(q, idx) {
     }
 
     var input = '<input type="text" id="'+id+'" name="answer" value="'+written+'" class="form-control" placeholder="Type answer here" />';
-
-    console.log();
 
     var html = '';
     // if (mode == 'print') {

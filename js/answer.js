@@ -90,6 +90,8 @@ function registerAnswerForSimpleQuestion(event) {
 
         countProgress();
 
+        storeExam();
+
         if ((answeredExamQuestions().length) == questions.used.length) {
             enableAction('stop');
         }
