@@ -22,7 +22,16 @@ function startChallenge(event, newExam = true) {
             showElement('#timer');
         }
         // enable nav buttons
-        enableAction('next');
+        if (challenge == 0) {
+            disableAction('prev');
+        } else {
+            enableAction('prev');
+        }
+        if (challenge == limit-1) {
+            disableAction('next');
+        } else {
+            enableAction('next');
+        }
         enableAction('answers');
         // renderProgress(0);
         countProgress();
@@ -30,7 +39,7 @@ function startChallenge(event, newExam = true) {
         generateQuestion(questions.used[challenge]);
         
         // start timer
-        time = allExams[exam].duration * 60;
+        time = time || allExams[exam].duration * 60;
         renderTimer();
         // start interval
         displayTimer = setInterval(function() {
@@ -40,6 +49,10 @@ function startChallenge(event, newExam = true) {
                 finishChallenge();
             }
         }, 1000);
+        // store exam every minute to save running time
+        saverTimer = setInterval(function() {
+            storeExam();
+        }, 60000);
         // event.preventDefault();
 
         disableAction('start');
@@ -98,6 +111,7 @@ function finishChallenge(event) {
     }
     
     clearInterval(displayTimer);
+    clearInterval(saverTimer);
     // hide nav buttons
     disableAction('prev');
     disableAction('next');
@@ -127,6 +141,7 @@ function cancelChallenge() {
     }
     console.log('Stop event has been triggered.');
     clearInterval(displayTimer);
+    clearInterval(saverTimer);
     // hide nav buttons
     disableAction('prev');
     disableAction('next');

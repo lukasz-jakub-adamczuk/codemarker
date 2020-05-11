@@ -339,7 +339,7 @@ function renderProgress(value) {
 
 // Internal function returning anwered questions
 function answeredExamQuestions() {
-    return questions.exam.filter(function(elem, index, array) { return typeof elem != 'undefined';})
+    return questions.exam.filter(function(elem, index, array) { return typeof elem != 'undefined' && elem != null; });
 }
 
 function renderErrors(question, returnHtml = false) {

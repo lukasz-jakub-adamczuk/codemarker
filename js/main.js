@@ -17,6 +17,7 @@ var questions = {
 var challenge;
 var limit;
 var displayTimer;
+var saverTimer;
 
 var keyEventEnabled = false;
 
@@ -67,11 +68,11 @@ if (properties['app_ui_introduction_enabled']) {
 
 renderProperties(propertiesSetup);
 
-setTimeout(function() {
+// setTimeout(function() {
     if (getLocalStorageItem('examStorage')) {
         restoreExam();
     }
-}, 3000);
+// }, 3000);
 
 
 // adding events

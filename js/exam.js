@@ -169,9 +169,9 @@ function storeExam() {
 // Handle restoring exam if terminated
 function restoreExam() {
     var examStorage = getLocalStorageItem('examStorage');
-    var answer = confirm('Do you want to restore saved exam?');
+    // var answer = confirm('Do you want to restore saved exam?');
 
-    if (properties['quiz_auto_restoration'] || answer) {
+    if (properties['quiz_auto_restoration'] || confirm('Do you want to restore saved exam?')) {
         console.log('Exam has been restored.');
         questions = examStorage['questions'];
         challenge = examStorage['challenge'];
@@ -388,6 +388,7 @@ function removeAllExams(event) {
     challenge = undefined;
     limit = undefined;
     displayTimer = undefined;
+    saverTimer = undefined;
     
     keyEventEnabled = false;
     
