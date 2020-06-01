@@ -205,7 +205,7 @@ function validateExamAnswers() {
                     if ((questions.exam[i][answer] === true
                         && questions.used[i-1].answers.choices[answer].type === 'correct')
                         || (questions.exam[i][answer] !== ''
-                        && matches[0]+'-'+questions.exam[i][answer] === matches[0]+'-'+matches[1]
+                        && matches && matches[0]+'-'+questions.exam[i][answer] === matches[0]+'-'+matches[1]
                         && questions.used[i-1].answers.choices[answer].type === 'correct')
                         || (questions.exam[i][answer] !== ''
                         && questions.used[i-1].answers.choices[answer].slug === slugify((questions.exam[i][answer] + '').trim())

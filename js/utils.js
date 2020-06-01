@@ -70,7 +70,7 @@ function retrieveQuestions() {
         renderElement('.downloading-messages', html);
     } else {
         var req = new XMLHttpRequest();
-        req.open('POST', 'https://ash.unixstorm.org/codemarker/cloud/index.php', false); 
+        req.open('POST', 'https://ash.unixstorm.org/codemarker/cloud/index.php', false);
         req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         try {
             req.send('code=' + code.value);
