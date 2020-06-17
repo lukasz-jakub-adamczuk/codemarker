@@ -77,14 +77,35 @@ function initChallenge(skip_ignored, newExam = true) {
     } else {
         questionsForExam = questions.used.length;
     }
-    if (properties['quiz_questions_shuffle']) {
-        questions.used = shuffleArray(questions.used);
+    
+    // classic selection
+    // if (properties['quiz_questions_shuffle']) {
+    //     questions.used = shuffleArray(questions.used);
+    // }
+    // if (!properties['quiz_questions_use_all']) {
+    //     questions.used = questions.used.slice(0, questionsForExam);
+    // }
+    
+    // better selection
+    var allSlices = Math.ceil(questions.used.length / questionsForExam);
+    var slice = allExams[exam].slice || 0;
+    slice = slice % allSlices;
+    var singleSlice = Math.ceil(questions.used.length / allSlices);
+
+    var selected = questions.used.slice(slice * singleSlice, (slice + 1) * singleSlice);
+
+    var sliceDiff = questionsForExam - selected.length;
+
+    if (sliceDiff > 0) {
+        slice++;
+        slice = slice % allSlices;
+        allExams[exam].slice = slice;
+        var nextSlice = questions.used.slice(slice * singleSlice, (slice + 1) * singleSlice);
+        selected = selected.concat(shuffleArray(nextSlice).slice(0, sliceDiff));
     }
-    if (!properties['quiz_questions_use_all']) {
-    //     questions.used = questions.used.slice(0);
-    // } else {
-        questions.used = questions.used.slice(0, questionsForExam);
-    }
+    setLocalStorageItem('allExam', allExams);
+
+    questions.used = shuffleArray(selected);
     
     if (newExam) {
         questions.exam = [];
@@ -93,7 +114,82 @@ function initChallenge(skip_ignored, newExam = true) {
         errors = [];
     }
 
+    for (var q of questions.all) {
+        console.log(slugify(q.name));
+
+    }
+
     return limit;
+}
+
+function testChallenge(skip_ignored = true, newExam = true) {
+    if (skip_ignored) {
+        questions.used = questions.all.filter(function(elem, index, array) { return elem.params.status != 'ignored'; }).slice(0);
+    } else {
+        questions.used = questions.all.slice(0);
+    }
+
+    // console.log('all:  ' + questions.all.length);
+    // console.log('used: ' + questions.used.length);
+    
+    var ignored = questions.all.filter(function(elem, index, array) { return elem.params.status == 'ignored'; }).slice(0);
+    var questionsForExam;
+    if (questions.used.length > allExams[exam].questions) {
+        questionsForExam = allExams[exam].questions;
+    } else {
+        questionsForExam = questions.used.length;
+    }
+    
+    // classic selection
+    // if (properties['quiz_questions_shuffle']) {
+    //     questions.used = shuffleArray(questions.used);
+    // }
+    // if (!properties['quiz_questions_use_all']) {
+    //     questions.used = questions.used.slice(0, questionsForExam);
+    // }
+
+    
+    // better selection
+    var allSlices = Math.ceil(questions.used.length / questionsForExam);
+    var slice = allExams[exam].slice || 0;
+    slice = slice % allSlices;
+    var singleSlice = Math.ceil(questions.used.length / allSlices);
+
+    var selected = questions.used.slice(slice * singleSlice, (slice + 1) * singleSlice);
+
+    var sliceDiff = questionsForExam - selected.length;
+
+    if (sliceDiff > 0) {
+        slice++;
+        slice = slice % allSlices;
+        allExams[exam].slice = slice;
+        var nextSlice = questions.used.slice(slice * singleSlice, (slice + 1) * singleSlice);
+        selected = selected.concat(shuffleArray(nextSlice).slice(0, sliceDiff));
+    }
+    setLocalStorageItem('allExam', allExams);
+
+    questions.used = shuffleArray(selected);
+    
+
+    stats = getLocalStorageItem('stats') || [];
+
+    for (var q in questions.all) {
+        mapping[slugify(questions.all[q].name)] = q;
+        if (!stats[q]) {
+            stats[q] = 0;
+        }
+    }
+    for (var q in questions.used) {
+        stats[mapping[slugify(questions.used[q].name)]]++;
+    }
+
+    setLocalStorageItem('stats', stats);
+    var str = 'salesperson,sales' + "\n";
+    for (var s in stats) {
+        str += s + ',' + stats[s] + "\n";
+    }
+    console.log(str);
+
 }
 
 // Handle finishing running challenge

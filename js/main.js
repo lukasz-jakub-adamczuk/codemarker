@@ -31,6 +31,9 @@ var errors = [];
 var exam;
 var time;
 
+var stats;
+    var mapping = {};
+
 var letters = 'abcdefghijklmnopqrstuvwxyz'.split('');
 
 // hide menu by default (in case would be opened during page reload and intro running)
