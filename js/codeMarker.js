@@ -77,46 +77,36 @@ function initChallenge(skip_ignored, newExam = true) {
     } else {
         questionsForExam = questions.used.length;
     }
-    
-    // classic selection
-    // if (properties['quiz_questions_shuffle']) {
-    //     questions.used = shuffleArray(questions.used);
-    // }
-    // if (!properties['quiz_questions_use_all']) {
-    //     questions.used = questions.used.slice(0, questionsForExam);
-    // }
-    
-    // better selection
-    var allSlices = Math.ceil(questions.used.length / questionsForExam);
-    var slice = allExams[exam].slice || 0;
-    slice = slice % allSlices;
-    var singleSlice = Math.ceil(questions.used.length / allSlices);
 
-    var selected = questions.used.slice(slice * singleSlice, (slice + 1) * singleSlice);
-
-    var sliceDiff = questionsForExam - selected.length;
-
-    if (sliceDiff > 0) {
-        slice++;
+    if (properties['quiz_questions_use_all']) {
+        questions.used = questions.used.slice(0);
+    } else {
+        var allSlices = Math.ceil(questions.used.length / questionsForExam);
+        var slice = allExams[exam].slice || 0;
         slice = slice % allSlices;
-        allExams[exam].slice = slice;
-        var nextSlice = questions.used.slice(slice * singleSlice, (slice + 1) * singleSlice);
-        selected = selected.concat(shuffleArray(nextSlice).slice(0, sliceDiff));
-    }
-    setLocalStorageItem('allExam', allExams);
+        var singleSlice = Math.ceil(questions.used.length / allSlices);
 
-    questions.used = shuffleArray(selected);
+        var selected = questions.used.slice(slice * singleSlice, (slice + 1) * singleSlice);
+
+        var sliceDiff = questionsForExam - selected.length;
+
+        if (sliceDiff > 0) {
+            slice++;
+            slice = slice % allSlices;
+            allExams[exam].slice = slice;
+            var nextSlice = questions.used.slice(slice * singleSlice, (slice + 1) * singleSlice);
+            selected = selected.concat(shuffleArray(nextSlice).slice(0, sliceDiff));
+        }
+        setLocalStorageItem('allExam', allExams);
+
+        questions.used = shuffleArray(selected);
+    }
     
     if (newExam) {
         questions.exam = [];
         challenge = 0;
         limit = questions.used.length;
         errors = [];
-    }
-
-    for (var q of questions.all) {
-        console.log(slugify(q.name));
-
     }
 
     return limit;
@@ -128,9 +118,6 @@ function testChallenge(skip_ignored = true, newExam = true) {
     } else {
         questions.used = questions.all.slice(0);
     }
-
-    // console.log('all:  ' + questions.all.length);
-    // console.log('used: ' + questions.used.length);
     
     var ignored = questions.all.filter(function(elem, index, array) { return elem.params.status == 'ignored'; }).slice(0);
     var questionsForExam;
@@ -139,15 +126,6 @@ function testChallenge(skip_ignored = true, newExam = true) {
     } else {
         questionsForExam = questions.used.length;
     }
-    
-    // classic selection
-    // if (properties['quiz_questions_shuffle']) {
-    //     questions.used = shuffleArray(questions.used);
-    // }
-    // if (!properties['quiz_questions_use_all']) {
-    //     questions.used = questions.used.slice(0, questionsForExam);
-    // }
-
     
     // better selection
     var allSlices = Math.ceil(questions.used.length / questionsForExam);
@@ -255,6 +233,7 @@ function generateQuestion(q, idx) {
     var idx = idx === 0 ? 0 : idx || challenge;
     console.log('idx in var: '+ idx);
     var html = '';
+    var image = '';
     console.log('challenge in var: '+ challenge);
     challenge = idx;
     console.log('challenge in var: '+ challenge);
@@ -269,7 +248,12 @@ function generateQuestion(q, idx) {
     }
     if (q.params.image) {
         html += '<span class="icon image-icon" data-toggle="modal" data-target="#image-modal"></span>';
-        renderElement('#image-modal .modal-body', '<img class="question-image" src="'+q.params.image+'">');
+        if (q.params.image.indexOf('http') == -1) {
+            image = 'data:image/jpg;base64,' + q.params.image;
+        } else {
+            image = q.params.image;
+        }
+        renderElement('#image-modal .modal-body', '<img class="question-image" src="'+image+'">');
     }
     if (q.params.eqi && q.params.eri) {
         html += '<span class="icon database-icon" data-toggle="modal" data-target="#database-modal"></span>';
