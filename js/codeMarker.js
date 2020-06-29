@@ -1,6 +1,7 @@
 // Handle starting new challenge for user
 function startChallenge(event, newExam = true) {
     console.log('startChallenge() has been used.');
+    var duration;
     if (event && event.target.className.indexOf('disabled') != -1) {
         return;
     }
@@ -39,7 +40,12 @@ function startChallenge(event, newExam = true) {
         generateQuestion(questions.used[challenge]);
         
         // start timer
-        time = time || allExams[exam].duration * 60;
+        if (properties['quiz_questions_use_all']) {
+            duration = questions.used.length * 120
+        } else {
+            duration = allExams[exam].duration * 60
+        }
+        time = time || duration;
         renderTimer();
         // start interval
         displayTimer = setInterval(function() {

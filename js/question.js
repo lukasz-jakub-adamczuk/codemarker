@@ -158,9 +158,9 @@ function prepareMatchingQuestion(q, idx) {
                 if (idx in questions.exam && ans in questions.exam[idx] && questions.exam[idx][ans] == slugify(match.answer)) {
                     selected = ' selected';
                 }
-                if (mode == 'print' && choice == match.answer) {
-                    selected = ' selected';
-                }
+                // if (mode == 'print' && choice == match.answer) {
+                //     selected = ' selected';
+                // }
 
                 html +='<option value="'+slugify(match.answer)+'"'+selected+'>' + marked(match.answer) + '</option>'
             }

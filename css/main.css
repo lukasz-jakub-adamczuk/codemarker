@@ -131,9 +131,10 @@ body {
 
 #timer {
     position: absolute;
-    width: 100%;
-    bottom: 3.5rem;
-    text-align: center;
+    /* width: 100%; */
+    top: 1.5rem;
+    right: 1rem;
+    /* text-align: center; */
     z-index: 1;
 }
 .timer-content {
