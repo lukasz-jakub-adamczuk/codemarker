@@ -63,7 +63,7 @@ function prepareSimpleQuestion(q, idx) {
     // if (mode == 'print') {
     //     html += '<div class="question">' + marked(q.name).replace('<p>', '<p>' + idx + '. ') + '</div>';
     // } else {
-        html += '<div class="question">' + marked(escapeHtml(q.name)) + '</div>';
+        html += '<div class="question">' + marked(q.name.escapeHtml()) + '</div>';
     // }
     // html += '<div class="row">';
     html += '<div class="answers">';
@@ -90,7 +90,7 @@ function prepareSimpleQuestion(q, idx) {
             // if (mode != 'print' || (mode == 'print' && answers.choices[ans].type == 'correct') || (mode == 'print' && properties['print_answers.print_incorrect'] && answers.choices[ans].type == 'wrong')) {
                 html += '<div class="custom-control custom-checkbox">'
                     +'<input type="checkbox" id="'+id+'" name="answer" class="custom-control-input" value="'+slugify(answer)+'"'+(checked ? ' checked' : '')+'>'
-                    +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+marked(escapeHtml(letter+answer))+'</label>'
+                    +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+marked(letter+answer.escapeHtml())+'</label>'
                 +'</div>';
             // }
         } else {
@@ -98,7 +98,7 @@ function prepareSimpleQuestion(q, idx) {
             // if (mode != 'print' || (mode == 'print' && answers.choices[ans].type == 'correct') || (mode == 'print' && properties['print_answers.print_incorrect'] && answers.choices[ans].type == 'wrong')) {
                 html += '<div class="custom-control custom-radio">'
                     +'<input type="radio" id="'+id+'" name="answer" class="custom-control-input" value="'+slugify(answer)+'"'+(checked ? ' checked' : '')+'>'
-                    +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+marked(escapeHtml(letter+answer))+'</label>'
+                    +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+marked(letter+answer.escapeHtml())+'</label>'
                 +'</div>';
             // }
         }
@@ -120,7 +120,7 @@ function prepareMatchingQuestion(q, idx) {
     // if (mode == 'print') {
     //     html += '<div class="question">' + marked(q.name).replace('<p>', '<p>' + idx + '. ') + '</div>';
     // } else {
-        html += '<div class="question">' + marked(escapeHtml(q.name)) + '</div>';
+        html += '<div class="question">' + marked(q.name.escapeHtml()) + '</div>';
     // }
     
     // prepare choices for matching
@@ -145,7 +145,7 @@ function prepareMatchingQuestion(q, idx) {
 
         html += '<div class="matching-control">'
             // +'<input type="radio" id="'+id+'" name="customRadio" class="custom-control-input" value="'+slugify(answer)+'"'+(checked ? ' checked' : '')+'>'
-            +'<label class="matching-control-label" for="'+id+'">'+marked(escapeHtml(answer))+'</label>'
+            +'<label class="matching-control-label" for="'+id+'">'+marked(answer.escapeHtml())+'</label>'
             // +'<select class="custom-select" id="'+id+'" name="'+slugify(answer)+'">';
             +'<select class="custom-select" id="'+id+'" name="answer">';
             html +='<option value="">choose answer</option>'
@@ -162,7 +162,7 @@ function prepareMatchingQuestion(q, idx) {
                 //     selected = ' selected';
                 // }
 
-                html +='<option value="'+slugify(match.answer)+'"'+selected+'>' + marked(escapeHtml(match.answer)) + '</option>'
+                html +='<option value="'+slugify(match.answer)+'"'+selected+'>' + marked(match.answer.escapeHtml()) + '</option>'
             }
             html +='</select>'
         +'</div>';
@@ -198,7 +198,7 @@ function prepareInputQuestion(q, idx) {
     // if (mode == 'print') {
     //     html += '<div class="question">' + marked(q.name).replace('<p>', '<p>' + idx + '. ') + '</div>';
     // } else {
-        html += '<div class="question">' + marked(escapeHtml(q.name)).replace('[]', input) + '</div>';
+        html += '<div class="question">' + marked(q.name.escapeHtml()).replace('[]', input) + '</div>';
     // }
 
 
@@ -215,7 +215,7 @@ function printSimpleQuestion(q, challenge) {
     var html = '';
     var inputState = '';
     
-    html += '<div class="question">' + marked(escapeHtml(q.name)).replace('<p>', '<p>' + idx + '. ').replace() + '</div>';
+    html += '<div class="question">' + marked(q.name.escapeHtml()).replace('<p>', '<p>' + idx + '. ').replace() + '</div>';
     if (q.params.image) {
         html += '<img class="question-image" src="' + q.params.image + '" />';
     }
@@ -247,7 +247,7 @@ function printSimpleQuestion(q, challenge) {
             if (answers.choices[ans].type == 'correct' || (properties['print_answers.print_incorrect'] && answers.choices[ans].type == 'wrong')) {
                 html += '<div class="custom-control custom-checkbox">'
                     +'<input type="checkbox" id="'+id+'" name="'+id+'" class="custom-control-input '+inputState+'" value="'+slugify(answer)+'"'+(checked ? ' checked="checked"' : '')+' >'
-                    +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+marked(escapeHtml(letter+answer))+'</label>'
+                    +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+marked(letter+answer.escapeHtml())+'</label>'
                 +'</div>';
             }
         } else {
@@ -255,7 +255,7 @@ function printSimpleQuestion(q, challenge) {
             if (answers.choices[ans].type == 'correct' || (properties['print_answers.print_incorrect'] && answers.choices[ans].type == 'wrong')) {
                 html += '<div class="custom-control custom-radio">'
                     +'<input type="radio" id="'+id+'" name="'+id+'" class="custom-control-input '+inputState+'" value="'+slugify(answer)+'"'+(checked ? ' checked="checked"' : '')+' >'
-                    +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+marked(escapeHtml(letter+answer))+'</label>'
+                    +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+marked(letter+answer.escapeHtml())+'</label>'
                 +'</div>';
             }
         }
@@ -274,7 +274,7 @@ function printMatchingQuestion(q, challenge) {
     var html = '';
     var matching = '';
     
-    html += '<div class="question">' + marked(escapeHtml(q.name)).replace('<p>', '<p>' + idx + '. ') + '</div>';
+    html += '<div class="question">' + marked(q.name.escapeHtml()).replace('<p>', '<p>' + idx + '. ') + '</div>';
 
     if (q.params.image) {
         html += '<img class="question-image" src="' + q.params.image + '" />';
@@ -348,7 +348,7 @@ function printInputQuestion(q, challenge) {
     
     question.replace('[]', '<strong>'+written+'</strong>');
     
-    html += '<div class="question">' + marked(escapeHtml(question)).replace('<p>', '<p>' + idx + '. ') + '</div>';
+    html += '<div class="question">' + marked(question.escapeHtml()).replace('<p>', '<p>' + idx + '. ') + '</div>';
     if (q.params.image) {
         html += '<img class="question-image" src="' + q.params.image + '" />';
     }
