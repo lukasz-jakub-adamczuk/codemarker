@@ -83,7 +83,8 @@ function retrieveQuestions() {
                 
                     parseChallenge(req.responseText);
     
-                    // console.log(allExams[exam]);
+                    console.log(allExams);
+                    console.log(allExams[exam]);
                     if (code.value.length != 40) {
                         var examHash = {
                             'id': exam,
@@ -93,7 +94,7 @@ function retrieveQuestions() {
                         };
                         examsHashes[exam] = examHash;
     
-                        // console.log(examsHashes);
+                        console.log(examsHashes);
                         setLocalStorageItem('examsHashes', examsHashes);
                     }
     

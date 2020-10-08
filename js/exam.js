@@ -131,8 +131,7 @@ function parseChallenge(content) {
 
     questions.all = parser.questions;
     exam = 'cm-' + parser.examConfig.exam;
-    // console.log(exam);
-
+    
     // console.log(allExams);
     // console.log(allExams[exam]);
     allExams[exam] = parser.examConfig;
@@ -171,22 +170,25 @@ function restoreExam() {
     var examStorage = getLocalStorageItem('examStorage');
     // var answer = confirm('Do you want to restore saved exam?');
 
-    if (properties['quiz_auto_restoration'] || confirm('Do you want to restore saved exam?')) {
-        console.log('Exam has been restored.');
-        questions = examStorage['questions'];
-        challenge = examStorage['challenge'];
-        limit = examStorage['limit'];
-        displayTimer = examStorage['displayTimer'];
-        // allExams = examStorage['allExams'];
-        // examsHashes = examStorage['examsHashes'];
-        // availableExams = examStorage['availableExams'];
-        
-        errors = examStorage['errors'];
-        exam = examStorage['exam'];
-        time = examStorage['time'];
-        startChallenge(null, false);
-        // removeLocalStorageItem('examStorage');
-    }
+    // if (properties['allow_quiz_restoration']) {
+        // if (properties['quiz_auto_restoration'] || confirm('Do you want to restore saved exam?')) {
+        if (properties['quiz_auto_restoration']) {
+            console.log('Exam has been restored.');
+            questions = examStorage['questions'];
+            challenge = examStorage['challenge'];
+            limit = examStorage['limit'];
+            displayTimer = examStorage['displayTimer'];
+            // allExams = examStorage['allExams'];
+            // examsHashes = examStorage['examsHashes'];
+            // availableExams = examStorage['availableExams'];
+            
+            errors = examStorage['errors'];
+            exam = examStorage['exam'];
+            time = examStorage['time'];
+            startChallenge(null, false);
+            // removeLocalStorageItem('examStorage');
+        }
+    // }
 }
 
 // Handle displaying questions for exam in print mode

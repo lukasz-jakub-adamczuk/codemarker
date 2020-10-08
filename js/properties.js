@@ -16,15 +16,19 @@ var propertiesSetup = {
                 'value': true
             }, {
                 'name': 'quiz_questions_use_all',
-                'label': 'Use all available questions. <span class="badge badge-primary">New</span>',
+                'label': 'Use all available questions.',
                 'value': false
             }, {
                 'name': 'quiz_questions_skip_ignored',
                 'label': 'Skip invalid or ignored questions.',
                 'value': true
             }, {
+            //     'name': 'allow_quiz_restoration',
+            //     'label': 'Allow restoring saved exam. <span class="badge badge-primary">New</span>',
+            //     'value': true
+            // }, {
                 'name': 'quiz_auto_restoration',
-                'label': 'Auto-restoring saved exam. <span class="badge badge-primary">New</span>',
+                'label': 'Auto-restoring saved exam.',
                 'value': false
             }
         ]
@@ -54,7 +58,7 @@ var propertiesSetup = {
                 'value': false
             }, {
                 'name': 'quiz_questions_mark_for_review',
-                'label': 'Allow marking questions for review. <span class="badge badge-primary">New</span>',
+                'label': 'Allow marking questions for review.',
                 'value': false
             }, {
                 'name': 'quiz_answers_help_button',
@@ -62,7 +66,7 @@ var propertiesSetup = {
                 'value': true
             }, {
                 'name': 'app_ui_display_nav_below_questions',
-                'label': 'Display additional navigation below questions. <span class="badge badge-primary">New</span>',
+                'label': 'Display additional navigation below questions.',
                 'value': false
             }, {
                 'name': 'quiz_answers_print_letters',

@@ -63,6 +63,7 @@ var parser = {
                         parser.paramsFound = true;
                         if (parser.line.trim().substr(-1) == '}') {
                             // parser.question.params = parser.line;
+                            parser.debug ? console.log(parser.params) : '';
                             parser.question.params = JSON.parse(parser.params);
                             parser.debug ? console.log('Exam params before and after parsing:') : '';
                             parser.debug ? console.log(parser.params) : '';
