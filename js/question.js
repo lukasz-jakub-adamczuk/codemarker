@@ -58,14 +58,20 @@ function prepareSimpleQuestion(q, idx) {
         q.answers = processAnswers(q);
     }
     var answers = q.answers;
+    
     // var idx = idx || challenge+1;
     var html = '';
-    // if (mode == 'print') {
-    //     html += '<div class="question">' + marked(q.name).replace('<p>', '<p>' + idx + '. ') + '</div>';
-    // } else {
-        html += '<div class="question">' + marked(q.name.escapeHtml()).split('[dash]').join('&ndash;').split('[tab]').join('&nbsp;&nbsp;&nbsp;&nbsp;') + '</div>';
-    // }
-    // html += '<div class="row">';
+
+    var question = q.name;
+    question = question.escapeHtml();
+
+    if (!q.params.markdown || q.params.markdown == 'both' || q.params.markdown == 'question') {
+        question = marked(question);
+    }
+    question = replaceBBCode(question);
+    
+    html += '<div class="question">' + question + '</div>';
+    
     html += '<div class="answers">';
     for (var ans in answers.choices) {
         id = 'q'+idx+'a'+ans+'';
@@ -89,7 +95,7 @@ function prepareSimpleQuestion(q, idx) {
             // if (mode != 'print' || (mode == 'print' && answers.choices[ans].type == 'correct') || (mode == 'print' && properties['print_answers.print_incorrect'] && answers.choices[ans].type == 'wrong')) {
             // if (mode != 'print' || (mode == 'print' && answers.choices[ans].type == 'correct') || (mode == 'print' && properties['print_answers.print_incorrect'] && answers.choices[ans].type == 'wrong')) {
                 html += '<div class="custom-control custom-checkbox">'
-                    +'<input type="checkbox" id="'+id+'" name="answer" class="custom-control-input" value="'+slugify(answer)+'"'+(checked ? ' checked' : '')+'>'
+                    +'<input type="checkbox" id="'+id+'" name="answer" class="custom-control-input" tabindex="'+(parseInt(ans)+1)+'" value="'+slugify(answer)+'"'+(checked ? ' checked' : '')+'>'
                     +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+marked(letter+answer.escapeHtml()).split('[br]').join('<br>')+'</label>'
                 +'</div>';
             // }
@@ -97,7 +103,7 @@ function prepareSimpleQuestion(q, idx) {
             // single choice
             // if (mode != 'print' || (mode == 'print' && answers.choices[ans].type == 'correct') || (mode == 'print' && properties['print_answers.print_incorrect'] && answers.choices[ans].type == 'wrong')) {
                 html += '<div class="custom-control custom-radio">'
-                    +'<input type="radio" id="'+id+'" name="answer" class="custom-control-input" value="'+slugify(answer)+'"'+(checked ? ' checked' : '')+'>'
+                    +'<input type="radio" id="'+id+'" name="answer" class="custom-control-input" tabindex="'+(parseInt(ans)+1)+'" value="'+slugify(answer)+'"'+(checked ? ' checked' : '')+'>'
                     +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+marked(letter+answer.escapeHtml()).split('[br]').join('<br>')+'</label>'
                 +'</div>';
             // }
@@ -117,11 +123,16 @@ function prepareMatchingQuestion(q, idx) {
     var idx = challenge+1;
     var html = '';
     var matching = '';
-    // if (mode == 'print') {
-    //     html += '<div class="question">' + marked(q.name).replace('<p>', '<p>' + idx + '. ') + '</div>';
-    // } else {
-        html += '<div class="question">' + marked(q.name.escapeHtml()).split('[dash]').join('&ndash;').split('[tab]').join('&nbsp;&nbsp;&nbsp;&nbsp;') + '</div>';
-    // }
+    
+    var question = q.name;
+    question = question.escapeHtml();
+
+    if (!q.params.markdown || q.params.markdown == 'both' || q.params.markdown == 'question') {
+        question = marked(question);
+    }
+    question = replaceBBCode(question);
+    
+    html += '<div class="question">' + question + '</div>';
     
     // prepare choices for matching
     var choices = [];
@@ -195,11 +206,15 @@ function prepareInputQuestion(q, idx) {
     var input = '<input type="text" id="'+id+'" name="answer" value="'+written+'" class="form-control" placeholder="Type answer here" />';
 
     var html = '';
-    // if (mode == 'print') {
-    //     html += '<div class="question">' + marked(q.name).replace('<p>', '<p>' + idx + '. ') + '</div>';
-    // } else {
-        html += '<div class="question">' + marked(q.name.escapeHtml()).split('[dash]').join('&ndash;').split('[tab]').join('&nbsp;&nbsp;&nbsp;&nbsp;').split('[tab]').join('&nbsp;&nbsp;&nbsp;&nbsp;').replace('[]', input) + '</div>';
-    // }
+    var question = q.name;
+    question = question.escapeHtml();
+
+    if (!q.params.markdown || q.params.markdown == 'both' || q.params.markdown == 'question') {
+        question = marked(question);
+    }
+    question = replaceBBCode(question);
+    
+    html += '<div class="question">' + question.replace('[]', input) + '</div>';
 
 
     return html;
@@ -214,8 +229,16 @@ function printSimpleQuestion(q, challenge) {
     var idx = challenge+1;
     var html = '';
     var inputState = '';
+
+    var question = q.name;
+    question = question.escapeHtml();
+
+    if (!q.params.markdown || q.params.markdown == 'both' || q.params.markdown == 'question') {
+        question = marked(question);
+    }
+    question = replaceBBCode(question);
     
-    html += '<div class="question">' + marked(q.name.escapeHtml()).split('[dash]').join('&ndash;').split('[tab]').join('&nbsp;&nbsp;&nbsp;&nbsp;').replace('<p>', '<p>' + idx + '. ').replace() + '</div>';
+    html += '<div class="question">' + question.replace('<p>', '<p>' + idx + '. ') + '</div>';
     if (q.params.image) {
         html += '<img class="question-image" src="' + q.params.image + '" />';
     }
@@ -273,8 +296,15 @@ function printMatchingQuestion(q, challenge) {
     var idx = challenge+1;
     var html = '';
     var matching = '';
+    var question = q.name;
+    question = question.escapeHtml();
+
+    if (!q.params.markdown || q.params.markdown == 'both' || q.params.markdown == 'question') {
+        question = marked(question);
+    }
+    question = replaceBBCode(question);
     
-    html += '<div class="question">' + marked(q.name.escapeHtml()).split('[dash]').join('&ndash;').split('[tab]').join('&nbsp;&nbsp;&nbsp;&nbsp;').replace('<p>', '<p>' + idx + '. ') + '</div>';
+    html += '<div class="question">' + question.replace('<p>', '<p>' + idx + '. ') + '</div>';
 
     if (q.params.image) {
         html += '<img class="question-image" src="' + q.params.image + '" />';
@@ -341,14 +371,18 @@ function printInputQuestion(q, challenge) {
 
     var input = '<input type="text" id="'+id+'" name="aaa" value="'+written+'" class="form-control" />';
 
-    console.log();
-
     var html = '';
     var question = q.name;
+    question = question.escapeHtml();
+
+    if (!q.params.markdown || q.params.markdown == 'both' || q.params.markdown == 'question') {
+        question = marked(question);
+    }
+    question = replaceBBCode(question);
     
-    question.replace('[]', '<strong>'+written+'</strong>');
+    question = question.replace('[]', '<strong>'+written+'</strong>');
     
-    html += '<div class="question">' + marked(question.escapeHtml()).split('[dash]').join('&ndash;').replace('<p>', '<p>' + idx + '. ') + '</div>';
+    html += '<div class="question">' + question.replace('<p>', '<p>' + idx + '. ') + '</div>';
     if (q.params.image) {
         html += '<img class="question-image" src="' + q.params.image + '" />';
     }

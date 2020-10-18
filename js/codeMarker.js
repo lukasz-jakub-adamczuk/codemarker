@@ -76,7 +76,7 @@ function initChallenge(skip_ignored, newExam = true) {
         questions.used = questions.all.slice(0);
     }
     
-    var ignored = questions.all.filter(function(elem, index, array) { return elem.params.status == 'ignored'; }).slice(0);
+    questions.ignored = questions.all.filter(function(elem, index, array) { return elem.params.status == 'ignored'; }).slice(0);
     var questionsForExam;
     if (questions.used.length > allExams[exam].questions) {
         questionsForExam = allExams[exam].questions;
@@ -232,7 +232,7 @@ function cancelChallenge() {
 }
 
 // Handle generating question
-function generateQuestion(q, idx) {
+function generateQuestion(q, idx, type, mode = 'challenge') {
     storeExam();
     console.log('challenge: '+ challenge);
     console.log('idx in param: '+ idx);
@@ -243,10 +243,13 @@ function generateQuestion(q, idx) {
     console.log('challenge in var: '+ challenge);
     challenge = idx;
     console.log('challenge in var: '+ challenge);
+    // var q = q || questions.used[challenge];
+    // var mode = 
     
     html += '<div class="challenge-header">';
     html += '<b class="_text-muted _badge _badge-secondary question-number">Question ' + (idx + 1) + ' <span class="_text-muted">/ '+questions.used.length+'</span></b>';
     html += (q.params.area ? ' <span class="_badge _badge-secondary tag"> ' + q.params.area + '</span>' : '');
+    html += (q.params.status ? '<span class="badge badge-danger ml-2">' + q.params.status + '</span>' : '');
     
     if (q.params.comment) {
         html += '<span class="icon comment-icon" data-toggle="modal" data-target="#comment-modal"></span>';
@@ -279,7 +282,7 @@ function generateQuestion(q, idx) {
         }
     }
 
-    if (properties['quiz_questions_mark_for_review']) {
+    if (mode == 'challenge' && properties['quiz_questions_mark_for_review']) {
         // default value
         questions.marked[idx] = questions.marked[idx] || false; 
         var checked = questions.marked[idx];
@@ -295,28 +298,34 @@ function generateQuestion(q, idx) {
     html += renderErrors(idx, true);
     html += '</div>';
     
+    
     html += '<div class="additional-navigation">';
     html += '<div class="row">';
     html += '<div class="col text-right mb-3">';
-    if (properties['app_ui_display_nav_below_questions']) {
-        // html += '<div class="col-sm-12 col-md-4 text-right mb-3">';
-        if (challenge != 0) {
-            html += '<button id="additional-prev" onclick="javascript:prevQuestion();" class="btn btn-secondary">Prev</button>';
+    if (mode == 'challenge') {
+        if (properties['app_ui_display_nav_below_questions']) {
+            // html += '<div class="col-sm-12 col-md-4 text-right mb-3">';
+            if (challenge != 0) {
+                html += '<button id="additional-prev" onclick="javascript:prevQuestion();" class="btn btn-secondary">Prev</button>';
+            }
+            if (challenge != limit-1) {
+                html += '<button id="additional-next" onclick="javascript:nextQuestion();" class="btn btn-secondary">Next</button>';
+            }
+            // html += '</div>';
         }
-        if (challenge != limit-1) {
-            html += '<button id="additional-next" onclick="javascript:nextQuestion();" class="btn btn-secondary">Next</button>';
+        if (properties['quiz_questions_mark_for_review']) {
+            // html += '<div class="col-sm-12 col-md-8 text-right">'
+            html += '<button id="additional-review" onclick="javascript:renderReviewResult();" class="btn btn-secondary">Review exam</button>';
+            html += '<button id="additional-stop" onclick="javascript:finishChallenge();" class="btn btn-secondary">Submit exam</button>';
+                    // +'</div>';
         }
-        // html += '</div>';
-    }
-    if (properties['quiz_questions_mark_for_review']) {
-        // html += '<div class="col-sm-12 col-md-8 text-right">'
-        html += '<button id="additional-review" onclick="javascript:renderReviewResult();" class="btn btn-secondary">Review exam</button>';
-        html += '<button id="additional-stop" onclick="javascript:finishChallenge();" class="btn btn-secondary">Submit exam</button>';
-                // +'</div>';
+    } else {
+        html += '<button onclick="javascript:renderExamResultDetails(\''+type+'\');" class="btn btn-secondary">Back to result details</button>';
     }
     html += '</div>';
     html += '</div>';
     html += '</div>';
+
 
     html += '<div class="question-messages"></div>';
     
@@ -324,6 +333,14 @@ function generateQuestion(q, idx) {
     //     return html;
     // };
     renderElement('.challenge', html);
+
+    var elem = document.querySelector('.answers .custom-control-input');
+    if (!elem) {
+        elem = document.querySelector('.answers .custom-select')
+    }
+    if (elem) {
+        elem.focus();
+    }
 }
 
 

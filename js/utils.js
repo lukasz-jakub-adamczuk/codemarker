@@ -450,6 +450,12 @@ function renderMessage(message, type, element, autoclose = false) {
     }
 }
 
+function replaceBBCode(text) {
+    text = text.split('[dash]').join('&ndash;');
+    text = text.split('[tab]').join('&nbsp;&nbsp;&nbsp;&nbsp;');
+    return text;
+}
+
 
 (function(){
     "use strict";

@@ -235,8 +235,10 @@ function validateExamAnswers() {
             // console.log(point);
             if (point == 1) {
                 summary.correct.push(questions.exam[i]);
+                questions.answered[i] = 'correct';
             } else {
                 summary.wrong.push(questions.exam[i]);
+                questions.answered[i] = 'wrong';
             }
             score += point;
         }

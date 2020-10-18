@@ -1,6 +1,6 @@
 'use strict';
 
-const LW_VERSION = 'v0.07 patch-1';
+const LW_VERSION = 'v0.07 patch-2';
 
 var codeMarker = {};
 
@@ -104,11 +104,18 @@ document.querySelector('#answers-button').addEventListener('click', showCorrectA
 
 
 
-var arrows = {
+var keys = {
     'left': 37,
     'up': 38,
     'right': 39,
-    'down': 40
+    'down': 40,
+    'esc': 27,
+    'help': 72,
+    'tab': 9,
+    'w': 87,
+    'a': 65,
+    's': 83,
+    'd': 68
 };
 
 window.addEventListener('keydown', function(event) {
@@ -117,14 +124,32 @@ window.addEventListener('keydown', function(event) {
     } else {
         keyEventEnabled = true;
     }
+    console.log(event.keyCode + ' pressed.');
     if (keyEventEnabled) {
         switch (event.keyCode) {
-            case arrows.left:
+            case keys.left:
+            case keys.a:
                 prevQuestion(event);
                 break;
-            case arrows.right:
+            case keys.right:
+            case keys.d:
                 nextQuestion(event);
                 break;
+            case keys.top:
+                // prevQuestion(event);
+                break;
+            case keys.down:
+                // nextQuestion(event);
+                break;
+            case keys.esc:
+                // nextQuestion(event);
+                break;
+            case keys.help:
+            case keys.s:
+                showCorrectAnswers();
+                break;
+            // case keys.tab:
+            //     break;
         }
     }
 });

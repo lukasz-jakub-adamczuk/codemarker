@@ -48,7 +48,7 @@ function renderExams(displayLayer = true) {
 
 // Handle preparing single exam on list
 function prepareExam(config, includeWrapper = true) {
-    var valid = config.all-config.ignored;
+    var valid = config.all - config.ignored;
     var html = '';
     html += includeWrapper ? '<article id="'+config.exam+'" class="list-group-item list-group-item-action flex-column align-items-start">' : '';
     html += (valid == 0 ? '<div class="alert alert-warning mb-2" role="alert">Challenge cannot be started, because has no valid questions.</div>' : '');
@@ -147,6 +147,29 @@ function parseChallenge(content) {
     // state = 'challenge_parsed';
 }
 
+// Handle repeating exam
+function repeatExam() {
+    var examStorage = getLocalStorageItem('examStorage');
+    
+    questions = examStorage['questions'];
+    questions.exam = [];
+    challenge = 0;
+    limit = questions.used.length;
+    errors = [];
+    
+    
+    
+    // errors = examStorage['errors'];
+    // exam = examStorage['exam'];
+    // time = examStorage['time'];
+    startChallenge(null, false);
+}
+
+// Handle retrying exam
+function retryExam() {
+    startChallenge();
+}
+
 // Handle storing exam
 function storeExam() {
     var examStorage = {};
@@ -220,101 +243,10 @@ function printExam(event) {
     state = 'exam_printed';
 }
 
-// Handle rendering result of finished challenge
-function renderExamResult() {
-    console.log('renderExamResult() has been used.');
-    
-    hideElements(['challenge', 'progress', 'timer']);
-    
-    showElement('.result');
-
-
-    var summary = validateExamAnswers();
-    var score = summary.score;
-    var title;
-    var subtitle;
-    var image;
-
-    var html = '';
-
-    if (score == 100) {
-        title = 'Perfect';
-        subtitle = 'Your score is %d%. Will you repeat this?';
-        image = 'passed';
-    }
-    if (score >= 80 && score < 100) {
-        title = 'Great';
-        subtitle = 'Your score is %d%. You would pass exam.';
-        image = 'passed';
-    }
-    if (score >= 50 && score < 80) {
-        title = 'Not good';
-        subtitle = 'Your score is %d%. You can do it better.';
-        image = 'failed';
-    }
-    if (score < 50) {
-        title = 'Poor';
-        subtitle = 'Your score is %d%. You have to do it better.';
-        image = 'failed';
-    }
-    if (score == 0) {
-        title = 'Terrible';
-        subtitle = 'Your score is %d%. Start to learn wise.';
-        image = 'epic-fail';
-    }
-
-
-    html += '<div class="row">';
-    html += '<div class="col mb-3">';
-    html += '<div class="card text-center">';
-    // html += '<div class="card text-center col-sm-6 col-md-6  col-lg-8  col-xl-12">';
-    html += '   <div class="card-header">';
-    html +=  allExams[exam].exam.toUpperCase() + ' exam result';
-    // html +=  ' Service Mapping exam result';
-    html += '   </div>';
-    html += '   <div class="card-body">';
-    html += '       <img src="./img/'+image+'.png" class="col-sm-6">';
-    html += '       <h1 class="card-title">'+title+'</h1>';
-    html += '       <p class="card-text">'+subtitle.replace('%d%', '<strong>'+score+'%</strong>')+'</p>';
-    // html += '<a href="#" class="btn btn-primary">Go somewhere</a>';
-    html += '   </div>';
-    html += '</div>';
-    html += '</div>';
-    html += '</div>';
-
-    html += '<div class="row row-cols-1 row-cols-md-2">';
-    html += '   <div class="col mb-3 col-sm-6 col-md-6">';
-    // html += '      <div class="card-deck">';
-    html += '         <div class="card h-100 text-center text-success border-success">';
-    // html += '             <div class="card-header">Corrent</div>';
-    html += '             <div class="card-body">';
-    html += '                 <h1 class="card-title">'+summary.correct.length+'</h1>';
-    html += '                 <p class="card-text">Questions answered correctly.</p>';
-    html += '             </div>';
-    html += '         </div>';
-    // html += '      </div>';
-    html += '   </div>';
-    html += '   <div class="col mb-3 col-sm-6 col-md-6">';
-    html += '       <div class="card h-100 text-center text-danger border-danger">';
-    // html += '           <div class="card-header">Mistakes</div>';
-    html += '           <div class="card-body">';
-    html += '              <h1 class="card-title">'+summary.wrong.length+'</h1>';
-    html += '               <p class="card-text">Questions with incorrect or missing answer.</p>';
-    html += '           </div>';
-    html += '       </div>';
-    html += '   </div>';
-    html += '</div>';
-
-    // renderElement('.result', result + '<p class="advice">' + advice + '</p>' + html);
-    renderElement('.result', html);
-
-    state = 'exam_result_rendered';
-}
-
-function backToChallenge(id) {
+function backToChallenge(id, mode, type) {
     hideElements(['result']);
 
-    generateQuestion(questions.used[id], parseInt(id));
+    generateQuestion(questions.used[id], parseInt(id), type, mode);
 
     showElements(['challenge']);
 }
@@ -333,6 +265,7 @@ function renderReviewResult() {
     var answered = questions.exam.filter(el => el != undefined).length;
     var missing = questions.used.length - answered;
     var marked = questions.marked.filter(el => el == true).length;
+    var onclick, ignored;
 
     html += '<div class="container">';
     html += '<div>Answered in total: <strong>'+answered+'</strong></div>';
@@ -351,8 +284,13 @@ function renderReviewResult() {
             }
         }
         var markedForReview = questions.marked[q] ? '*' : '';
+        onclick = 'onclick="javascript:backToChallenge(this.getAttribute(\'data-id\'));"';
+        ignored = (questions.used[q].params.status && questions.used[q].params.status == 'ignored') ? '<span class="badge badge-danger">ignored</span>' : '';
+
         html += '';
-        html += '<div><a id="r'+q+'" href="#" data-id="'+q+'" onclick="javascript:backToChallenge(this.getAttribute(\'data-id\'));" class="review-question text-secondary">'+(q+1)+'. '+answers.join(', ')+' '+markedForReview+'</a></div>';
+        html += '<div>';
+        html += '    <a id="r'+q+'" href="#" data-id="'+q+'" '+onclick+' class="review-question text-secondary">'+(q+1)+'. '+answers.join(', ')+' '+markedForReview + ignored + '</a>';
+        html += '</div>';
         if ((q+1) % column == 0) {
             html += '</div>';
         }
