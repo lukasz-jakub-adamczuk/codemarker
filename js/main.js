@@ -115,7 +115,8 @@ var keys = {
     'w': 87,
     'a': 65,
     's': 83,
-    'd': 68
+    'd': 68,
+    'c': 67
 };
 
 window.addEventListener('keydown', function(event) {
@@ -147,6 +148,9 @@ window.addEventListener('keydown', function(event) {
             case keys.help:
             case keys.s:
                 showCorrectAnswers();
+                break;
+            case keys.c:
+                completeCorrectAnswers();
                 break;
             // case keys.tab:
             //     break;

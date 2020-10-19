@@ -334,13 +334,14 @@ function generateQuestion(q, idx, type, mode = 'challenge') {
     // };
     renderElement('.challenge', html);
 
+    /*
     var elem = document.querySelector('.answers .custom-control-input');
     if (!elem) {
-        elem = document.querySelector('.answers .custom-select')
+        elem = document.querySelector('.answers .custom-select');
     }
     if (elem) {
         elem.focus();
-    }
+    }*/
 }
 
 

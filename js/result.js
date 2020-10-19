@@ -127,7 +127,9 @@ function renderExamResultDetails(type) {
     
     var html = '';
 
-    html += '<div class="list-group">';
+    html += '<div class="row">';
+    html += '    <div class="col mb-3">';
+    html += '        <div class="list-group mb-3">';
     list.forEach(function(item, i) {
         className = item == 'correct' ? 'success' : 'danger';
         if (!type || type == 'common') {
@@ -138,9 +140,16 @@ function renderExamResultDetails(type) {
             }
         }
     });
-    
-    html += '<div class="row">';
-    html += '    <div class="col text-center mt-3 mb-3">';
+    if (type == 'correct' || type == 'wrong') {
+        var answered = type == 'correct' ? 'correctly' : 'incorrectly';
+        var message = 'Questions answered ' + answered + ' not found.';
+        if (summary[type].length == 0) {
+            html += '<div class="alert alert-warning mb-2" role="alert">' + message + '</div>';
+        }
+    }
+    html += '    </div>';
+
+    html += '    <div class="col text-center mb-3">';
     html += '        <button id="exam-results" onclick="javascript:renderExamResult();" class="btn btn-secondary">Back to exam result</button>';
     html += '    </div>';
     html += '</div>';

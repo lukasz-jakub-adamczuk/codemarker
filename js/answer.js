@@ -24,7 +24,6 @@ function registerAnswerForSimpleQuestion(event) {
             }
 
             if (type == 'single') {
-                questions.exam[question] = {};
                 questions.exam[question][answer] = true;
             }
             if (type == 'multiple') {
@@ -162,6 +161,53 @@ function showCorrectAnswers(event) {
     // errors[challenge].push('Correct answers:' + questions.used[challenge].answers.choices[chc].some(function(el) { return el.name; }).join(', ') + '.');
 }
 
+// Handle matching question with answers
+function completeCorrectAnswers() {
+    console.log('completeCorrectAnswers() has been used.');
+
+    var type = questions.used[challenge].params.type;
+    var question = challenge + 1;
+    var option;
+    var controls;
+
+    if (type == 'single' || type == 'multiple') {
+        controls = document.querySelectorAll('.answers .custom-control-input');
+        controls.forEach(function(itm, i) {
+            var answer = questions.used[challenge].answers.choices[i];
+            if (answer.type == 'correct') {
+                itm.checked = true;
+                
+                questions.exam[question] = questions.exam[question] || {};
+                // if (i in questions.exam[question]) {
+                //     questions.exam[question][i] = !questions.exam[question][i];
+                // } else {
+                questions.exam[question][i] = true;
+                // }
+            }
+        });
+    }
+
+    if (type == 'matching') {
+        controls = document.querySelectorAll('.answers .custom-select');
+        controls.forEach(function(itm, i) {
+            option = questions.used[challenge].answers.choices[i].name.split('==')[1].trim();
+            itm.value = slugify(option);
+            // itm.dispatchEvent(new Event('change'));
+            
+            // if ('createEvent' in document) {
+            //     var evt = document.createEvent('HTMLEvents');
+            //     evt.initEvent('change', false, true);
+            //     itm.dispatchEvent(evt);
+            // } else {
+            //     itm.fireEvent('onchange');
+            // }
+
+            questions.exam[question] = questions.exam[question] || {};
+            questions.exam[question][i] = itm.value;
+        });
+    }
+}
+
 // Handle mapping answers
 function processAnswers(question) {
     var result = {'correct': 0, 'wrong': 0, 'choices': [], 'processed': true, 'shuffled': false};
@@ -213,7 +259,7 @@ function validateExamAnswers() {
                         point += ratio;
                     }
                 }
-                console.log('Checking correct answers :' + point);
+                console.log('Checking correct answers: ' + point);
                 if (ratio < 1) {
                     for (var answer in questions.exam[i]) {
                         if (questions.used[i-1].answers.choices[answer].name.indexOf('==') != -1) {
@@ -230,10 +276,10 @@ function validateExamAnswers() {
                         }
                     }
                 }
-                console.log('Checking wrong answers :' + point);
+                console.log('Checking wrong answers: ' + point);
             }
-            // console.log(point);
-            if (point == 1) {
+            console.log(point);
+            if (point == 1 || (parseInt(point * 1000) == 999)) {
                 summary.correct.push(questions.exam[i]);
                 questions.answered[i] = 'correct';
             } else {
