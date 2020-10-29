@@ -178,11 +178,13 @@ function completeCorrectAnswers() {
                 itm.checked = true;
                 
                 questions.exam[question] = questions.exam[question] || {};
-                // if (i in questions.exam[question]) {
-                //     questions.exam[question][i] = !questions.exam[question][i];
-                // } else {
                 questions.exam[question][i] = true;
-                // }
+            } else {
+                if (questions.exam[question][i]) {
+                    itm.checked = false;
+                    // deselect incorrect answer if needed
+                    questions.exam[question][i] = false;
+                }
             }
         });
     }
