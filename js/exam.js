@@ -160,8 +160,8 @@ function repeatExam() {
     
     
     // errors = examStorage['errors'];
-    // exam = examStorage['exam'];
-    // time = examStorage['time'];
+    exam = examStorage['exam'];
+    time = getTime();
     startChallenge(null, false);
 }
 

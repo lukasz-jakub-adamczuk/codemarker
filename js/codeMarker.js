@@ -40,19 +40,14 @@ function startChallenge(event, newExam = true) {
         generateQuestion(questions.used[challenge]);
         
         // start timer
-        if (properties['quiz_questions_use_all']) {
-            duration = questions.used.length * 120
-        } else {
-            duration = allExams[exam].duration * 60
-        }
-        time = time || duration;
+        time = time || getTime();
         renderTimer();
         // start interval
         displayTimer = setInterval(function() {
             time--;
             renderTimer();
             if (properties['app_ui_display_timer'] && time <= 0) {
-                finishChallenge();
+                stopChallenge();
             }
         }, 1000);
         // store exam every minute to save running time
@@ -176,12 +171,20 @@ function testChallenge(skip_ignored = true, newExam = true) {
 
 }
 
-// Handle finishing running challenge
-function finishChallenge(event) {
-    console.log('finishChallenge() has been used.');
-    if (event && event.target.className.indexOf('disabled') != -1) {
-        renderMessage('Exam cannot be sumitted until all questions will be answered.', 'warning', '.question-messages', true);
-        return;
+// Handle stoping running challenge
+function stopChallenge(event) {
+    console.log('stopChallenge() has been used.');
+    console.warn(event);
+    if (event) {
+        if (event.type == 'dblclick') {
+            if (confirm('Seriously?')) {
+                finishChallenge();
+            }
+        }
+        if (event.target.className.indexOf('disabled') != -1) {
+            // renderMessage('This action is disbaled currently.', 'warning', '.question-messages', true);
+            return;
+        }
     }
     console.log('Stop event has been triggered.');
 
@@ -189,7 +192,11 @@ function finishChallenge(event) {
         renderMessage('Exam cannot be sumitted until all questions will be answered.', 'warning', '.question-messages', true);
         return;
     }
-    
+
+    finishChallenge();
+}
+
+function finishChallenge() {
     clearInterval(displayTimer);
     clearInterval(saverTimer);
     // hide nav buttons
@@ -209,7 +216,7 @@ function finishChallenge(event) {
         renderExamResult();
     }
 
-    state = 'challenge_finished';
+    state = 'challenge_stoped';
 }
 
 // Handle canceling running challenge
@@ -264,9 +271,9 @@ function generateQuestion(q, idx, type, mode = 'challenge') {
         }
         renderElement('#image-modal .modal-body', '<img class="question-image" src="'+image+'">');
     }
-    if (q.params.eqi && q.params.eri) {
+    if (q.params.eqi || q.params.eri) {
         html += '<span class="icon database-icon" data-toggle="modal" data-target="#database-modal"></span>';
-        renderElement('#database-modal .modal-body', marked('If this question looks broken then check how it looks in Excel file\n\nQuestion in Excel: '+q.params.eqi+'\n\nRow in Excel: '+q.params.eri));
+        renderElement('#database-modal .modal-body', marked('If this question looks broken then check how it looks in Excel file\n\nQuestion in Excel: '+(q.params.eqi || '?')+'\n\nRow in Excel: '+(q.params.eri || '?')));
     }
     html += '</div>';
     
@@ -288,7 +295,7 @@ function generateQuestion(q, idx, type, mode = 'challenge') {
         var checked = questions.marked[idx];
         html += '<div class="mark-for-review">';
         html += '<div class="custom-control custom-checkbox">'
-                    +'<input type="checkbox" id="review-'+idx+'" name="marker" class="custom-control-input" value=""'+(checked ? ' checked' : '')+'>'
+                    +'<input type="checkbox" id="review-'+idx+'" name="marker" class="custom-control-input review-question" value=""'+(checked ? ' checked' : '')+'>'
                     +'<label class="custom-control-label" for="review-'+idx+'">Mark question for review</label>'
                 +'</div>';
         html += '</div>';
@@ -316,7 +323,7 @@ function generateQuestion(q, idx, type, mode = 'challenge') {
         if (properties['quiz_questions_mark_for_review']) {
             // html += '<div class="col-sm-12 col-md-8 text-right">'
             html += '<button id="additional-review" onclick="javascript:renderReviewResult();" class="btn btn-secondary">Review exam</button>';
-            html += '<button id="additional-stop" onclick="javascript:finishChallenge();" class="btn btn-secondary">Submit exam</button>';
+            html += '<button id="additional-stop" onclick="javascript:stopChallenge(event);" ondblclick="javascript:stopChallenge(event);" class="btn btn-secondary">Submit exam</button>';
                     // +'</div>';
         }
     } else {

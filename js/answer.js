@@ -171,13 +171,13 @@ function completeCorrectAnswers() {
     var controls;
 
     if (type == 'single' || type == 'multiple') {
+        questions.exam[question] = questions.exam[question] || {};
         controls = document.querySelectorAll('.answers .custom-control-input');
         controls.forEach(function(itm, i) {
             var answer = questions.used[challenge].answers.choices[i];
+            
             if (answer.type == 'correct') {
                 itm.checked = true;
-                
-                questions.exam[question] = questions.exam[question] || {};
                 questions.exam[question][i] = true;
             } else {
                 if (questions.exam[question][i]) {

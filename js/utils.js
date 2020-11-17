@@ -479,3 +479,13 @@ function replaceBBCode(text) {
       String.prototype.escapeHtml = escapeHtml;
     }
 })();
+
+
+function getTime() {
+    if (properties['quiz_questions_use_all']) {
+        duration = questions.used.length * 120
+    } else {
+        duration = allExams[exam].duration * 60
+    }
+    return duration;
+}

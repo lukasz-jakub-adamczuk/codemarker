@@ -95,7 +95,8 @@ document.querySelector('#exams .list').addEventListener('click', selectExam);  /
 document.querySelector('.challenge').addEventListener('change', registerAnswerForSimpleQuestion);
 
 document.querySelector('#start-button').addEventListener('click', startChallenge);
-document.querySelector('#stop-button').addEventListener('click', finishChallenge);
+document.querySelector('#stop-button').addEventListener('click', stopChallenge);
+document.querySelector('#stop-button').addEventListener('dblclick', stopChallenge);
 document.querySelector('#print-button').addEventListener('click', printExam);
 
 document.querySelector('#prev-button').addEventListener('click', prevQuestion);
@@ -116,7 +117,8 @@ var keys = {
     'a': 65,
     's': 83,
     'd': 68,
-    'c': 67
+    'c': 67,
+    'r': 82
 };
 
 window.addEventListener('keydown', function(event) {
@@ -151,6 +153,9 @@ window.addEventListener('keydown', function(event) {
                 break;
             case keys.c:
                 completeCorrectAnswers();
+                break;
+            case keys.r:
+                document.querySelector('.review-question').click();
                 break;
             // case keys.tab:
             //     break;
