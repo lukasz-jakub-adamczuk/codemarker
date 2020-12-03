@@ -343,6 +343,56 @@ function answeredExamQuestions() {
     return questions.exam.filter(function(elem, index, array) { return typeof elem != 'undefined' && elem != null; });
 }
 
+function changeTheme(theme) {
+    console.log('change theme');
+    // console.log(this);
+
+    var theme = this.value || theme;
+    document.querySelectorAll('link[rel=stylesheet]').forEach(function(itm, i) {
+        if (!itm.hasAttribute('disabled')) {
+            itm.setAttribute('disabled', true);
+        }
+    });
+
+    document.querySelector('link[href*=bootstrap]').removeAttribute('disabled');
+    document.querySelector('link[href*=main]').removeAttribute('disabled');
+
+    if (theme == 'light') {
+        document.querySelectorAll('link[href*=light]').forEach(function(itm, i) {
+            itm.removeAttribute('disabled');
+        });
+    }
+
+    if (theme == 'dark') {
+        document.querySelectorAll('link[href*=dark]').forEach(function(itm, i) {
+            itm.removeAttribute('disabled');
+        });
+    }
+
+    if (theme == 'gold') {
+        document.querySelectorAll('link[href*=gold]').forEach(function(itm, i) {
+            itm.removeAttribute('disabled');
+        });
+    }
+}
+
+function prepareMessage(type, message, params) {
+    // TODO params in messages
+    return '<div class="alert alert-'+type+' mb-2" role="alert">' + message + '</div>';
+}
+
+function info(message, params) {
+    return prepareMessage('info', message, params);
+}
+
+function warning(message, params) {
+    return prepareMessage('warning', message, params);
+}
+
+function error(message, params) {
+    return prepareMessage('danger', message, params);
+}
+
 function renderErrors(question, returnHtml = false) {
     var html = '';
     if (errors[question]) {

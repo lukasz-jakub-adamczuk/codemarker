@@ -14,9 +14,11 @@ body {
 
 
 }
+/* background-color: #0069d9;
+border-color: #0062cc; */
 
 .container {
-    color: #333a40;
+    /* color: #333a40; */
 }
 
 .challenge,
@@ -26,7 +28,7 @@ body {
     /* top: 0; */
     /* bottom: 3rem; */
     /* height: calc(100% - 3rem); */
-    background: #fff;
+    /* background: #fff; */
     /* overflow: scroll; */
     padding-top: 15px;
     padding-bottom: 15px;
@@ -40,7 +42,7 @@ body {
     right: 0;
     /* bottom: 3rem; */
     height: calc(100% - 3rem);
-    background: #fff;
+    /* background: #fff; */
     padding-top: 15px;
     padding-bottom: 15px;
     margin-bottom: 3rem;
@@ -139,8 +141,8 @@ body {
 }
 .timer-content {
     display: inline-block;
-    background: #eee;
-    color: #a48b66;
+    /* background: #eee;
+    color: #a48b66; */
     /* font-size: 1rem; */
     padding: .25rem .5rem .125rem;
     border-radius: .25rem;
@@ -158,7 +160,7 @@ body {
 
 .matching-control {
     display: flex;
-    background-color: #fafafa;
+    /* background-color: #fafafa; */
     padding: .5rem;
     margin-bottom: .5rem;
     align-items: center;
@@ -174,6 +176,12 @@ body {
 }
 .custom-control-label {
     /* margin: 0; */
+}
+.app-settings-control-choice {
+    min-width: 20%;
+}
+.app-settings-control-choice + label {
+    margin-left: .5rem;
 }
 
 .custom-control-label.marked-correct {
@@ -224,14 +232,15 @@ div.hidden {
 .progresso > span {
     display: inline-block;
     height: 16px;
-    background-image:
+    /* background-image:
          linear-gradient(-45deg, 
                                  transparent 33%, rgba(0, 0, 0, .1) 33%, 
                                  rgba(0,0, 0, .1) 66%, transparent 66%),
          linear-gradient(to top, 
                                  rgba(255, 255, 255, .25), 
                                  rgba(0, 0, 0, .25)),
-         linear-gradient(to left, #09c, #f44);
+         linear-gradient(to left, #09c, #f44); */
+    
     background-size: 35px 20px, 100% 100%, 100% 100%;
     animation: animate-stripes 5s linear infinite;
 }
@@ -248,19 +257,21 @@ div.hidden {
 }
 
 .result-image {
-    height: 48%;
+    height: 256px;
+    width: 50%;
+    margin: 0 auto;
     background-size: 72% auto;
     background-position: center;
     background-repeat: no-repeat;
 }
 .passed {
-    background-image: url(../img/passed.png);
+    background-image: url(../img/passed-transparent.png);
 }
 .failed {
-    background-image: url(../img/failed.png);
+    background-image: url(../img/failed-transparent.png);
 }
 .epic-fail {
-    background-image: url(../img/epic-fail.png);
+    background-image: url(../img/epic-fail-transparent.png);
 }
 .advice {
     text-align: center;
@@ -271,7 +282,7 @@ div.hidden {
 
 /* menu options */
 .menu-options {
-    background: url(../img/trianglify.png) 50% 50% no-repeat;
+    /* background: url(../img/trianglify.png) 50% 50% no-repeat; */
     /* text-align: center; */
     position: absolute;
     /* top: 0; */
@@ -320,7 +331,7 @@ div.hidden {
     align-items: center;
     width: 100%;
     height: 3rem;
-    background: url(../img/trianglify.png) 50% 50% no-repeat;
+    /* background: url(../img/trianglify.png) 50% 50% no-repeat; */
     border-top: #222;
     position: fixed;
     bottom: 0;
@@ -328,6 +339,8 @@ div.hidden {
     padding: 0 .25rem;
     z-index: 100;
 }
+
+
 .main-nav.hidden {
     display: none;
 }
@@ -337,7 +350,6 @@ div.hidden {
     height: 2.5rem;
     padding: .25rem;
     margin: 0;
-    background-color: #a48b66;
     background-position: 50% 50%;
     background-repeat: no-repeat;
     border-radius: .25rem;
@@ -383,16 +395,18 @@ div.hidden {
     border-radius: .25rem;
     /* background-color: #eee; */
 }
-.comment-icon {
+.comment-icon,
+.image-icon,
+.database-icon {
     background-color: #eee;
+}
+.comment-icon {
     background-image: url('../img/IcoMoon-Free-master/SVG/108-bubble.svg');
 }
 .image-icon {
-    background-color: #eee;
     background-image: url('../img/IcoMoon-Free-master/SVG/014-image.svg');
 }
 .database-icon {
-    background-color: #eee;
     background-image: url('../img/IcoMoon-Free-master/SVG/101-database.svg');
 }
 .delete-icon {
@@ -432,7 +446,7 @@ div.hidden {
 
 
 a {
-    color: #a48b66;
+    /* color: #a48b66; */
 }
 
 .btn {
@@ -440,31 +454,39 @@ a {
     padding-right: 2rem; */
 }
 
+.btn-primary {
+    /* background-color: #a48b66;
+    border-color: #a48b66; */
+}
 .btn-primary,
 .btn-primary:hover,
 .btn-primary.focus,
 .btn-primary:focus {
-    background-color: #a48b66;
-    border-color: #a48b66;
+    /* background-color: #a48b66;
+    border-color: #a48b66; */
 }
 .btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active, .show>.btn-primary.dropdown-toggle {
     color: #fff;
-    background-color: #a48b66;
-    border-color: #a48b66;
+    /* background-color: #a48b66;
+    border-color: #a48b66; */
 }
 .btn-secondary {
-    background-color: #a48b66;
-    border-color: #a48b66;
+    /* background-color: #aaa;
+    border-color: #aaa; */
 }
 
 .custom-control-input:checked~.custom-control-label::before {
     color: #fff;
-    border-color: #c6383a;
-    background-color: #c6383a;
-    background-color: #a48b66;
-    border-color: #a48b66;
+    /* border-color: #c6383a;
+    background-color: #c6383a; */
+    /* border-color: #a48b66;
+    background-color: #a48b66; */
 }
 
+a:hover {
+    /* color: #a48b66; */
+    text-decoration: none;
+}
 
 .loading-errors .alert:last-child {
     margin-bottom: .5rem;

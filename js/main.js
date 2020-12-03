@@ -32,12 +32,15 @@ var exam;
 var time;
 
 var stats;
-    var mapping = {};
+var mapping = {};
 
 var letters = 'abcdefghijklmnopqrstuvwxyz'.split('');
 
 // hide menu by default (in case would be opened during page reload and intro running)
 $('#options-tgr').prop('checked', false);
+
+// show menu from app if needed
+// $('#options-tgr').click();
 
 // checking online version with local
 checkAppVersion();
@@ -67,6 +70,9 @@ if (properties['app_ui_introduction_enabled']) {
     skipIntro();
 }
 
+if (properties['app_ui_theme']) {
+    changeTheme(properties['app_ui_theme']);
+}
 
 
 renderProperties(propertiesSetup);
@@ -87,7 +93,7 @@ document.querySelector('#retrieve').addEventListener('click', retrieveQuestions)
 document.querySelector('#app-properties').addEventListener('click', manageProperty);
 document.querySelector('#default-settings').addEventListener('click', resetAllSettings);
 document.querySelector('#remove-exams').addEventListener('click', removeAllExams);
-
+document.querySelector('#app_ui_theme').addEventListener('change', changeTheme);
 
 // challenge
 document.querySelector('#exams .list').addEventListener('click', selectExam);  // true
@@ -155,7 +161,7 @@ window.addEventListener('keydown', function(event) {
                 completeCorrectAnswers();
                 break;
             case keys.r:
-                document.querySelector('.review-question').click();
+                // document.querySelector('.review-question').click();
                 break;
             // case keys.tab:
             //     break;

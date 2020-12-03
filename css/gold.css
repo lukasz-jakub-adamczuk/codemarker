@@ -1,0 +1,84 @@
+
+.menu-options {
+    background: url(../img/fancy-cushion/fancy-cushion.png) 50% 50% repeat;
+}
+.main-nav {
+    background-color: #222;
+}
+
+.matching-control {
+background-color: #fafafa;
+}
+.progresso > span {
+    background-image:
+         linear-gradient(-45deg, 
+                                 transparent 33%, rgba(0, 0, 0, .1) 33%, 
+                                 rgba(0,0, 0, .1) 66%, transparent 66%),
+         linear-gradient(to top, 
+                                 rgba(255, 255, 255, .25), 
+                                 rgba(0, 0, 0, .25)),
+         linear-gradient(to left, #a48b66, #6c757d);
+}
+.main-nav .button {
+    background-color: #a48b66;
+    /* border-color: #5c656d; */
+}
+.comment-icon,
+.image-icon,
+.database-icon {
+    background-color: #eee;
+}
+
+a.text-secondary:hover,
+a.text-secondary:focus {
+    /* color: #eee; */
+}
+.result-box a,
+.review-question,
+.review-question:hover,
+.review-question:focus {
+    color: #222;
+}
+
+.list-group-item-action {
+    /* color: #fff; */
+}
+.list-group-item-danger {
+    /* color: #78281f; */
+}
+.list-group-item-success {
+    /* color: #006249; */
+}
+
+.btn-primary {
+    background-color: #a48b66;
+    border-color: #a48b66;
+}
+.btn-primary,
+.btn-primary:hover,
+.btn-primary.focus,
+.btn-primary:focus {
+    background-color: #a48b66;
+    border-color: #a48b66;
+}
+.btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active, .show>.btn-primary.dropdown-toggle {
+    color: #fff;
+    background-color: #a48b66;
+    border-color: #a48b66;
+}
+.btn-secondary {
+    background-color: #aaa;
+    border-color: #aaa;
+}
+
+.custom-control-input:checked~.custom-control-label::before {
+    color: #fff;
+    /* border-color: #c6383a;
+    background-color: #c6383a; */
+    border-color: #a48b66;
+    background-color: #a48b66;
+}
+
+a {
+    color: #a48b66;
+}

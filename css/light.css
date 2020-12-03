@@ -1,0 +1,49 @@
+
+.menu-options,
+.main-nav {
+    background: url(../img/trianglify.png) 50% 50% no-repeat;
+}
+
+.matching-control {
+background-color: #fafafa;
+}
+.progresso > span {
+    background-image:
+         linear-gradient(-45deg, 
+                                 transparent 33%, rgba(0, 0, 0, .1) 33%, 
+                                 rgba(0,0, 0, .1) 66%, transparent 66%),
+         linear-gradient(to top, 
+                                 rgba(255, 255, 255, .25), 
+                                 rgba(0, 0, 0, .25)),
+         linear-gradient(to left, #0069d9, #a48b66);
+}
+.main-nav .button {
+    background-color: #0069d9;
+    /* border-color: #5c656d; */
+}
+.comment-icon,
+.image-icon,
+.database-icon {
+    background-color: #888;
+}
+
+a.text-secondary:hover,
+a.text-secondary:focus {
+    /* color: #eee; */
+}
+.result-box a,
+.review-question,
+.review-question:hover,
+.review-question:focus {
+    color: #222;
+}
+
+.list-group-item-action {
+    /* color: #fff; */
+}
+.list-group-item-danger {
+    color: #78281f;
+}
+.list-group-item-success {
+    color: #006249;
+}
