@@ -65,13 +65,13 @@ if ('localStorage' in window) {
     //     properties = JSON.parse(localStorage.getItem('properties'));
     // }
     // available exams
-    // if ('allExams' in localStorage) {
-    //     allExams = JSON.parse(localStorage.getItem('allExams'));
-    // }
+    if ('allExams' in localStorage) {
+        allExams = JSON.parse(localStorage.getItem('allExams'));
+    }
     // hashes for exams retrived from server
-    // if ('examsHashes' in localStorage) {
-    //     examsHashes = JSON.parse(localStorage.getItem('examsHashes'));
-    // }
+    if ('examsHashes' in localStorage) {
+        examsHashes = JSON.parse(localStorage.getItem('examsHashes'));
+    }
 }
 
 if ('localStorage' in window) {
@@ -81,11 +81,12 @@ if ('localStorage' in window) {
 }
 document.querySelector('#version strong').textContent = version;
 
+// this code assigns crap to vars
 // available exams
-allExams = getLocalStorageItem('allExams');
+// allExams = getLocalStorageItem('allExams');
 
 // hashes for exams retrived from server
-examsHashes = getLocalStorageItem('examsHashes');
+// examsHashes = getLocalStorageItem('examsHashes');
 
 if (properties['app_ui_introduction_enabled']) {
     runSpinner('renderExams');
