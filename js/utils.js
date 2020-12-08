@@ -29,10 +29,10 @@ function readSingleFile(e) {
         var html = '<hr>';
         if (parser.errors.length) {
             for (var error of parser.errors) {
-                html += '<div class="alert alert-warning mb-2" role="alert">' + error + '</div>';
+                html += info(error);
             }
         } else {
-            html += '<div class="alert alert-info mb-2" role="info">Exam file has been loaded and parsed sucessfully.</div>';
+            html += info(getMessage('msg_exam_loaded_parsed', 'Exam file has been loaded and parsed sucessfully'));
         }
         renderElement('.loading-messages', html);
 
@@ -66,7 +66,7 @@ function retrieveQuestions() {
     }
     
     if (code.value == '') {
-        html += '<div class="alert alert-danger mb-2" role="alert">Empty code.</div>';
+        html += error(getMessage('msg_exam_empty_code', 'Empty code.'));
         renderElement('.downloading-messages', html);
     } else {
         var req = new XMLHttpRequest();
@@ -77,9 +77,9 @@ function retrieveQuestions() {
 
             if (req.status == 200) {
                 if (req.responseText == 'Not found.') {
-                    html += '<div class="alert alert-danger mb-2" role="alert">Invalid code.</div>';
+                    html += error(getMessage('msg_exam_invalid_code', 'Invalid code.'));
                 } else {
-                    html += '<div class="alert alert-info mb-2" role="info">Exam file has been downloaded and parsed sucessfully.</div>';
+                    html += info(getMessage('msg_exam_downloaded_parsed', 'Exam file has been downloaded and parsed sucessfully'));
                 
                     parseChallenge(req.responseText);
     
@@ -112,12 +112,12 @@ function retrieveQuestions() {
                     }
                 }
             } else {
-                html += '<div class="alert alert-warning mb-2" role="alert">' + req.status + '</div>';
+                html += warning(req.status);
             }
         } catch (exception) {
             if (exception.name == 'NetworkError') {
                 console.log('There was a network error.');
-                html += '<div class="alert alert-danger mb-2" role="alert">' + exception.message + '</div>';
+                html += error(exception.message);
             }
         }
         renderElement('.downloading-messages', html);
@@ -147,12 +147,12 @@ function checkQuestions(exam) {
                 document.querySelector('#'+exam.id.replace('cm-', '')+' div h5 i').addEventListener('click', syncExam);
             }
         } else {
-            html += '<div class="alert alert-warning mb-2" role="alert">' + req.status + '</div>';
+            html += warning(req.status);
         }
     } catch (exception) {
         if (exception.name == 'NetworkError') {
             console.log('There was a network error.');
-            // html += '<div class="alert alert-warning mb-2" role="alert">' + exception.message + '</div>';
+            // html += warning(exception.message);
         }
     }
 }
@@ -192,7 +192,7 @@ function syncExam(event) {
     } catch (exception) {
         if (exception.name == 'NetworkError') {
             console.log('There was a network error.');
-            // html += '<div class="alert alert-warning mb-2" role="alert">' + exception.message + '</div>';
+            // html += warning(exception.message);
         }
     }
     event.stopPropagation();
@@ -343,6 +343,16 @@ function answeredExamQuestions() {
     return questions.exam.filter(function(elem, index, array) { return typeof elem != 'undefined' && elem != null; });
 }
 
+// Internal function returning anwered questions
+function changeLanguage(language) {
+    console.log('change language');
+
+    // var language = this.value || language;
+
+    // renderProperties(propertiesSetup);
+}
+
+// Internal function returning anwered questions
 function changeTheme(theme) {
     console.log('change theme');
     // console.log(this);
@@ -376,9 +386,30 @@ function changeTheme(theme) {
     }
 }
 
+// Internal function returning anwered questions
+function changeAnnotations(annotations) {
+    console.log('change annotations');
+
+    var annotations = this.value || annotations;
+
+    var items = document.querySelectorAll('.alert-info');
+    if (annotations) {
+        items.forEach(function(itm) {
+            console.log(itm);
+            $(itm).show();
+        });
+    } else {
+        items.forEach(function(itm) {
+            $(itm).hide();
+        });
+    }
+
+    // renderProperties(propertiesSetup);
+}
+
 function prepareMessage(type, message, params) {
     // TODO params in messages
-    return '<div class="alert alert-'+type+' mb-2" role="alert">' + message + '</div>';
+    return '<div class="alert alert-'+type+' mb-2" role="'+type+'">' + message + '</div>';
 }
 
 function info(message, params) {
@@ -396,8 +427,8 @@ function error(message, params) {
 function renderErrors(question, returnHtml = false) {
     var html = '';
     if (errors[question]) {
-        for (var error of errors[question]) {
-            html += '<div class="alert alert-danger mb-2" role="alert">'+error+'</div>';
+        for (var e of errors[question]) {
+            html += error(e);
         }
     }
     if (returnHtml) {
@@ -476,21 +507,23 @@ function removeLocalStorageItem(item) {
 }
 
 function checkAppVersion() {
-    if ('localStorage' in window) {
-        if ('learnwise' in localStorage) {
-            if (getLocalStorageItem('learnwise', false) == LW_VERSION) {
-                $('#version strong')[0].textContent = LW_VERSION;
-            }
+    // if ('localStorage' in window) {
+        // var current;
+        // if ('learnwise' in localStorage) {
+            // console.log(getLocalStorageItem('learnwise', false));
+            // console.log(LW_VERSION);
+        if (getLocalStorageItem('learnwise', false) == LW_VERSION) {
+            $('#version strong')[0].textContent = LW_VERSION;
         } else {
-            var html = '<div class="alert alert-warning mb-2" role="alert">Application available online has new features. Your local version is outdated. Reset all settings using button placed below.</div>';
+            var html = warning(getMessage('msg_new_version', 'Application available online has new features. Your local version is outdated. Reset all settings using button placed below.'));
             renderElement('.version-messages', html);
         }
-    }
+    // }
 }
 
 function renderMessage(message, type, element, autoclose = false) {
     var type = type || 'alert';
-    var template = '<div class="alert alert-'+type+' mb-2" role="alert">'+message+'</div>'
+    var template = '<div class="alert alert-'+type+' mb-2" role="'+type+'">'+message+'</div>'
     
     document.querySelector(element).innerHTML = template;
     if (autoclose) {
@@ -539,3 +572,106 @@ function getTime() {
     }
     return duration;
 }
+
+function generateMenuSections() {
+    if ('content' in document.createElement('template')) {
+        var menu = document.querySelector('.menu-options .container');
+        var section = document.querySelector('#menu-section');
+        var item = document.querySelector('#menu-item');
+
+        var about = section.content.cloneNode(true);
+        var aboutHeader = about.querySelector('p');
+        aboutHeader.textContent = getMessage('about_app', 'About');
+        var aboutContent = about.querySelector('div');
+
+        var version = item.content.cloneNode(true);
+        var sourceCode = item.content.cloneNode(true);
+        var defaultSettings = item.content.cloneNode(true);
+        
+        version.querySelector('div').innerHTML = '<span>' + getMessage('version_desc') + ': <strong data-version=""></strong></span><div class="version-messages"></div>';
+        // console.log(version);
+        version.querySelector('div').id = 'version';
+        // version.setAttribute('id', 'version');
+        
+        var sourceCodeLink = ['<a href="https://github.com/lukasz-jakub-adamczuk/codemarker#codemarker">${}</a>'];
+        
+        sourceCode.querySelector('div').innerHTML = '<span>' + getMessage('source_code_desc', 'Source code available on ${Github}', sourceCodeLink) + '</span>';
+        defaultSettings.querySelector('div').innerHTML = '<span>' + getMessage('default_settings_desc', 'Use those actions to back with current options to default settings.') + '</span><div class="mb-2"><button id="default-settings" class="btn btn-secondary">' + getMessage('reset_settings', 'Reset settings') + '</button> <button id="remove-exams" class="btn btn-danger">' + getMessage('remove_exams', 'Remove exams') + '</button></div><div class="settings-messages"></div>';
+
+        aboutContent.appendChild(version);
+        aboutContent.appendChild(sourceCode);
+        aboutContent.appendChild(defaultSettings);
+        
+        menu.appendChild(about);
+
+
+        var upload = document.querySelector('#upload-section');
+        var uploadSection = upload.content.cloneNode(true);
+
+        var uploadHeader = uploadSection.querySelector('p');
+        var uploadDescription = uploadSection.querySelector('span');
+        var uploadButton = uploadSection.querySelector('#load');
+
+        var fileFormatLink = ['<a href="https://github.com/lukasz-jakub-adamczuk/codemarker#file-format">${}</a>'];
+        
+        uploadHeader.textContent = getMessage('upload_file', 'Upload file');
+        uploadDescription.innerHTML = getMessage('upload_desc', 'Use this option to load questions from your computer or mobile. File content must be in special ${format} to be parsed with application.', fileFormatLink);
+        uploadButton.textContent = getMessage('retrieve_questions', 'Load your questions');
+
+        menu.appendChild(uploadSection);
+
+
+        var retrieve = document.querySelector('#retrieve-section');
+        var retrieveSection = retrieve.content.cloneNode(true);
+
+        var retrieveHeader = retrieveSection.querySelector('p');
+        var retrieveDescription = retrieveSection.querySelector('span');
+        var retrievePlaceholder = retrieveSection.querySelector('#retrieve-code');
+        var retrieveButton = retrieveSection.querySelector('#retrieve');
+
+        retrieveHeader.textContent = getMessage('retrieve_file', 'Retrieve file from internet');
+        retrieveDescription.textContent = getMessage('retrieve_desc', 'Retrieve file from internet');
+        retrievePlaceholder.placeholder = getMessage('retrieve_placeholder', 'type code here');
+        retrieveButton.textContent = getMessage('retrieve_questions', 'Retrieve');
+
+        menu.appendChild(retrieveSection);
+
+
+        var propertiesSection = document.createElement('div')
+        propertiesSection.id = 'app-properties';
+        // <div id="app-properties"></div>
+        menu.appendChild(propertiesSection);
+        
+    }
+}
+
+// function generateRetrieveSection() {
+//     var menu = document.querySelector('.menu-options .container');
+//     var div = document.createElement('div');
+
+//     var retrieveHeader = getMessage('retrieve_file', 'Retrieve file from internet');
+//     var retrieveDesciption = getMessage('retrieve_desc', 'Use this option to load prepared questions from LearnWise cloud storage.');
+//     var retrievePlaceholder = getMessage('retrieve_questions', 'Retrieve');
+//     var retrieveButton = getMessage('retrieve_placeholder', 'type code here');
+    
+//     var html = '';
+//     html =+ '<p class="opts-header">' + retrieveHeader + '</p>';
+//     html =+ '    <div class="list-group">';
+//     html =+ '        <div class="list-group-item list-group-item-action flex-column align-items-start">';
+//     html =+ '            <span>' + retrieveDesciption + '</span>';
+//     html =+ '            <div class="input-group mb-2">';
+//     html =+ '                <input id="retrieve-code" type="text" class="form-control" placeholder="' + retrievePlaceholder + '" aria-label="' + retrievePlaceholder + '" aria-describedby="retrieve">';
+//     html =+ '                <div class="input-group-append">';
+//     html =+ '                    <button id="retrieve" class="btn btn-primary" type="button">' + retrieveButton + '</button>';
+//     html =+ '                </div>';
+//     html =+ '            </div>';
+//     html =+ '            <div class="downloading-messages"></div>';
+//     html =+ '        </div>';
+//     html =+ '    </div>';
+
+//     div.innerHTML = html;
+
+//     menu.appendChild(div.firstElementChild);
+
+    
+// }
