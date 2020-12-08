@@ -133,7 +133,7 @@ var translationsInEnglish = {
     'msg_exam_downloaded_parsed': 'Exam file has been downloaded and parsed successfully.',
     'msg_new_version': 'Application available online has new features. Your local version is outdated. Reset all settings using button placed below.',
     'msg_no_exams': 'You need to load first challenge exam. Use application menu at bottom.',
-    'msg_exam_invalid': 'Challenge cannot be started, because has no valid questions.</div>',
+    'msg_exam_invalid': 'Challenge cannot be started, because has no valid questions.',
     'msg_answers_limit': 'You have to choose %d answers.',
     'msg_match_each': 'You have to match each answer.',
     'msg_match_once': 'You cannot use single answer many times.',

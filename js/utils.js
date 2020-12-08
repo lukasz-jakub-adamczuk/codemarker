@@ -523,7 +523,7 @@ function checkAppVersion() {
 
 function renderMessage(message, type, element, autoclose = false) {
     var type = type || 'alert';
-    var template = '<div class="alert alert-'+type+' mb-2" role="'+type+'">'+message+'</div>'
+    var template = error(message);
     
     document.querySelector(element).innerHTML = template;
     if (autoclose) {
