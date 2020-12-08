@@ -25,13 +25,15 @@ function renderExams(displayLayer = true) {
                 html += prepareExam(exams[i]);
             }
             html += '</div>';
-        // } else {
-        //     html += warning('msg_no_exams', 'You need to load first challenge exam. Use application menu at bottom.');
+        } else {
+            html += warning(getMessage('msg_no_exams', 'You need to load first challenge exam. Use application menu at bottom.'));
         }
     } else {
         html += warning(getMessage('msg_no_exams', 'You need to load first challenge exam. Use application menu at bottom.'));
     }
+
     renderElement('#exams .list', html);
+    
 
     // checking updates for questions
     for (var hash in examsHashes) {
