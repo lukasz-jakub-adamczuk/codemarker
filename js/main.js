@@ -122,7 +122,10 @@ document.querySelector('#default-settings').addEventListener('click', resetAllSe
 document.querySelector('#remove-exams').addEventListener('click', removeAllExams);
 
 // document.querySelector('#app_ui_language').addEventListener('change', changeLanguage);
-document.querySelector('#app_ui_theme').addEventListener('change', changeTheme);
+var changeElement = document.querySelector('#app_ui_theme');
+if (changeElement) {
+    changeElement.addEventListener('change', changeTheme);
+}
 // document.querySelector('#app_ui_annotations').addEventListener('change', changeAnnotations);
 
 // challenge
