@@ -92,8 +92,8 @@ function prepareSimpleQuestion(q, idx) {
         // }
         if (answers.choices.length - answers.wrong > 1) {
             // multi choice
-            // if (mode != 'print' || (mode == 'print' && answers.choices[ans].type == 'correct') || (mode == 'print' && properties['print_answers.print_incorrect'] && answers.choices[ans].type == 'wrong')) {
-            // if (mode != 'print' || (mode == 'print' && answers.choices[ans].type == 'correct') || (mode == 'print' && properties['print_answers.print_incorrect'] && answers.choices[ans].type == 'wrong')) {
+            // if (mode != 'print' || (mode == 'print' && answers.choices[ans].type == 'correct') || (mode == 'print' && properties['print_answers_print_incorrect'] && answers.choices[ans].type == 'wrong')) {
+            // if (mode != 'print' || (mode == 'print' && answers.choices[ans].type == 'correct') || (mode == 'print' && properties['print_answers_print_incorrect'] && answers.choices[ans].type == 'wrong')) {
                 html += '<div class="custom-control custom-checkbox">'
                     +'<input type="checkbox" id="'+id+'" name="answer" class="custom-control-input" tabindex="'+(parseInt(ans)+1)+'" value="'+slugify(answer)+'"'+(checked ? ' checked' : '')+'>'
                     +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+marked(letter+answer.escapeHtml()).split('[br]').join('<br>')+'</label>'
@@ -101,7 +101,7 @@ function prepareSimpleQuestion(q, idx) {
             // }
         } else {
             // single choice
-            // if (mode != 'print' || (mode == 'print' && answers.choices[ans].type == 'correct') || (mode == 'print' && properties['print_answers.print_incorrect'] && answers.choices[ans].type == 'wrong')) {
+            // if (mode != 'print' || (mode == 'print' && answers.choices[ans].type == 'correct') || (mode == 'print' && properties['print_answers_print_incorrect'] && answers.choices[ans].type == 'wrong')) {
                 html += '<div class="custom-control custom-radio">'
                     +'<input type="radio" id="'+id+'" name="answer" class="custom-control-input" tabindex="'+(parseInt(ans)+1)+'" value="'+slugify(answer)+'"'+(checked ? ' checked' : '')+'>'
                     +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+marked(letter+answer.escapeHtml()).split('[br]').join('<br>')+'</label>'
@@ -159,24 +159,24 @@ function prepareMatchingQuestion(q, idx) {
             +'<label class="matching-control-label" for="'+id+'">'+marked(answer.escapeHtml()).split('[br]').join('<br>')+'</label>'
             // +'<select class="custom-select" id="'+id+'" name="'+slugify(answer)+'">';
             +'<select class="custom-select" id="'+id+'" name="answer">';
-            html +='<option value="">choose answer</option>'
+        html +='<option value="">' + getMessage('choose_answer', 'choose answer') + '</option>';
             // for (var mtch in answers.choices) {
             //     matching = answers.choices[mtch].name.split('==')[1].trim();
             //     html +='<option value="'+slugify(matching)+'">' + matching + '</option>'
             // }
-            for (var match of choices) {
-                selected = '';
-                if (idx in questions.exam && ans in questions.exam[idx] && questions.exam[idx][ans] == slugify(match.answer)) {
-                    selected = ' selected';
-                }
-                // if (mode == 'print' && choice == match.answer) {
-                //     selected = ' selected';
-                // }
-
-                html +='<option value="'+slugify(match.answer)+'"'+selected+'>' + marked(match.answer.escapeHtml()).split('[br]').join('<br>') + '</option>'
+        for (var match of choices) {
+            selected = '';
+            if (idx in questions.exam && ans in questions.exam[idx] && questions.exam[idx][ans] == slugify(match.answer)) {
+                selected = ' selected';
             }
-            html +='</select>'
-        +'</div>';
+            // if (mode == 'print' && choice == match.answer) {
+            //     selected = ' selected';
+            // }
+
+            html +='<option value="'+slugify(match.answer)+'"'+selected+'>' + marked(match.answer.escapeHtml()).split('[br]').join('<br>') + '</option>';
+        }
+        html +='</select>';
+        html += '</div>';
     }
     html += '</div>';
     return html;
@@ -203,7 +203,7 @@ function prepareInputQuestion(q, idx) {
         }
     }
 
-    var input = '<input type="text" id="'+id+'" name="answer" value="'+written+'" class="form-control" placeholder="Type answer here" />';
+    var input = '<input type="text" id="'+id+'" name="answer" value="'+written+'" class="form-control" placeholder="'+getMessage('type_answer', 'Type answer here')+'" />';
 
     var html = '';
     var question = q.name;
@@ -237,8 +237,13 @@ function printSimpleQuestion(q, challenge) {
         question = marked(question);
     }
     question = replaceBBCode(question);
+    question = question.replace('<p>', '<p>' + idx + '. ');
+
+    // if (q.params.status) {
+    //     question += q.params.status ? '<span class="badge badge-danger ml-2">' + q.params.status + '</span>' : '';
+    // }
     
-    html += '<div class="question">' + question.replace('<p>', '<p>' + idx + '. ') + '</div>';
+    html += '<div class="question">' + question + '</div>';
     if (q.params.image) {
         html += '<img class="question-image" src="' + q.params.image + '" />';
     }
@@ -246,40 +251,42 @@ function printSimpleQuestion(q, challenge) {
     // console.log(q.name);
     // console.log(q.answers);
     html += '<div class="answers">';
-    for (var ans in answers.choices) {
-        id = 'q'+idx+'a'+ans+'';
-        answer = answers.choices[ans].name;
-        // checked = true;
-        if (answers.choices[ans].type == 'correct') {
-            checked = true;
-            inputState = 'checked';
-        } else {
-            checked = false;
-            inputState = 'unchecked';
-        }
-        if (properties['quiz_answers_print_letters']) {
-            letter = '<span class="answer-letter">'+letters[ans].toUpperCase()+'.</span>';
-        }
-        // correct answer
-        // answerClass = '';
-        answerClass = answers.choices[ans].type == 'wrong' ? ' marked-wrong' : ' marked-correct';
-
-
-        if (answers.choices.length - answers.wrong > 1) {
-            // multi choice
-            if (answers.choices[ans].type == 'correct' || (properties['print_answers.print_incorrect'] && answers.choices[ans].type == 'wrong')) {
-                html += '<div class="custom-control custom-checkbox">'
-                    +'<input type="checkbox" id="'+id+'" name="'+id+'" class="custom-control-input '+inputState+'" value="'+slugify(answer)+'"'+(checked ? ' checked="checked"' : '')+' >'
-                    +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+marked(letter+answer.escapeHtml()).split('[br]').join('<br>')+'</label>'
-                +'</div>';
+    if (answers.choices.length) {
+        for (var ans in answers.choices) {
+            id = 'q'+idx+'a'+ans+'';
+            answer = answers.choices[ans].name;
+            // checked = true;
+            if (answers.choices[ans].type == 'correct') {
+                checked = true;
+                inputState = 'checked';
+            } else {
+                checked = false;
+                inputState = 'unchecked';
             }
-        } else {
-            // single choice
-            if (answers.choices[ans].type == 'correct' || (properties['print_answers.print_incorrect'] && answers.choices[ans].type == 'wrong')) {
-                html += '<div class="custom-control custom-radio">'
-                    +'<input type="radio" id="'+id+'" name="'+id+'" class="custom-control-input '+inputState+'" value="'+slugify(answer)+'"'+(checked ? ' checked="checked"' : '')+' >'
-                    +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+marked(letter+answer.escapeHtml()).split('[br]').join('<br>')+'</label>'
-                +'</div>';
+            if (properties['quiz_answers_print_letters']) {
+                letter = '<span class="answer-letter">'+letters[ans].toUpperCase()+'.</span>';
+            }
+            // correct answer
+            // answerClass = '';
+            answerClass = answers.choices[ans].type == 'wrong' ? ' marked-wrong' : ' marked-correct';
+
+
+            if (answers.choices.length - answers.wrong > 1) {
+                // multi choice
+                if (answers.choices[ans].type == 'correct' || (properties['print_answers_print_incorrect'] && answers.choices[ans].type == 'wrong')) {
+                    html += '<div class="custom-control custom-checkbox">'
+                        +'<input type="checkbox" id="'+id+'" name="'+id+'" class="custom-control-input '+inputState+'" value="'+slugify(answer)+'"'+(checked ? ' checked="checked"' : '')+' >'
+                        +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+marked(letter+answer.escapeHtml()).split('[br]').join('<br>')+'</label>'
+                    +'</div>';
+                }
+            } else {
+                // single choice
+                if (answers.choices[ans].type == 'correct' || (properties['print_answers_print_incorrect'] && answers.choices[ans].type == 'wrong')) {
+                    html += '<div class="custom-control custom-radio">'
+                        +'<input type="radio" id="'+id+'" name="'+id+'" class="custom-control-input '+inputState+'" value="'+slugify(answer)+'"'+(checked ? ' checked="checked"' : '')+' >'
+                        +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+marked(letter+answer.escapeHtml()).split('[br]').join('<br>')+'</label>'
+                    +'</div>';
+                }
             }
         }
     }
@@ -303,8 +310,13 @@ function printMatchingQuestion(q, challenge) {
         question = marked(question);
     }
     question = replaceBBCode(question);
+    question = question.replace('<p>', '<p>' + idx + '. ');
+
+    // if (q.params.status) {
+    //     question += q.params.status ? '<span class="badge badge-danger ml-2">' + q.params.status + '</span>' : '';
+    // }
     
-    html += '<div class="question">' + question.replace('<p>', '<p>' + idx + '. ') + '</div>';
+    html += '<div class="question">' + question + '</div>';
 
     if (q.params.image) {
         html += '<img class="question-image" src="' + q.params.image + '" />';
@@ -319,31 +331,33 @@ function printMatchingQuestion(q, challenge) {
     choices = shuffleArray(choices);
 
     html += '<div class="answers">';
-    for (var ans in answers.choices) {
-        id = 'q'+idx+'a'+ans+'';
-        answer = answers.choices[ans].name.split('==')[0].trim();
-        choice = answers.choices[ans].name.split('==')[1].trim();
-        
-        // correct answer
-        answerClass = answers.choices[ans].type == 'wrong' ? ' marked-wrong' : ' marked-correct';
+    if (answers.choices.length) {
+        for (var ans in answers.choices) {
+            id = 'q'+idx+'a'+ans+'';
+            answer = answers.choices[ans].name.split('==')[0].trim();
+            choice = answers.choices[ans].name.split('==')[1].trim();
+            
+            // correct answer
+            answerClass = answers.choices[ans].type == 'wrong' ? ' marked-wrong' : ' marked-correct';
 
-        html += '<div class="matching-control">'
-            +'<label class="matching-control-label" for="'+id+'">'+answer+'</label>'
-            +'<select class="custom-select" id="'+id+'" name="'+slugify(answer)+'">';
-            html +='<option value="">choose answer</option>'
-            for (var match of choices) {
-                selected = '';
-                if (idx in questions.exam && ans in questions.exam[idx] && questions.exam[idx][ans] == slugify(match.answer)) {
-                    selected = ' selected';
-                }
-                if (choice == match.answer) {
-                    selected = ' selected';
-                }
+            html += '<div class="matching-control">'
+                +'<label class="matching-control-label" for="'+id+'">'+answer+'</label>'
+                +'<select class="custom-select" id="'+id+'" name="'+slugify(answer)+'">';
+                html +='<option value="">' + getMessage('choose_answer', 'choose answer') + '</option>';
+                for (var match of choices) {
+                    selected = '';
+                    if (idx in questions.exam && ans in questions.exam[idx] && questions.exam[idx][ans] == slugify(match.answer)) {
+                        selected = ' selected';
+                    }
+                    if (choice == match.answer) {
+                        selected = ' selected';
+                    }
 
-                html +='<option value="'+slugify(match.answer)+'"'+selected+'>' + marked(match.answer) + '</option>'
-            }
-            html +='</select>'
-        +'</div>';
+                    html +='<option value="'+slugify(match.answer)+'"'+selected+'>' + marked(match.answer) + '</option>';
+                }
+                html +='</select>';
+            +'</div>';
+        }
     }
     html += '</div>';
     return html;
@@ -379,10 +393,14 @@ function printInputQuestion(q, challenge) {
         question = marked(question);
     }
     question = replaceBBCode(question);
-    
     question = question.replace('[]', '<strong>'+written+'</strong>');
+    question = question.replace('<p>', '<p>' + idx + '. ');
+
+    // if (q.params.status) {
+    //     question += q.params.status ? '<span class="badge badge-danger ml-2">' + q.params.status + '</span>' : '';
+    // }
     
-    html += '<div class="question">' + question.replace('<p>', '<p>' + idx + '. ') + '</div>';
+    html += '<div class="question">' + question + '</div>';
     if (q.params.image) {
         html += '<img class="question-image" src="' + q.params.image + '" />';
     }

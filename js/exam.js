@@ -13,7 +13,7 @@ function renderExams(displayLayer = true) {
     var exams = Object.values(allExams);
     var html = '';
     if (!('localStorage' in window)) {
-        html += '<div class="alert alert-warning mb-2" role="alert">Changing options is disabled, because your browser does not support localStorage.</div>';
+        html += warning('msg_options_change_disabled', 'Changing options is disabled, because your browser does not support localStorage.');
     }
     // print available exams or warning
     if (exams.length) {
@@ -23,7 +23,7 @@ function renderExams(displayLayer = true) {
         }
         html += '</div>';
     } else {
-        html += '<div class="alert alert-warning mb-2" role="alert">You need to load first challenge exam. Use application menu at bottom.</div>';
+        html += warning('msg_no_exams', 'You need to load first challenge exam. Use application menu at bottom.');
     }
     renderElement('#exams .list', html);
 
@@ -48,25 +48,26 @@ function renderExams(displayLayer = true) {
 
 // Handle preparing single exam on list
 function prepareExam(config, includeWrapper = true) {
+    var questionsInExam = getMessage('questions_in_exam', '%d questions in %d min', [config.questions, config.duration]);
     var valid = config.all - config.ignored;
     var html = '';
     html += includeWrapper ? '<article id="'+config.exam+'" class="list-group-item list-group-item-action flex-column align-items-start">' : '';
-    html += (valid == 0 ? '<div class="alert alert-warning mb-2" role="alert">Challenge cannot be started, because has no valid questions.</div>' : '');
+    html += (valid == 0 ? warning(getMessage('msg_exam_invalid', 'Challenge cannot be started, because has no valid questions.')) : '');
     html += '<div class="d-flex w-100 justify-content-between">'
         + '<h5 class="mb-1 d-flex align-items-start">'
         + '<span class="exam-name">'+config.exam.split('-').join(' ').toUpperCase()+'</span>'
         // + '<i class="icon sync-icon" data-exam="'+config.exam+'"></i>'
         + '</h5>'
         // + '<small>'+(config.all - config.ignored > config.questions ? config.questions : config.all - config.ignored)+' questions in '+config.duration+'min</small>'
-        + '<small>'+(config.questions)+' questions in '+config.duration+'min</small>'
+        + '<small>' + questionsInExam + '</small>'
         + '</div>'
         + '<i class="icon delete-icon" data-exam="'+config.exam+'"></i>'
         + '<p class="mb-1">'+config.description+'</p>'
         // + '<small>'+config.all+' questions found'+(config.ignored > 0 ? ', but ' +config.ignored+ ' ignored or incomplete' : '')+'</small>'
         // + '<small>Notifications <span class="badge badge-secondary">4</span></small>'
-        + 'Found <span class="badge badge-secondary">'+config.all+'</span> '
-        + 'Valid <span class="badge badge-success">'+(valid)+'</span> '
-        + 'Invalid <span class="badge badge-danger">'+config.ignored+'</span> ';
+        + getMessage('found', 'Found') + ' <span class="badge badge-secondary">'+config.all+'</span> '
+        + getMessage('valid', 'Valid') + ' <span class="badge badge-success">'+(valid)+'</span> '
+        + getMessage('invalid', 'Invalid') + ' <span class="badge badge-danger">'+config.ignored+'</span> ';
     html += includeWrapper ? '</article>' : '';
     return html;
 }
@@ -268,9 +269,9 @@ function renderReviewResult() {
     var onclick, ignored;
 
     html += '<div class="container">';
-    html += '<div>Answered in total: <strong>'+answered+'</strong></div>';
-    html += '<div>Missing answers:   <strong>'+missing+'</strong></div>';
-    html += '<div>Marked for review: <strong>'+marked+'</strong></div>';
+    html += '<div>' + getMessage('answered_in_total', 'Answered in total') + ': <strong>'+answered+'</strong></div>';
+    html += '<div>' + getMessage('missing_answers', 'Missing answers') + '  : <strong>'+missing+'</strong></div>';
+    html += '<div>' + getMessage('marked_for_review', 'Marked for review') + ': <strong>'+marked+'</strong></div>';
     html += '<div class="row">';
     for (var q in questions.used) {
         q = parseInt(q);
@@ -285,11 +286,11 @@ function renderReviewResult() {
         }
         var markedForReview = questions.marked[q] ? '*' : '';
         onclick = 'onclick="javascript:backToChallenge(this.getAttribute(\'data-id\'));"';
-        ignored = (questions.used[q].params.status && questions.used[q].params.status == 'ignored') ? '<span class="badge badge-danger">ignored</span>' : '';
+        ignored = (questions.used[q].params.status && questions.used[q].params.status == 'ignored') ? '<span class="badge badge-danger">'+getMessage('ignored', 'Ignored')+'</span>' : '';
 
         html += '';
         html += '<div>';
-        html += '    <a id="r'+q+'" href="#" data-id="'+q+'" '+onclick+' class="review-question text-secondary">'+(q+1)+'. '+answers.join(', ')+' '+markedForReview + ignored + '</a>';
+        html += '    <a id="r'+q+'" href="#" data-id="'+q+'" '+onclick+' class="review-question">'+(q+1)+'. '+answers.join(', ')+' '+markedForReview + ignored + '</a>';
         html += '</div>';
         if ((q+1) % column == 0) {
             html += '</div>';
@@ -314,7 +315,7 @@ function removeAllExams(event) {
     removeLocalStorageItem('allExams');
     removeLocalStorageItem('examsHashes');
     
-    html += 'All exams have been removed.';
+    html += getMessage('msg_exams_removed', 'All exams have been removed.');
     console.log('All exams and related variables have been removed.');
     
     questions = {

@@ -47,7 +47,7 @@ function registerAnswerForSimpleQuestion(event) {
                 console.log(answers);
                 errors[question-1] = [];
                 if (Object.values(questions.exam[question]).filter(val => val == true).length != answers) {
-                    errors[question-1].push('You have to choose '+answers+' answers.');
+                    errors[question-1].push(getMessage('msg_answers_limit', 'You have to choose %d answers.', [answers]));
                     console.log(errors);
                 }
             }
@@ -70,10 +70,10 @@ function registerAnswerForSimpleQuestion(event) {
             $('select option:selected').each(function(idx, itm) { if (itm.value != '') selected.push(itm.value) });
             console.log(selected);
             if (Object.values(questions.exam[question]).some(el => el == '')) {
-                errors[question-1].push('You have to match each answer.');
+                errors[question-1].push(getMessage('msg_match_each', 'You have to match each answer.'));
             }
             if ((new Set(selected).size) < selected.length) {
-                errors[question-1].push('You cannot use single answer many times.');
+                errors[question-1].push(getMessage('msg_match_once', 'You cannot use single answer many times.'));
             }
     
             // renderErrors(question-1);

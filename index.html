@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html locale="en">
     <head>
         <title>LearnWise</title>
         <link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
@@ -41,10 +41,10 @@
         <input id="options-tgr" type="checkbox">
         <div class="menu-options">
             <div class="container">
-                <p class="opts-header">About</p>
+                <!-- <p class="opts-header">About</p>
                 <div class="list-group">
                     <div id="version" class="list-group-item list-group-item-action flex-column align-items-start">
-                        <span>Learn Wise: <strong data-version="0.7">v0.07</strong></span>
+                        <span>Version: <strong data-version="0.7">0.07</strong></span>
                         <div class="version-messages"></div>
                     </div>
                     <div id="source-code" class="list-group-item list-group-item-action flex-column align-items-start">
@@ -58,8 +58,8 @@
                         </div>
                         <div class="settings-messages"></div>
                     </div>
-                </div>
-                <p class="opts-header">Upload file</p>
+                </div> -->
+                <!-- <p class="opts-header">Upload file</p>
                 <div class="list-group">
                     <div class="list-group-item list-group-item-action flex-column align-items-start">
                         <span>Use this option to load questions from your computer or mobile. File content must be in <a href="https://github.com/lukasz-jakub-adamczuk/codemarker#exam-format">special format</a> to be parsed with application.</span>
@@ -68,8 +68,8 @@
                         </div>
                         <div class="loading-messages"></div>
                     </div>
-                </div>
-                <p class="opts-header">Retrieve from internet</p>
+                </div> -->
+                <!-- <p class="opts-header">Retrieve from internet</p>
                 <div class="list-group">
                     <div class="list-group-item list-group-item-action flex-column align-items-start">
                         <span>Use this option to load prepared questions from LearnWise cloud storage.</span>
@@ -81,8 +81,8 @@
                         </div>
                         <div class="downloading-messages"></div>
                     </div>
-                </div>
-                <div id="app-properties"></div>
+                </div> -->
+                <!-- <div id="app-properties"></div> -->
             </div>
         </div>
         <div id="progress" class="progresso" style="display: none;">
@@ -176,6 +176,44 @@
             </div>
         </div>
 
+        <template id="menu-section">
+            <p class="opts-header"></p>
+            <div class="list-group"></div>
+        </template>
+
+        <template id="menu-item">
+            <div class="list-group-item list-group-item-action flex-column align-items-start"></div>
+        </template>
+
+        <template id="upload-section">
+            <p class="opts-header">Upload file</p>
+            <div class="list-group">
+                <div class="list-group-item list-group-item-action flex-column align-items-start">
+                    <span>TEST Use this option to load questions from your computer or mobile. File content must be in <a href="https://github.com/lukasz-jakub-adamczuk/codemarker#exam-format">special format</a> to be parsed with application.</span>
+                    <div class="input-group mb-2">
+                        <button id="load" class="btn btn-primary">Load your questions</button>
+                    </div>
+                    <div class="loading-messages"></div>
+                </div>
+            </div>
+        </template>
+
+        <template id="retrieve-section">
+            <p class="opts-header">Retrieve from internet</p>
+            <div class="list-group">
+                <div class="list-group-item list-group-item-action flex-column align-items-start">
+                    <span>Use this option to load prepared questions from LearnWise cloud storage.</span>
+                    <div class="input-group mb-2">
+                        <input id="retrieve-code" type="text" class="form-control" placeholder="use code" aria-label="use code" aria-describedby="retrieve">
+                        <div class="input-group-append">
+                            <button id="retrieve" class="btn btn-primary" type="button">Retrieve</button>
+                        </div>
+                    </div>
+                    <div class="downloading-messages"></div>
+                </div>
+            </div>
+        </template>
+
         <div id="loader" style="display: none;">
             <input type="file" id="file-input" >
             <div id="file-content" style="display: none;"></div>
@@ -188,8 +226,8 @@
         <script src="js/langs/en.js"></script>
         <script src="js/langs/pl.js"></script>
         <script src="js/translations.js"></script>
-        <script src="js/parser.js"></script>
         <script src="js/utils.js"></script>
+        <script src="js/parser.js"></script>
         <script src="js/properties.js"></script>
         <script src="js/exam.js"></script>
         <script src="js/question.js"></script>

@@ -1,6 +1,9 @@
 'use strict';
 
-const LW_VERSION = 'v0.07 patch-2';
+const LW_VERSION = '0.10';
+const PROP_VERSION = '0.07';
+
+var version;
 
 var codeMarker = {};
 
@@ -42,27 +45,47 @@ $('#options-tgr').prop('checked', false);
 // show menu from app if needed
 // $('#options-tgr').click();
 
-// checking online version with local
-checkAppVersion();
+// generate menu sections
+generateMenuSections();
 
 // init properties with default values
-initProperties(propertiesSetup);
+// initProperties(propertiesSetup);
 
 // load user preferences from localStorage
 if ('localStorage' in window) {
+    // properties version
+    // if ('learnwise' in localStorage) {
+    //     document.querySelector('#version strong').textContent = localStorage.getItem('learnwise');
+    // } else {
+    //     document.querySelector('#version strong').textContent = '0.07';
+    // }
+    
     // properties
-    if (localStorage.getItem('properties')) {
-        properties = JSON.parse(localStorage.getItem('properties'));
-    }
+    // if (localStorage.getItem('properties')) {
+    //     properties = JSON.parse(localStorage.getItem('properties'));
+    // }
     // available exams
-    if ('allExams' in localStorage) {
-        allExams = JSON.parse(localStorage.getItem('allExams'));
-    }
+    // if ('allExams' in localStorage) {
+    //     allExams = JSON.parse(localStorage.getItem('allExams'));
+    // }
     // hashes for exams retrived from server
-    if ('examsHashes' in localStorage) {
-        examsHashes = JSON.parse(localStorage.getItem('examsHashes'));
-    }
+    // if ('examsHashes' in localStorage) {
+    //     examsHashes = JSON.parse(localStorage.getItem('examsHashes'));
+    // }
 }
+
+if ('localStorage' in window) {
+    version = getLocalStorageItem('learnwise', false);
+} else {
+    version = PROP_VERSION;
+}
+document.querySelector('#version strong').textContent = version;
+
+// available exams
+allExams = getLocalStorageItem('allExams');
+
+// hashes for exams retrived from server
+examsHashes = getLocalStorageItem('examsHashes');
 
 if (properties['app_ui_introduction_enabled']) {
     runSpinner('renderExams');
@@ -74,8 +97,12 @@ if (properties['app_ui_theme']) {
     changeTheme(properties['app_ui_theme']);
 }
 
-
 renderProperties(propertiesSetup);
+
+// checking online version with local
+checkAppVersion();
+
+// generateRetrieveSection();
 
 // setTimeout(function() {
     if (getLocalStorageItem('examStorage')) {
@@ -93,7 +120,10 @@ document.querySelector('#retrieve').addEventListener('click', retrieveQuestions)
 document.querySelector('#app-properties').addEventListener('click', manageProperty);
 document.querySelector('#default-settings').addEventListener('click', resetAllSettings);
 document.querySelector('#remove-exams').addEventListener('click', removeAllExams);
+
+// document.querySelector('#app_ui_language').addEventListener('change', changeLanguage);
 document.querySelector('#app_ui_theme').addEventListener('change', changeTheme);
+// document.querySelector('#app_ui_annotations').addEventListener('change', changeAnnotations);
 
 // challenge
 document.querySelector('#exams .list').addEventListener('click', selectExam);  // true
@@ -108,8 +138,6 @@ document.querySelector('#print-button').addEventListener('click', printExam);
 document.querySelector('#prev-button').addEventListener('click', prevQuestion);
 document.querySelector('#next-button').addEventListener('click', nextQuestion);
 document.querySelector('#answers-button').addEventListener('click', showCorrectAnswers);
-
-
 
 var keys = {
     'left': 37,

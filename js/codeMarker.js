@@ -177,7 +177,7 @@ function stopChallenge(event) {
     console.warn(event);
     if (event) {
         if (event.type == 'dblclick') {
-            if (confirm('Seriously?')) {
+            if (confirm(getMessage('confirm_seriously', 'Seriously?'))) {
                 finishChallenge();
             }
         }
@@ -189,7 +189,7 @@ function stopChallenge(event) {
     console.log('Stop event has been triggered.');
 
     if (questions.exam.filter(el => el != undefined).length != limit) {
-        renderMessage('Exam cannot be sumitted until all questions will be answered.', 'warning', '.question-messages', true);
+        renderMessage(getMessage('msg_exam_cannot_be_submitted', 'Exam cannot be submitted until all questions will be answered.'), 'warning', '.question-messages', true);
         return;
     }
 
@@ -254,7 +254,7 @@ function generateQuestion(q, idx, type, mode = 'challenge') {
     // var mode = 
     
     html += '<div class="challenge-header">';
-    html += '<b class="_text-muted _badge _badge-secondary question-number">Question ' + (idx + 1) + ' <span class="_text-muted">/ '+questions.used.length+'</span></b>';
+    html += '<b class="_text-muted _badge _badge-secondary question-number">' + getMessage('question', 'Question') + ' ' + (idx + 1) + ' <span class="_text-muted">/ '+questions.used.length+'</span></b>';
     html += (q.params.area ? ' <span class="_badge _badge-secondary tag"> ' + q.params.area + '</span>' : '');
     html += (q.params.status ? '<span class="badge badge-danger ml-2">' + q.params.status + '</span>' : '');
     
@@ -273,7 +273,11 @@ function generateQuestion(q, idx, type, mode = 'challenge') {
     }
     if (q.params.eqi || q.params.eri) {
         html += '<span class="icon database-icon" data-toggle="modal" data-target="#database-modal"></span>';
-        renderElement('#database-modal .modal-body', marked('If this question looks broken then check how it looks in Excel file\n\nQuestion in Excel: '+(q.params.eqi || '?')+'\n\nRow in Excel: '+(q.params.eri || '?')));
+        var infoDesc = getMessage('info_desc', 'If this question looks broken then check how it looks in Excel file');
+        var infoEri = getMessage('info_eri', 'Row in Excel');
+        var infoEqi = getMessage('info_eqi', 'Question in Excel');
+        
+        renderElement('#database-modal .modal-body', marked(infoDesc + '\n\n'+infoEqi+': '+(q.params.eqi || '?')+'\n\n'+infoEri+': '+(q.params.eri || '?')));
     }
     html += '</div>';
     
@@ -296,7 +300,7 @@ function generateQuestion(q, idx, type, mode = 'challenge') {
         html += '<div class="mark-for-review">';
         html += '<div class="custom-control custom-checkbox">'
                     +'<input type="checkbox" id="review-'+idx+'" name="marker" class="custom-control-input review-question" value=""'+(checked ? ' checked' : '')+'>'
-                    +'<label class="custom-control-label" for="review-'+idx+'">Mark question for review</label>'
+                    +'<label class="custom-control-label" for="review-'+idx+'">' + getMessage('mark_for_review', 'Mark question for review') + '</label>'
                 +'</div>';
         html += '</div>';
     }
@@ -313,21 +317,21 @@ function generateQuestion(q, idx, type, mode = 'challenge') {
         if (properties['app_ui_display_nav_below_questions']) {
             // html += '<div class="col-sm-12 col-md-4 text-right mb-3">';
             if (challenge != 0) {
-                html += '<button id="additional-prev" onclick="javascript:prevQuestion();" class="btn btn-secondary">Prev</button>';
+                html += '<button id="additional-prev" onclick="javascript:prevQuestion();" class="btn btn-secondary">' + getMessage('prev_short', 'Prev') + '</button>';
             }
             if (challenge != limit-1) {
-                html += '<button id="additional-next" onclick="javascript:nextQuestion();" class="btn btn-secondary">Next</button>';
+                html += '<button id="additional-next" onclick="javascript:nextQuestion();" class="btn btn-secondary">' + getMessage('next_short', 'Next') + '</button>';
             }
             // html += '</div>';
         }
         if (properties['quiz_questions_mark_for_review']) {
             // html += '<div class="col-sm-12 col-md-8 text-right">'
-            html += '<button id="additional-review" onclick="javascript:renderReviewResult();" class="btn btn-secondary">Review exam</button>';
-            html += '<button id="additional-stop" onclick="javascript:stopChallenge(event);" ondblclick="javascript:stopChallenge(event);" class="btn btn-secondary">Submit exam</button>';
+            html += '<button id="additional-review" onclick="javascript:renderReviewResult();" class="btn btn-secondary">' + getMessage('review_exam', 'Review exam') + '</button>';
+            html += '<button id="additional-stop" onclick="javascript:stopChallenge(event);" ondblclick="javascript:stopChallenge(event);" class="btn btn-secondary">' + getMessage('submit_exam', 'Submit exam') + '</button>';
                     // +'</div>';
         }
     } else {
-        html += '<button onclick="javascript:renderExamResultDetails(\''+type+'\');" class="btn btn-secondary">Back to result details</button>';
+        html += '<button onclick="javascript:renderExamResultDetails(\''+type+'\');" class="btn btn-secondary">' + getMessage('back_to_result_details', 'Back to result details') + '</button>';
     }
     html += '</div>';
     html += '</div>';
@@ -365,6 +369,18 @@ function printQuestion(q, index) {
         if (q.params.type == 'single' || q.params.type == 'multiple') {
             html += printSimpleQuestion(q, index);
         }
+
+        errors[index] = [];
+        if (q.answers.choices.length == 0) {
+            errors[index].push('This question is invalid, because has no available answers.');
+        }
+        if (q.answers.correct == 0) {
+            errors[index].push('This question is invalid, because has no correct answer.');
+        }
+
+        html += '<div class="question-errors">';
+        html += renderErrors(index, true);
+        html += '</div>';
     }
   
     return html;

@@ -24,7 +24,7 @@ background-color: #fafafa;
 .comment-icon,
 .image-icon,
 .database-icon {
-    background-color: #888;
+    background-color: #eee;
 }
 
 a.text-secondary:hover,
@@ -42,8 +42,8 @@ a.text-secondary:focus {
     /* color: #fff; */
 }
 .list-group-item-danger {
-    color: #78281f;
+    /* color: #78281f; */
 }
 .list-group-item-success {
-    color: #006249;
+    /* color: #006249; */
 }

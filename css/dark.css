@@ -7,7 +7,7 @@
 }
 
 .matching-control {
-background-color: #fafafa;
+background-color: #303030;
 }
 .progresso > span {
     background-image:
@@ -48,4 +48,8 @@ a.text-secondary:focus {
 }
 .list-group-item-success {
     color: #006249;
+}
+.btn-secondary {
+    /* background-color: #aaa; */
+    border-color: #5c656d;
 }

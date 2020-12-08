@@ -165,6 +165,9 @@ border-color: #0062cc; */
     margin-bottom: .5rem;
     align-items: center;
 }
+.matching-control-label p {
+    margin: 0 .5rem;
+}
 .matching-control-label {
     display: flex;
     width: 50%;
@@ -189,14 +192,14 @@ border-color: #0062cc; */
     animation: marked-correct .5s linear;
 }
 .custom-control-label.marked-wrong {
-    opacity: .1;
+    opacity: .2;
     animation: marked-wrong .5s linear;
 }
 @keyframes marked-correct {
     100% { opacity: 1 }
 }
 @keyframes marked-wrong {
-    100% { opacity: .1 }
+    100% { opacity: .2 }
 }
 
 
