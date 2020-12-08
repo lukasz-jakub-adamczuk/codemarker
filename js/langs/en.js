@@ -27,7 +27,7 @@ var translationsInEnglish = {
     'back_to_result_details': 'Back to result details',
     'back_to_result': 'Back to exam result',
     // exams view
-    'questions_in_exam': '${number} questions in ${time} mins',
+    'questions_in_exam': '%d questions in %d mins',
     // challenge view
     'question': 'Question',
     'choose_answer': 'choose_answer',
