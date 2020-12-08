@@ -10,20 +10,26 @@ function renderExams(displayLayer = true) {
     }
     
 
-    var exams = Object.values(allExams);
     var html = '';
-    if (!('localStorage' in window)) {
-        html += warning('msg_options_change_disabled', 'Changing options is disabled, because your browser does not support localStorage.');
-    }
-    // print available exams or warning
-    if (exams.length) {
-        html += '<div class="list-group">';
-        for (var i in exams) {
-            html += prepareExam(exams[i]);
+    var exams;
+    if (allExams) {
+        exams = Object.values(allExams);
+        
+        if (!('localStorage' in window)) {
+            html += warning(getMessage('msg_options_change_disabled', 'Changing options is disabled, because your browser does not support localStorage.'));
         }
-        html += '</div>';
+        // print available exams or warning
+        if (exams.length) {
+            html += '<div class="list-group">';
+            for (var i in exams) {
+                html += prepareExam(exams[i]);
+            }
+            html += '</div>';
+        // } else {
+        //     html += warning('msg_no_exams', 'You need to load first challenge exam. Use application menu at bottom.');
+        }
     } else {
-        html += warning('msg_no_exams', 'You need to load first challenge exam. Use application menu at bottom.');
+        html += warning(getMessage('msg_no_exams', 'You need to load first challenge exam. Use application menu at bottom.'));
     }
     renderElement('#exams .list', html);
 
@@ -315,7 +321,7 @@ function removeAllExams(event) {
     removeLocalStorageItem('allExams');
     removeLocalStorageItem('examsHashes');
     
-    html += getMessage('msg_exams_removed', 'All exams have been removed.');
+    html += info(getMessage('msg_exams_removed', 'All exams have been removed.'));
     console.log('All exams and related variables have been removed.');
     
     questions = {
