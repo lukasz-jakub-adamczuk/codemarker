@@ -10,13 +10,13 @@ var translations = {
 function getMessage(key, message, params) {
     // var lang = getProperty('app_ui_language', 'en');
     var lang = properties.app_ui_language || 'en';
-    console.log(lang);
+    // console.log(lang);
     message = translations[lang][key] || message;
     // params might me used in message ${1} ${2}
     if (params) {
         // var message = 'Use this option to load questions from your computer or mobile. File content must be in ${format} to be parsed with application.';
 
-        console.log(message);
+        // console.log(message);
 
         // placeholder
         const regex = /(\${\w*})/gm;
@@ -36,7 +36,7 @@ function getMessage(key, message, params) {
         var varFound = message.match(variableRegex);
 
         if (varFound) {
-            console.log('var found');
+            // console.log('var found');
             for (var p in params) {
                 message = message.replace('%d', params[p]);
             }

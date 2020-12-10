@@ -15,7 +15,8 @@ var propertiesSetup = {
                     'pl': 'Polish'
                 },
                 'value': 'en',
-                'version': '0.10'
+                'version': '0.10',
+                'new_feature': true
             }, {
                 'name': 'app_ui_theme',
                 'label': 'Preferred theme.',
@@ -170,12 +171,12 @@ var propertiesSetup = {
     }
 };
 
-console.log('1. ' + properties.app_ui_language);
+// console.log('1. ' + properties.app_ui_language);
 
 // init properties with default values
 initProperties(propertiesSetup);
 
-console.log('2. ' + properties.app_ui_language);
+// console.log('2. ' + properties.app_ui_language);
 
 if ('localStorage' in window) {
     if (localStorage.getItem('properties')) {
@@ -186,17 +187,20 @@ if ('localStorage' in window) {
     }
 }
 
-console.log('3. ' + properties.app_ui_language);
+// console.log('3. ' + properties.app_ui_language);
 
 
 
 
 // Handle creating list of available properties
 function initProperties(setup) {
+    var version = getLocalStorageItem('learnwise', false) || LW_VERSION;
     for (var section in setup) {
         if (setup[section].opts.length) {
             for (var p in setup[section].opts) {
-                properties[setup[section].opts[p].name] = setup[section].opts[p].value;
+                if (!setup[section].opts[p].version || parseFloat(setup[section].opts[p].version) <= parseFloat(version)) {
+                    properties[setup[section].opts[p].name] = setup[section].opts[p].value;
+                }
             }
         }
     }
@@ -353,6 +357,8 @@ function resetAllSettings(event) {
     console.log('resetAllSettings() has been used.');
 
     var html = '';
+
+    // reset settings
     if ('localStorage' in window) {
         removeLocalStorageItem('properties');
         initProperties(propertiesSetup);
@@ -378,16 +384,6 @@ function enableNewFeatures(event) {
     console.log('enableNewFeatures() has been used.');
 
     var html = '';
-    if ('localStorage' in window) {
-        // removeLocalStorageItem('properties');
-        // initProperties(propertiesSetup);
-        // setLocalStorageItem('properties', properties);
-        renderProperties(propertiesSetup);
-        html += info(getMessage('msg_options_has_been_reset', 'Current settings has been reset.'));
-    } else {
-        html += warning(getMessage('msg_options_reset_disabled', 'Current settings cannot be reset, because your browser does not support localStorage.'));
-    }
-    renderElement('.settings-messages', html);
 
     // set local version
     if ('localStorage' in window) {
@@ -396,4 +392,11 @@ function enableNewFeatures(event) {
         html = info(getMessage('msg_version_up_to_date', 'Your version is up-to-date.'));
     }
     renderElement('.version-messages', html);
+
+    // initProperties(propertiesSetup);
+    // setLocalStorageItem('properties', properties);
+    renderProperties(propertiesSetup);
+    html = info(getMessage('msg_options_new_features_enabled', 'New features has been enabled.'));
+    
+    renderElement('.settings-messages', html);
 }

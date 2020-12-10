@@ -130,6 +130,7 @@ var translationsInEnglish = {
     'msg_prop_not_detected': 'Property value not detected locally. Use switch to set correct value or Reset all settings.',
     'msg_options_has_been_reset': 'Current settings has been reset to default values.',
     'msg_options_reset_disabled': 'Current settings cannot be reset to default values, because your browser does not support localStorage.',
+    'msg_options_new_features_enabled': 'New features has been enabled.',
     'msg_version_up_to_date': 'Your version is up-to-date.',
     'confirm_seriously': 'Seriously?',
     'msg_exam_cannot_be_submitted': 'Exam cannot be submitted until all questions will be answered.',

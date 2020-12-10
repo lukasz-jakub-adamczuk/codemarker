@@ -130,6 +130,7 @@ var translationsInPolish = {
     'msg_prop_not_detected': 'Nie wykryto lokalnej wartości opcji konfiguracyjnej. Użyj przełącznika do ustawienia wartości lub Przywróć ustawienia domyślne.',
     'msg_options_has_been_reset': 'Bieżące ustawienia zostały zmienione na domyślne.',
     'msg_options_reset_disabled': 'Bieżące ustawienia niemożliwe do zmiany na domyślne, ponieważ twoja przeglądarka nie obsługuje localStorage.',
+    'msg_options_new_features_enabled': 'Nowe funkcje zostały aktywowane. Zmień ich domyślne, wartości jeśli chcesz.',
     'msg_version_up_to_date': 'Twoja wersja jest aktualna.',
     'confirm_seriously': 'Poważnie?',
     'msg_exam_cannot_be_submitted': 'Wysłanie egzaminu niemożliwe dopóki nie odpowiesz na wszystkie pytania.',
