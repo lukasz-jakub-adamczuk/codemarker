@@ -9,7 +9,7 @@
 .matching-control {
 background-color: #fafafa;
 }
-.progresso > span {
+/* .progresso > span {
     background-image:
          linear-gradient(-45deg, 
                                  transparent 33%, rgba(0, 0, 0, .1) 33%, 
@@ -18,6 +18,12 @@ background-color: #fafafa;
                                  rgba(255, 255, 255, .25), 
                                  rgba(0, 0, 0, .25)),
          linear-gradient(to left, #a48b66, #6c757d);
+} */
+.progress-bar {
+    background-color: #a48b66;
+}
+.opts-header {
+    color: #a48b66;
 }
 .main-nav .button {
     background-color: #a48b66;
