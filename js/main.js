@@ -1,6 +1,6 @@
 'use strict';
 
-const LW_VERSION = '0.10';
+const LW_VERSION = '0.11';
 const PROP_VERSION = '0.07';
 
 var version;
@@ -38,6 +38,9 @@ var stats;
 var mapping = {};
 
 var letters = 'abcdefghijklmnopqrstuvwxyz'.split('');
+
+var goodFeedback = new Audio('./audio/bravo.mp3');
+var badFeedback = new Audio('./audio/buzzer.mp3');
 
 // hide menu by default (in case would be opened during page reload and intro running)
 $('#options-tgr').prop('checked', false);
@@ -120,6 +123,7 @@ document.querySelector('#load').addEventListener('click', loadQuestions);
 document.querySelector('#retrieve').addEventListener('click', retrieveQuestions);
 document.querySelector('#app-properties').addEventListener('click', manageProperty);
 document.querySelector('#default-settings').addEventListener('click', resetAllSettings);
+document.querySelector('#enable-new-features').addEventListener('click', enableNewFeatures);
 document.querySelector('#remove-exams').addEventListener('click', removeAllExams);
 
 // document.querySelector('#app_ui_language').addEventListener('change', changeLanguage);
@@ -193,13 +197,25 @@ window.addEventListener('keydown', function(event) {
                 completeCorrectAnswers();
                 break;
             case keys.r:
-                // document.querySelector('.review-question').click();
+                var reviewTgr = document.querySelector('.review-question');
+                if (reviewTgr) {
+                    reviewTgr.click();
+                }
                 break;
             // case keys.tab:
             //     break;
         }
     }
 });
+
+// translations
+document.querySelectorAll('.modal-footer button').forEach(function(itm, idx) {
+    itm.textContent = getMessage('close', 'Close');
+});
+
+document.querySelector('#comment-modal-label').textContent = getMessage('comment', 'Comment');
+document.querySelector('#image-modal-label').textContent = getMessage('image', 'Image');
+document.querySelector('#database-modal-label').textContent = getMessage('info', 'About question');
 
 var challengeLayer = document.getElementById('#challenge');
 

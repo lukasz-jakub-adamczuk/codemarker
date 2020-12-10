@@ -3,11 +3,11 @@
 var translationsInPolish = {
     // ui
     // settings
-    'lang_en': 'Angielski',
-    'lang_pl': 'Polski',
-    'theme_light': 'Jasny',
-    'theme_dark': 'Ciemny',
-    'theme_gold': 'Złoty',
+    'app_ui_language_en': 'Angielski',
+    'app_ui_language_pl': 'Polski',
+    'app_ui_theme_light': 'Jasny',
+    'app_ui_theme_dark': 'Ciemny',
+    'app_ui_theme_gold': 'Złoty',
     // states
     'ignored': 'Ignorowane',
     'found': 'Znalezione',
@@ -15,6 +15,7 @@ var translationsInPolish = {
     'invalid': 'Niepoprawne',
     // buttons
     'reset_settings': 'Przywróć domyślne ustawienia',
+    'enable_new_features': 'Aktywuj nowe funkcje',
     'remove_exams': 'Usuń wyzwania',
     'load_questions': 'Wgraj swoje pytania',
     'retrieve_questions': 'Pobierz',
@@ -59,7 +60,7 @@ var translationsInPolish = {
     'info': 'Odnośnie pytania',
     'info_desc': 'Jeśli to pytanie zostało źle wygenrowane to sprawdź jak wygląda w pliku z pytaniami.',
     'info_eqi': 'Pytanie w arkuszu Excela',
-    'info_eri': 'Wierrz w arkuszu Excela',
+    'info_eri': 'Wiersz w arkuszu Excela',
     'close': 'Zamknij',
     // menu sections
     'about_app': 'O aplikacji',
@@ -98,6 +99,12 @@ var translationsInPolish = {
     'quiz_answers_help_button_hint': 'Opcja pozwala na używanie przycisku Pomoc w celu sprawdzenia prawidłowych odpowiedzi.',
     'app_ui_display_nav_below_questions_label': 'Dodatkowe przyciski nawigacyjne poniżej pytania.',
     'app_ui_display_nav_below_questions_hint': 'Opcja wyświetla dodatkowe przyciski nawigacyjne Poprzednie i Następne poniżej pytania.',
+    'quiz_answer_instant_feedback_label': 'Natychmiastowa informacja zwrotna.',
+    'quiz_answer_instant_feedback_hint': 'Opcja informuje nas o poprawności odpowiedzi, jeśli jest włączona.',
+    'quiz_positive_feedback_audio_label': 'Pozytywna dźwiękowa informacja zwrotna.',
+    'quiz_positive_feedback_audio_hint': 'Opcja informuje dźwiękowo o poprawnej odpowiedzi, jeśli natychmiastowa informacja zwrotna jest włączona.',
+    'quiz_negative_feedback_audio_label': 'Negatywna dźwiękowa informacja zwrotna.',
+    'quiz_negative_feedback_audio_hint': 'Opcja informuje dźwiękowo o błędnej odpowiedzi, jeśli natychmiastowa informacja zwrotna jest włączona',
     'quiz_answers_print_letters_label': 'Litery przed odpowiedziami.',
     'quiz_answers_print_letters_hint': 'Opcja wyświetla dodatkowe litery przed wariantami opowiedzi.',
     'app_ui_display_progress_label': 'Pasek postępu.',
@@ -105,7 +112,7 @@ var translationsInPolish = {
     'app_ui_display_timer_label': 'Pomiar czasu.',
     'app_ui_display_timer_hint': 'Opcja wyświetla pomiar czasu w prawym górnym rogu ekranu.',
     'quiz_questions_shuffle_label': 'Losowa kolejność pytań.',
-    'quiz_questions_shuffle_hint': 'Opcja zmienia kolejność pytań wyświetlanych podczas wyzwania. Wymaga odświeżenia strony i nowego wyzwania.',
+    'quiz_questions_shuffle_hint': 'Opcja zmienia kolejność pytań wyświetlanych podczas wyzwania. Wymaga odświeżenia strony i nowego wyzwania. Działa tylko dla wszystkich pytań.',
     'quiz_answers_shuffle_label': 'Losowa kolejność odpowiedzi.',
     'quiz_answers_shuffle_hint': 'Opcja zmienia kolejność odpowiedzi wyświetlanych podczas wyzwania. Wymaga odświeżenia strony i nowego wyzwania.',
     'quiz_questions_use_all_label': 'Użyj wszystkie dostępne pytania.',
@@ -126,7 +133,7 @@ var translationsInPolish = {
     'msg_version_up_to_date': 'Twoja wersja jest aktualna.',
     'confirm_seriously': 'Poważnie?',
     'msg_exam_cannot_be_submitted': 'Wysłanie egzaminu niemożliwe dopóki nie odpowiesz na wszystkie pytania.',
-    'msg_exam_file_loaded_parsed': 'Plik egzaminu został wgrany i przetworzony właściwie.',
+    'msg_exam_loaded_parsed': 'Plik egzaminu został wgrany i przetworzony właściwie.',
     'msg_exam_empty_code': 'Brakujący kod.',
     'msg_exam_invalid_code': 'Niepoprawny kod.',
     'msg_exam_downloaded_parsed': 'Plik egzaminu został pobrany i przetworzony właściwie.',
@@ -134,6 +141,7 @@ var translationsInPolish = {
     'msg_no_exams': 'Wgraj lub pobierz pierwsze wyzwanie. Użyj menu aplikacji na dole ekranu.',
     'msg_exam_invalid': 'Rozpoczęcie wyzwania jest niemożliwe, ponieważ brakuje poprawnych pytań.',
     'msg_answers_limit': 'Musisz wybrać %d odpowiedzi.',
+    'msg_answers_limit_exceed': 'Wybrano zbyt wiele odpowiedzi.',
     'msg_match_each': 'Musisz dopasować każdy z wariantów odpowiedzi.',
     'msg_match_once': 'Nie możesz użyć jednej odpowiedzi wielokrotnie.',
     'msg_exams_removed': 'Wszystkie egzaminy zostały usunięte.'

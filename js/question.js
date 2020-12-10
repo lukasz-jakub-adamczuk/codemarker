@@ -7,6 +7,12 @@ function prevQuestion(event) {
         return;
     }
 
+    validateQuestionAnswers(challenge+1);
+    if (errors[challenge] && errors[challenge].length) {
+        renderErrors(challenge);
+        return;
+    }
+
     console.log('Prev event has been triggered.');    
     if (challenge > 0) {
         challenge--;
@@ -30,6 +36,12 @@ function prevQuestion(event) {
 function nextQuestion(event) {
     console.log('nextQuestion() has been used.');
     if ($('#next-button').hasClass('disabled')) {
+        return;
+    }
+
+    validateQuestionAnswers(challenge+1);
+    if (errors[challenge] && errors[challenge].length) {
+        renderErrors(challenge);
         return;
     }
     

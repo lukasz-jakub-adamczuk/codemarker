@@ -323,6 +323,7 @@ function runIntro() {
 
 // Internal function for counting current progress
 function countProgress() {
+    console.warn('answered');
     var answered = answeredExamQuestions();
     var current = answered.length / questions.used.length * 100;
     if (current === 100) {
@@ -334,7 +335,7 @@ function countProgress() {
 // Internal function to render current progress value
 function renderProgress(value) {
     if (properties['app_ui_display_progress']) {
-        document.querySelector('.progresso span').style = 'width: ' + value + '%;';
+        document.querySelector('.progress div').style = 'width: ' + value + '%;';
     }
 }
 
@@ -437,6 +438,26 @@ function renderErrors(question, returnHtml = false) {
     renderElement('.question-errors', html);
 }
 
+function showFeedback(type) {
+    console.log('showFeedback() has been used.');
+
+    if (properties.quiz_answer_instant_feedback) {
+        var feedback = document.querySelector('.feedback.'+type);
+
+        if (properties.quiz_positive_feedback_audio && type == 'good') {
+            goodFeedback.play();
+        }
+        if (properties.quiz_negative_feedback_audio && type == 'bad') {
+            badFeedback.play();
+        }
+
+        feedback.style.display = 'flex';
+
+        setTimeout(function() {
+            feedback.style.display = 'none';
+        }, 500);
+    }
+}
 
 function runSpinner(callback, toShow) {
     hideElements();
@@ -596,7 +617,7 @@ function generateMenuSections() {
         var sourceCodeLink = ['<a href="https://github.com/lukasz-jakub-adamczuk/codemarker#codemarker">${}</a>'];
         
         sourceCode.querySelector('div').innerHTML = '<span>' + getMessage('source_code_desc', 'Source code available on ${Github}', sourceCodeLink) + '</span>';
-        defaultSettings.querySelector('div').innerHTML = '<span>' + getMessage('default_settings_desc', 'Use those actions to back with current options to default settings.') + '</span><div class="mb-2"><button id="default-settings" class="btn btn-secondary">' + getMessage('reset_settings', 'Reset settings') + '</button> <button id="remove-exams" class="btn btn-danger">' + getMessage('remove_exams', 'Remove exams') + '</button></div><div class="settings-messages"></div>';
+        defaultSettings.querySelector('div').innerHTML = '<span>' + getMessage('default_settings_desc', 'Use those actions to back with current options to default settings.') + '</span><div class="mb-2"><button id="default-settings" class="btn btn-secondary">' + getMessage('reset_settings', 'Reset settings') + '</button> <button id="enable-new-features" class="btn btn-secondary">' + getMessage('enable_new_features', 'Enable new features') + '</button> <button id="remove-exams" class="btn btn-danger">' + getMessage('remove_exams', 'Remove exams') + '</button></div><div class="settings-messages"></div>';
 
         aboutContent.appendChild(version);
         aboutContent.appendChild(sourceCode);
@@ -616,7 +637,7 @@ function generateMenuSections() {
         
         uploadHeader.textContent = getMessage('upload_file', 'Upload file');
         uploadDescription.innerHTML = getMessage('upload_desc', 'Use this option to load questions from your computer or mobile. File content must be in special ${format} to be parsed with application.', fileFormatLink);
-        uploadButton.textContent = getMessage('retrieve_questions', 'Load your questions');
+        uploadButton.textContent = getMessage('load_questions', 'Load your questions');
 
         menu.appendChild(uploadSection);
 

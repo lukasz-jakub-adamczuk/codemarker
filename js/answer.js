@@ -24,6 +24,7 @@ function registerAnswerForSimpleQuestion(event) {
             }
 
             if (type == 'single') {
+                questions.exam[question] = {};
                 questions.exam[question][answer] = true;
             }
             if (type == 'multiple') {
@@ -35,23 +36,11 @@ function registerAnswerForSimpleQuestion(event) {
                 }
             }
             if (type == 'input') {
-                // questions.exam[question][answer] = event.target.value;
-                // console.log(event.target.value);
+                questions.exam[question][answer] = event.target.value;
+                console.log(event.target.value);
             }
             console.log('Registered answer:');
             console.log(questions.exam[question]);
-
-            // multi choice questions may have exact number of answers
-            var answers = questions.used[question-1].params.answers;
-            if (answers) {
-                console.log(answers);
-                errors[question-1] = [];
-                if (Object.values(questions.exam[question]).filter(val => val == true).length != answers) {
-                    errors[question-1].push(getMessage('msg_answers_limit', 'You have to choose %d answers.', [answers]));
-                    console.log(errors);
-                }
-            }
-            
         }
 
         if (type == 'matching') {
@@ -83,6 +72,24 @@ function registerAnswerForSimpleQuestion(event) {
     
             questions.exam[question] = questions.exam[question] || {};
             questions.exam[question][0] = event.target.value;
+        }
+
+
+        // validateQuestionAnswers(question);
+        validateMandatoryAnswers(question);
+
+        // good or bad feedback
+        if (Object.values(questions.exam[question]).filter(val => val == true).length == questions.used[question-1].answers.correct) {
+            // var correctAnswers = questions.used[question-1].answers.choices.map(function(itm, idx) { if (itm.type == 'correct') return idx; }).filter(val => val);
+            var correctAnswers = questions.used[question-1].answers.choices.reduce(function(acc, cur, idx) { return cur.type == 'correct' ? acc + idx : acc}, '');
+            var answeredAnswers = Object.entries(questions.exam[question]).reduce(function(acc, cur, idx) { return cur[1] == true ? acc + cur[0] : acc}, '');
+            console.warn(correctAnswers);
+            console.warn(answeredAnswers);
+            if (correctAnswers == answeredAnswers) {
+                showFeedback('good');
+            } else {
+                showFeedback('bad');
+            }
         }
 
         renderErrors(question-1);
@@ -208,6 +215,14 @@ function completeCorrectAnswers() {
             questions.exam[question][i] = itm.value;
         });
     }
+
+    countProgress();
+
+    storeExam();
+
+    if ((answeredExamQuestions().length) == questions.used.length) {
+        enableAction('stop');
+    }
 }
 
 // Handle mapping answers
@@ -225,6 +240,52 @@ function processAnswers(question) {
         result.shuffled = true;
     }
     return result;
+}
+
+function validateQuestionAnswers(question) {
+    // multi choice questions may have exact number of answers
+    console.log(question);
+    var answers = questions.used[question-1].params.answers;
+    if (answers) {
+        console.log(answers);
+        errors[question-1] = [];
+        if (questions.exam[question]) {
+            if (Object.values(questions.exam[question]).filter(val => val == true).length != answers) {
+                errors[question-1].push(getMessage('msg_answers_limit', 'You have to choose %d answers.', [answers]));
+                console.log(errors);
+            // } else {
+            //     // good or bad feedback
+            //     var correctAnswers = questions.used[question-1].answers.choices.map(function(itm, idx) { if (itm.type == 'correct') return idx; }).filter(val => val);
+            //     var answeredAnswers = Object.values(questions.exam[question]).map(function(itm, idx) { if (itm == true) return idx; }).filter(val => val);
+            //     console.warn(correctAnswers);
+            //     console.warn(answeredAnswers);
+            //     if (correctAnswers == answeredAnswers) {
+            //         showFeedback('good');
+            //     } else {
+            //         showFeedback('bad');
+            //     }
+            }
+        }
+    }
+}
+
+function validateMandatoryAnswers(question) {
+    // multi choice questions may have exact number of answers
+    console.log(question);
+    var answers = questions.used[question-1].params.answers;
+    if (answers) {
+        console.log(answers);
+        errors[question-1] = [];
+        if (questions.exam[question]) {
+            // console.log('feedback...');
+            // console.warn(Object.values(questions.exam[question]).filter(val => val == true).length);
+            // console.warn(answers);
+            if (Object.values(questions.exam[question]).filter(val => val == true).length > answers) {
+                errors[question-1].push(getMessage('msg_answers_limit_exceed', 'You have chosen too many answers.', [answers]));
+                console.log(errors);
+            }
+        }
+    }
 }
 
 // Handle exam result calculations

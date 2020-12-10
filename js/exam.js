@@ -12,7 +12,7 @@ function renderExams(displayLayer = true) {
 
     var html = '';
     var exams;
-    if (allExams) {
+    // if (allExams) {
         exams = Object.values(allExams);
         
         if (!('localStorage' in window)) {
@@ -28,9 +28,9 @@ function renderExams(displayLayer = true) {
         } else {
             html += warning(getMessage('msg_no_exams', 'You need to load first challenge exam. Use application menu at bottom.'));
         }
-    } else {
-        html += warning(getMessage('msg_no_exams', 'You need to load first challenge exam. Use application menu at bottom.'));
-    }
+    // } else {
+    //     html += warning(getMessage('msg_no_exams', 'You need to load first challenge exam. Use application menu at bottom.'));
+    // }
 
     renderElement('#exams .list', html);
     

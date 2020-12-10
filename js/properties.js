@@ -2,24 +2,6 @@
 
 var properties = {};
 
-console.log('1. ' + properties.app_ui_language);
-
-// init properties with default values
-initProperties(propertiesSetup);
-
-console.log('2. ' + properties.app_ui_language);
-
-if ('localStorage' in window) {
-    if (localStorage.getItem('properties')) {
-        var locales = JSON.parse(localStorage.getItem('properties'));
-        for (var prop in locales) {
-            properties[prop] = locales[prop];
-        }
-    }
-}
-
-console.log('3. ' + properties.app_ui_language);
-
 var propertiesSetup = {
     'app': {
         'label': 'Application',
@@ -29,27 +11,29 @@ var propertiesSetup = {
                 'label': 'Preferred language.',
                 'hint': '',
                 'values': {
-                    'en': getMessage('lang_en', 'English'),
-                    'pl': getMessage('lang_pl', 'Polish')
+                    'en': 'English',
+                    'pl': 'Polish'
                 },
                 'value': 'en',
-                'new_feature': true
+                'version': '0.10'
             }, {
                 'name': 'app_ui_theme',
                 'label': 'Preferred theme.',
                 'hint': '',
                 'values': {
-                    'light': getMessage('theme_light', 'Light'),
-                    'dark': getMessage('theme_dark', 'Dark'),
-                    'gold': getMessage('theme_gold', 'Gold')
+                    'light': 'Light',
+                    'dark': 'Dark',
+                    'gold': 'Gold'
                 },
                 'value': 'light',
+                'version': '0.10',
                 'new_feature': true
             }, {
                 'name': 'app_ui_annotations',
                 'label': 'Display annotations.',
                 'hint': 'This option controls annotations in user preferences.',
                 'value': true,
+                'version': '0.10',
                 'new_feature': true
             }, {
                 'name': 'app_ui_introduction_enabled',
@@ -92,6 +76,27 @@ var propertiesSetup = {
                 'label': 'Display additional navigation below questions during challenge.',
                 'hint': 'This option allows to display additional navigation for previous and next question if available.',
                 'value': false
+            }, {
+                'name': 'quiz_answer_instant_feedback',
+                'label': 'Instant feedback.',
+                'hint': 'This option imediately provides feedback about answer correctness if enabled.',
+                'value': true,
+                'version': '0.11',
+                'new_feature': true
+            }, {
+                'name': 'quiz_positive_feedback_audio',
+                'label': 'Positive feedback with audio.',
+                'hint': 'This option provides positive feedback audio for answers when instant feedback is enabled.',
+                'value': true,
+                'version': '0.11',
+                'new_feature': true
+            }, {
+                'name': 'quiz_negative_feedback_audio',
+                'label': 'Negative feedback with audio.',
+                'hint': 'This option provides negative feedback audio for answers when instant feedback is enabled.',
+                'value': true,
+                'version': '0.11',
+                'new_feature': true
             }, {
                 'name': 'quiz_answers_help_button',
                 'label': 'Allow using Help button during challenge.',
@@ -165,6 +170,27 @@ var propertiesSetup = {
     }
 };
 
+console.log('1. ' + properties.app_ui_language);
+
+// init properties with default values
+initProperties(propertiesSetup);
+
+console.log('2. ' + properties.app_ui_language);
+
+if ('localStorage' in window) {
+    if (localStorage.getItem('properties')) {
+        var locales = JSON.parse(localStorage.getItem('properties'));
+        for (var prop in locales) {
+            properties[prop] = locales[prop];
+        }
+    }
+}
+
+console.log('3. ' + properties.app_ui_language);
+
+
+
+
 // Handle creating list of available properties
 function initProperties(setup) {
     for (var section in setup) {
@@ -175,6 +201,8 @@ function initProperties(setup) {
         }
     }
 }
+
+
 
 // Handle rendering list of available properties
 function renderProperties(setup) {
@@ -206,7 +234,7 @@ function getProperty(propertyName, defaultValue) {
 
 // Internal function to handle single property rendering
 function prepareProperty(property) {
-    if ((getLocalStorageItem('learnwise', false) != LW_VERSION) && (property.new_feature || property.new_feature == true)) {
+    if (property.version && parseFloat(property.version) > parseFloat(getLocalStorageItem('learnwise', false)))  {
         return '';
     }
     var disabled = 'localStorage' in window ? '' : ' disabled';
@@ -235,7 +263,7 @@ function prepareChoiceProperty(property, disabled) {
         html += '<select class="app-settings-control-choice" id="' + property.name + '"' + disabled + '>';
         for (var val in property.values) {
             selected = (val == properties[property.name] ? 'selected' : '');
-            html += '<option value="' + val + '"' + selected + '>' + property.values[val] + '</option>';
+            html += '<option value="' + val + '"' + selected + '>' + getMessage(property.name + '_' + val, property.values[val]) + '</option>';
         }
         html += '</select>';
     }
@@ -329,6 +357,31 @@ function resetAllSettings(event) {
         removeLocalStorageItem('properties');
         initProperties(propertiesSetup);
         setLocalStorageItem('properties', properties);
+        renderProperties(propertiesSetup);
+        html += info(getMessage('msg_options_has_been_reset', 'Current settings has been reset.'));
+    } else {
+        html += warning(getMessage('msg_options_reset_disabled', 'Current settings cannot be reset, because your browser does not support localStorage.'));
+    }
+    renderElement('.settings-messages', html);
+
+    // set local version
+    if ('localStorage' in window) {
+        setLocalStorageItem('learnwise', LW_VERSION, false);
+        document.querySelectorAll('#version strong').textContent = LW_VERSION;
+        html = info(getMessage('msg_version_up_to_date', 'Your version is up-to-date.'));
+    }
+    renderElement('.version-messages', html);
+}
+
+// Handle changing value of property
+function enableNewFeatures(event) {
+    console.log('enableNewFeatures() has been used.');
+
+    var html = '';
+    if ('localStorage' in window) {
+        // removeLocalStorageItem('properties');
+        // initProperties(propertiesSetup);
+        // setLocalStorageItem('properties', properties);
         renderProperties(propertiesSetup);
         html += info(getMessage('msg_options_has_been_reset', 'Current settings has been reset.'));
     } else {

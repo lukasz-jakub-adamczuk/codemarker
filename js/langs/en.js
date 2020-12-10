@@ -3,11 +3,11 @@
 var translationsInEnglish = {
     // ui
     // settings
-    'lang_en': 'English',
-    'lang_pl': 'Polish',
-    'themre_light': 'Light',
-    'themre_dark': 'Dark',
-    'themre_gold': 'Gold',
+    'app_ui_language_en': 'English',
+    'app_ui_language_pl': 'Polish',
+    'app_ui_theme_light': 'Light',
+    'app_ui_theme_dark': 'Dark',
+    'app_ui_theme_gold': 'Gold',
     // states
     'ignored': 'Ignored',
     'found': 'Found',
@@ -15,6 +15,7 @@ var translationsInEnglish = {
     'invalid': 'Invalid',
     // buttons
     'reset_settings': 'Reset settings',
+    'enable_new_features': 'Enable new features',
     'remove_exams': 'Remove exams',
     'load_questions': 'Load your questions',
     'retrieve_questions': 'Retrieve',
@@ -61,7 +62,6 @@ var translationsInEnglish = {
     'info_eqi': 'Question in Excel',
     'info_eri': 'Row in Excel',
     'close': 'Close',
-    'image': '',
     // menu sections
     'about_app': 'About',
     'upload_file': 'Upload file',
@@ -97,6 +97,12 @@ var translationsInEnglish = {
     'quiz_questions_mark_for_review_hint': 'This option allows to mark question which can be reviewed before submitting exam.',
     'app_ui_display_nav_below_questions_label': 'Display additional navigation below questions during challenge.',
     'app_ui_display_nav_below_questions_hint': 'This option allows to display additional navigation for previous and next question if available.',
+    'quiz_answer_instant_feedback_label': 'Instant feedback.',
+    'quiz_answer_instant_feedback_hint': 'This option imediately provides feedback about answer correctness if enabled.',
+    'quiz_positive_feedback_audio_label': 'Positive feedback with audio.',
+    'quiz_positive_feedback_audio_hint': 'This option provides positive feedback audio for answers when instant feedback is enabled.',
+    'quiz_negative_feedback_audio_label': 'Negative feedback with audio.',
+    'quiz_negative_feedback_audio_hint': 'This option provides negative feedback audio for answers when instant feedback is enabled.',
     'quiz_answers_help_button_label': 'Allow using Help button during challenge.',
     'quiz_answers_help_button_hint': 'This option allow to use Help button placed on bottom navigation.',
     'quiz_answers_print_letters_label': 'Display letters before answers.',
@@ -106,7 +112,7 @@ var translationsInEnglish = {
     'app_ui_display_timer_label': 'Display timer during challenge.',
     'app_ui_display_timer_hint': 'This option displays timer defined for exam or right equivalent for all available questions.',
     'quiz_questions_shuffle_label': 'Shuffle questions.',
-    'quiz_questions_shuffle_hint': 'This option allows to shuffle questions used in quiz. Quiz refresh required.',
+    'quiz_questions_shuffle_hint': 'This option allows to shuffle questions used in quiz. Quiz refresh required. Works for all questions in exam only.',
     'quiz_answers_shuffle_label': 'Shuffle available answers.',
     'quiz_answers_shuffle_hint': 'This option allows to shuffle answers appearence order. Quiz refresh required.',
     'quiz_questions_use_all_label': 'Use all available questions.',
@@ -127,7 +133,7 @@ var translationsInEnglish = {
     'msg_version_up_to_date': 'Your version is up-to-date.',
     'confirm_seriously': 'Seriously?',
     'msg_exam_cannot_be_submitted': 'Exam cannot be submitted until all questions will be answered.',
-    'msg_exam_file_loaded_parsed': 'Exam file has been loaded and parsed successfully.',
+    'msg_exam_loaded_parsed': 'Exam file has been loaded and parsed successfully.',
     'msg_exam_empty_code': 'Empty code.',
     'msg_exam_invalid_code': 'Invalid code.',
     'msg_exam_downloaded_parsed': 'Exam file has been downloaded and parsed successfully.',
@@ -135,6 +141,7 @@ var translationsInEnglish = {
     'msg_no_exams': 'You need to load first challenge exam. Use application menu at bottom.',
     'msg_exam_invalid': 'Challenge cannot be started, because has no valid questions.',
     'msg_answers_limit': 'You have to choose %d answers.',
+    'msg_answers_limit_exceed': 'You have chosen too many answers.',
     'msg_match_each': 'You have to match each answer.',
     'msg_match_once': 'You cannot use single answer many times.',
     'msg_exams_removed': 'All exams have been removed.'
