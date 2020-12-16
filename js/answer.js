@@ -1,5 +1,6 @@
 'use strict';
 
+var answersPromise;
 
 // Handle registring answer used to calculate running challenge result
 function registerAnswerForSimpleQuestion(event) {
@@ -98,8 +99,20 @@ function registerAnswerForSimpleQuestion(event) {
 
         storeExam();
 
-        if ((answeredExamQuestions().length) == questions.used.length) {
-            enableAction('stop');
+        // if ((answeredExamQuestions().length) == questions.used.length) {
+        //     enableAction('stop');
+        // }
+        if (canStopChallenge()) {
+            // answersPromise = Promise.resolve('Yes. I can stop challenge.');
+            answersPromise = new Promise(function(resolve, reject) {
+                resolve('finally');
+            });
+
+            answersPromise.then(function(msg) {
+                console.log(msg);
+            });
+
+            readyToSubmitChallenge();
         }
     }
 }
@@ -118,8 +131,20 @@ function registerAnswerForMatchingQuestion(event) {
 
     countProgress();
 
-    if ((answeredExamQuestions().length) == questions.used.length) {
-        enableAction('stop');
+    // if ((answeredExamQuestions().length) == questions.used.length) {
+    //     enableAction('stop');
+    // }
+    if (canStopChallenge()) {
+        answersPromise = Promise.resolve('registerAnswerForMatchingQuestion.');
+        // answersPromise = new Promise(function(resolve, reject) {
+        //     resolve('finally');
+        // });
+
+        answersPromise.then(function(msg) {
+            console.log(msg);
+        });
+
+        readyToSubmitChallenge();
     }
 }
 
@@ -127,6 +152,10 @@ function registerAnswerForMatchingQuestion(event) {
 function showCorrectAnswers(event) {
     console.log('showCorrectAnswers() has been used.');
     if (event && event.target.className.indexOf('disabled') != -1) {
+        return;
+    }
+    if (!properties['quiz_answers_help_button']) {
+        console.log('showCorrectAnswers() is disabled.');
         return;
     }
     console.log('Help event has been used.');
@@ -220,8 +249,16 @@ function completeCorrectAnswers() {
 
     storeExam();
 
-    if ((answeredExamQuestions().length) == questions.used.length) {
-        enableAction('stop');
+    // if ((answeredExamQuestions().length) == questions.used.length) {
+    //     enableAction('stop');
+    // }
+    if (canStopChallenge()) {
+        answersPromise = Promise.resolve('completeCorrectAnswers.');
+        answersPromise.then(function(msg) {
+            console.log(msg);
+        });
+
+        readyToSubmitChallenge();
     }
 }
 

@@ -348,9 +348,16 @@ function answeredExamQuestions() {
 function changeLanguage(language) {
     console.log('change language');
 
-    // var language = this.value || language;
+    console.warn(properties.app_ui_language);
 
-    // renderProperties(propertiesSetup);
+    // this need to run after manage property registred on parent element
+    setTimeout(function() {
+        generateMenuSections();
+        checkAppVersion();
+        bindMenuEvents();
+    }, 100);
+    console.log('generateMenuSections');
+    console.log('bindMenuEvents');
 }
 
 // Internal function returning anwered questions
@@ -388,24 +395,21 @@ function changeTheme(theme) {
 }
 
 // Internal function returning anwered questions
-function changeAnnotations(annotations) {
-    console.log('change annotations');
+function changeAnnotations() {
+    console.warn('change annotations');
 
-    var annotations = this.value || annotations;
+    var annotations = this.checked;
 
     var items = document.querySelectorAll('.alert-info');
     if (annotations) {
         items.forEach(function(itm) {
-            console.log(itm);
-            $(itm).show();
+            itm.style.display = '';
         });
     } else {
         items.forEach(function(itm) {
-            $(itm).hide();
+            itm.style.display = 'none';
         });
     }
-
-    // renderProperties(propertiesSetup);
 }
 
 function prepareMessage(type, message, params) {
@@ -456,6 +460,12 @@ function showFeedback(type) {
         setTimeout(function() {
             feedback.style.display = 'none';
         }, 500);
+
+        setTimeout(function() {
+            if (properties.quiz_next_question_when_positive_feedback && type == 'good') {
+                nextQuestion();
+            }
+        }, 300);
     }
 }
 
@@ -623,6 +633,9 @@ function generateMenuSections() {
         aboutContent.appendChild(sourceCode);
         aboutContent.appendChild(defaultSettings);
         
+        // clear menu options before generating
+        menu.innerHTML = '';
+        console.error(menu);
         menu.appendChild(about);
 
 
@@ -663,8 +676,45 @@ function generateMenuSections() {
         // <div id="app-properties"></div>
         menu.appendChild(propertiesSection);
         
+        renderProperties(propertiesSetup);
     }
 }
+
+function bindMenuEvents() {
+    // options
+    document.querySelector('#file-input').addEventListener('change', readSingleFile);
+    document.querySelector('#load').addEventListener('click', loadQuestions);
+    document.querySelector('#retrieve').addEventListener('click', retrieveQuestions);
+    document.querySelector('#app-properties').addEventListener('click', manageProperty);
+    document.querySelector('#default-settings').addEventListener('click', resetAllSettings);
+    document.querySelector('#enable-new-features').addEventListener('click', enableNewFeatures);
+    document.querySelector('#remove-exams').addEventListener('click', removeAllExams);
+
+    var changeLang = document.querySelector('#app_ui_language');
+    if (changeLang) {
+        changeLang.addEventListener('change', changeLanguage);
+    }
+    var changeCss = document.querySelector('#app_ui_theme');
+    if (changeCss) {
+        changeCss.addEventListener('change', changeTheme);
+    }
+    var changeHints = document.querySelector('#app_ui_annotations');
+    if (changeHints) {
+        changeHints.addEventListener('change', changeAnnotations);
+    }
+}
+
+function readyToSubmitChallenge() {
+    Promise.all([timePromise, answersPromise]).then((values) => {
+        console.log(values);
+        enableAction('stop');
+        console.warn('can submit exam');
+        console.log('will be done in 5s');
+
+        setTimeout(() => stopChallenge(), 5000);
+    });
+}
+
 
 // function generateRetrieveSection() {
 //     var menu = document.querySelector('.menu-options .container');
@@ -696,3 +746,20 @@ function generateMenuSections() {
 
     
 // }
+
+// var letters = 'abcdefghijklm'.split('');
+// var html = '';
+// for (var q in questions.marked) {
+// 	if (questions.marked[q] == true) {
+// 		html += questions.used[q].name;
+// 		var idx = 0;
+// 		for (var opt of questions.used[q].answers.choices) {
+// 			html += letters[idx] + ')' ;
+// 			html += (opt.type == 'correct') ? '+ ' : '- ';
+// 			html += opt.name + "\n";
+// 			idx++;
+// 		}
+// 		html += "\n";
+// 	}
+// }
+// console.log(html);

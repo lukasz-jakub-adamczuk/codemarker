@@ -65,7 +65,7 @@ var propertiesSetup = {
         ]
     },
     'ui': {
-        'labeld': 'User interface',
+        'label': 'User interface',
         'opts': [
             {
                 'name': 'quiz_questions_mark_for_review',
@@ -83,6 +83,13 @@ var propertiesSetup = {
                 'hint': 'This option imediately provides feedback about answer correctness if enabled.',
                 'value': true,
                 'version': '0.11',
+                'new_feature': true
+            }, {
+                'name': 'quiz_next_question_when_positive_feedback',
+                'label': 'Next question after positive feedback.',
+                'hint': 'This option display next question after positive feedback if possible.',
+                'value': true,
+                'version': '0.12',
                 'new_feature': true
             }, {
                 'name': 'quiz_positive_feedback_audio',
@@ -103,12 +110,6 @@ var propertiesSetup = {
                 'label': 'Allow using Help button during challenge.',
                 'hint': 'This option allow to use Help button placed on bottom navigation.',
                 'value': true
-            }, {
-                'name': 'quiz_answers_print_letters',
-                'label': 'Display letters before answers.',
-                'hint': 'This option displays additional letters for before answers.',
-                'value': false,
-                'state': 'enabled'
             }, {
                 'name': 'app_ui_display_progress',
                 'label': 'Display progress bar during challenge.',
@@ -140,6 +141,12 @@ var propertiesSetup = {
                 'label': 'Use all available questions.',
                 'hint': 'This option allows to use all available questions regardless limit set for challenge. Using invalid or ignored questions is controlled by other property.',
                 'value': false
+            }, {
+                'name': 'quiz_answers_print_letters',
+                'label': 'Display letters before answers.',
+                'hint': 'This option displays additional letters for before answers.',
+                'value': false,
+                'state': 'enabled'
             }, {
                 'name': 'quiz_questions_skip_ignored',
                 'label': 'Skip invalid/ignored questions.',

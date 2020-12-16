@@ -29,6 +29,10 @@ var translationsInEnglish = {
     'back_to_result': 'Back to exam result',
     // exams view
     'questions_in_exam': '%d questions in %d mins',
+    'filter_version': 'Versions',
+    'filter_tag': 'Tags',
+    'toggle_filters': 'select/unselect all',
+    'filter_opt_empty': 'empty',
     // challenge view
     'question': 'Question',
     'choose_answer': 'choose_answer',
@@ -99,6 +103,8 @@ var translationsInEnglish = {
     'app_ui_display_nav_below_questions_hint': 'This option allows to display additional navigation for previous and next question if available.',
     'quiz_answer_instant_feedback_label': 'Instant feedback.',
     'quiz_answer_instant_feedback_hint': 'This option imediately provides feedback about answer correctness if enabled.',
+    'quiz_next_question_when_positive_feedback_label': 'Next question after positive feedback.',
+    'quiz_next_question_when_positive_feedback_hint': 'This option display next question after positive feedback if possible.',
     'quiz_positive_feedback_audio_label': 'Positive feedback with audio.',
     'quiz_positive_feedback_audio_hint': 'This option provides positive feedback audio for answers when instant feedback is enabled.',
     'quiz_negative_feedback_audio_label': 'Negative feedback with audio.',
@@ -145,5 +151,6 @@ var translationsInEnglish = {
     'msg_answers_limit_exceed': 'You have chosen too many answers.',
     'msg_match_each': 'You have to match each answer.',
     'msg_match_once': 'You cannot use single answer many times.',
-    'msg_exams_removed': 'All exams have been removed.'
+    'msg_exams_removed': 'All exams have been removed.',
+    'msg_filtering_disabled': 'Filtering questions by versions and tags is not supported yet. Options have been disabled.'
 };

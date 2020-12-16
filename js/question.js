@@ -275,9 +275,10 @@ function printSimpleQuestion(q, challenge) {
                 checked = false;
                 inputState = 'unchecked';
             }
-            if (properties['quiz_answers_print_letters']) {
-                letter = '<span class="answer-letter">'+letters[ans].toUpperCase()+'.</span>';
-            }
+            // if (properties['quiz_answers_print_letters']) {
+            //     letter = ''+letters[ans].toUpperCase()+'. ';
+            //     // letter = '<span class="answer-letter">'+letters[ans].toUpperCase()+'.</span>';
+            // }
             // correct answer
             // answerClass = '';
             answerClass = answers.choices[ans].type == 'wrong' ? ' marked-wrong' : ' marked-correct';
@@ -288,7 +289,7 @@ function printSimpleQuestion(q, challenge) {
                 if (answers.choices[ans].type == 'correct' || (properties['print_answers_print_incorrect'] && answers.choices[ans].type == 'wrong')) {
                     html += '<div class="custom-control custom-checkbox">'
                         +'<input type="checkbox" id="'+id+'" name="'+id+'" class="custom-control-input '+inputState+'" value="'+slugify(answer)+'"'+(checked ? ' checked="checked"' : '')+' >'
-                        +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+marked(letter+answer.escapeHtml()).split('[br]').join('<br>')+'</label>'
+                        +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+marked(answer.escapeHtml()).split('[br]').join('<br>')+'</label>'
                     +'</div>';
                 }
             } else {
@@ -296,7 +297,7 @@ function printSimpleQuestion(q, challenge) {
                 if (answers.choices[ans].type == 'correct' || (properties['print_answers_print_incorrect'] && answers.choices[ans].type == 'wrong')) {
                     html += '<div class="custom-control custom-radio">'
                         +'<input type="radio" id="'+id+'" name="'+id+'" class="custom-control-input '+inputState+'" value="'+slugify(answer)+'"'+(checked ? ' checked="checked"' : '')+' >'
-                        +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+marked(letter+answer.escapeHtml()).split('[br]').join('<br>')+'</label>'
+                        +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+marked(answer.escapeHtml()).split('[br]').join('<br>')+'</label>'
                     +'</div>';
                 }
             }
@@ -368,7 +369,7 @@ function printMatchingQuestion(q, challenge) {
                     html +='<option value="'+slugify(match.answer)+'"'+selected+'>' + marked(match.answer) + '</option>';
                 }
                 html +='</select>';
-            +'</div>';
+            html += '</div>';
         }
     }
     html += '</div>';

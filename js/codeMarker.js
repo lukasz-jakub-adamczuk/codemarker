@@ -1,3 +1,7 @@
+'use strict';
+
+var timePromise;
+
 // Handle starting new challenge for user
 function startChallenge(event, newExam = true) {
     console.log('startChallenge() has been used.');
@@ -33,7 +37,9 @@ function startChallenge(event, newExam = true) {
         } else {
             enableAction('next');
         }
-        enableAction('answers');
+        if (properties['quiz_answers_help_button']) {
+            enableAction('answers');
+        }
         // renderProgress(0);
         countProgress();
         // generate first questions
@@ -42,14 +48,37 @@ function startChallenge(event, newExam = true) {
         // start timer
         time = time || getTime();
         renderTimer();
-        // start interval
-        displayTimer = setInterval(function() {
-            time--;
-            renderTimer();
-            if (properties['app_ui_display_timer'] && time <= 0) {
-                stopChallenge();
-            }
-        }, 1000);
+
+        timePromise = new Promise(function(timeRunOut, reject) {
+            // start interval
+            displayTimer = setInterval(function() {
+                time--;
+                if (time == 600) {
+                    displayTimerElement.className += ' almost-ended';
+                    console.log('time runs out -> 10min left.');
+                }
+                renderTimer();
+                if (properties['app_ui_display_timer'] && time <= 0) {
+                    // stopChallenge();
+                    timeRunOut('time run out -> ready to submit challenge');
+                    clearInterval(displayTimer);
+                }
+            }, 1000);
+        });
+
+        timePromise.then(function(msg) {
+            console.log(msg);
+        });
+
+        // answersPromise = new Promise(function(resolve, reject) {});
+
+        
+
+        // Promise.all([timePromise, answersPromise]).then((values) => {
+        //     console.log(values);
+        //     console.warn('can submit exam');
+        // });
+        
         // store exam every minute to save running time
         saverTimer = setInterval(function() {
             storeExam();
@@ -188,12 +217,16 @@ function stopChallenge(event) {
     }
     console.log('Stop event has been triggered.');
 
-    if (questions.exam.filter(el => el != undefined).length != limit) {
+    if (!canStopChallenge()) {
         renderMessage(getMessage('msg_exam_cannot_be_submitted', 'Exam cannot be submitted until all questions will be answered.'), 'warning', '.question-messages', true);
         return;
     }
 
     finishChallenge();
+}
+
+function canStopChallenge() {
+    return (questions.exam.filter(el => el != undefined).length == limit);
 }
 
 function finishChallenge() {
@@ -256,6 +289,7 @@ function generateQuestion(q, idx, type, mode = 'challenge') {
     html += '<div class="challenge-header">';
     html += '<b class="_text-muted _badge _badge-secondary question-number">' + getMessage('question', 'Question') + ' ' + (idx + 1) + ' <span class="_text-muted">/ '+questions.used.length+'</span></b>';
     html += (q.params.area ? ' <span class="_badge _badge-secondary tag"> ' + q.params.area + '</span>' : '');
+    html += (q.params.version ? ' <span class="_badge _badge-secondary tag"> ' + q.params.version + '</span>' : '');
     html += (q.params.status ? '<span class="badge badge-danger ml-2">' + q.params.status + '</span>' : '');
     
     if (q.params.comment) {

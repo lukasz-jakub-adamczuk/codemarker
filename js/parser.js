@@ -3,7 +3,7 @@
 var parser = {
     
     init: function() {
-        this.debug = true;
+        this.debug = false;
         this.question = {};        
         this.questions = [];        
         this.setup = null;        
@@ -13,7 +13,7 @@ var parser = {
         this.examName = '';        
         this.paramsFound = false;
         this.answersFound = false;
-        this.examConfig = {'all': 0, 'ignored': 0};        
+        this.examConfig = {'all': 0, 'ignored': 0, 'version': {}, 'area': {}};        
         this.n = 0;
         this.errors = [];        
         this.lengths = [];
@@ -65,6 +65,29 @@ var parser = {
                             // parser.question.params = parser.line;
                             parser.debug ? console.log(parser.params) : '';
                             parser.question.params = JSON.parse(parser.params);
+                            // console.log(parser.params.version);
+                            if (parser.question.params.version) {
+                                if (!parser.examConfig.version[parser.question.params.version]) {
+                                    parser.examConfig.version[parser.question.params.version] = 0;
+                                }
+                                parser.examConfig.version[parser.question.params.version]++;
+                            } else {
+                                if (!parser.examConfig.version['empty']) {
+                                    parser.examConfig.version['empty'] = 0;
+                                }
+                                parser.examConfig.version['empty']++;
+                            }
+                            if (parser.question.params.area) {
+                                if (!parser.examConfig.area[parser.question.params.area]) {
+                                    parser.examConfig.area[parser.question.params.area] = 0;
+                                }
+                                parser.examConfig.area[parser.question.params.area]++;
+                            } else {
+                                if (!parser.examConfig.area['empty']) {
+                                    parser.examConfig.area['empty'] = 0;
+                                }
+                                parser.examConfig.area['empty']++;
+                            }
                             parser.debug ? console.log('Exam params before and after parsing:') : '';
                             parser.debug ? console.log(parser.params) : '';
                             parser.debug ? console.log(parser.question.params) : '';
@@ -87,6 +110,28 @@ var parser = {
                             parser.params += parser.line;
                             if (parser.line.trim().substr(-1) == '}') {
                                 parser.question.params = JSON.parse(parser.params);
+                                if (parser.question.params.version) {
+                                    if (!parser.examConfig.version[parser.question.params.version]) {
+                                        parser.examConfig.version[parser.question.params.version] = 0;
+                                    }
+                                    parser.examConfig.version[parser.question.params.version]++;
+                                } else {
+                                    if (!parser.examConfig.version['empty']) {
+                                        parser.examConfig.version['empty'] = 0;
+                                    }
+                                    parser.examConfig.version['empty']++;
+                                }
+                                if (parser.question.params.area) {
+                                    if (!parser.examConfig.area[parser.question.params.area]) {
+                                        parser.examConfig.area[parser.question.params.area] = 0;
+                                    }
+                                    parser.examConfig.area[parser.question.params.area]++;
+                                } else {
+                                    if (!parser.examConfig.area['empty']) {
+                                        parser.examConfig.area['empty'] = 0;
+                                    }
+                                    parser.examConfig.area['empty']++;
+                                }
                                 parser.debug ? console.log('Exam params before and after parsing:') : '';
                                 parser.debug ? console.log(parser.params) : '';
                                 parser.debug ? console.log(parser.question.params) : '';

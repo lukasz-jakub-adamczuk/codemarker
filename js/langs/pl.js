@@ -29,6 +29,10 @@ var translationsInPolish = {
     'back_to_result': 'Wróc do wyniku egzaminu',
     // exams view
     'questions_in_exam': '%d pytań w %d min',
+    'filter_version': 'Wersje',
+    'filter_tag': 'Tagi',
+    'toggle_filters': 'zaznacz/odznacz wszystkie',
+    'filter_opt_empty': 'puste',
     // challenge view
     'question': 'Pytanie',
     'choose_answer': 'wybierz odpowiedź',
@@ -101,6 +105,8 @@ var translationsInPolish = {
     'app_ui_display_nav_below_questions_hint': 'Opcja wyświetla dodatkowe przyciski nawigacyjne Poprzednie i Następne poniżej pytania.',
     'quiz_answer_instant_feedback_label': 'Natychmiastowa informacja zwrotna.',
     'quiz_answer_instant_feedback_hint': 'Opcja informuje nas o poprawności odpowiedzi, jeśli jest włączona.',
+    'quiz_next_question_when_positive_feedback_label': 'Next question after positive feedback.',
+    'quiz_next_question_when_positive_feedback_hint': 'This option display next question after positive feedback if possible.',
     'quiz_positive_feedback_audio_label': 'Pozytywna dźwiękowa informacja zwrotna.',
     'quiz_positive_feedback_audio_hint': 'Opcja informuje dźwiękowo o poprawnej odpowiedzi, jeśli natychmiastowa informacja zwrotna jest włączona.',
     'quiz_negative_feedback_audio_label': 'Negatywna dźwiękowa informacja zwrotna.',
@@ -145,5 +151,6 @@ var translationsInPolish = {
     'msg_answers_limit_exceed': 'Wybrano zbyt wiele odpowiedzi.',
     'msg_match_each': 'Musisz dopasować każdy z wariantów odpowiedzi.',
     'msg_match_once': 'Nie możesz użyć jednej odpowiedzi wielokrotnie.',
-    'msg_exams_removed': 'Wszystkie egzaminy zostały usunięte.'
+    'msg_exams_removed': 'Wszystkie egzaminy zostały usunięte.',
+    'msg_filtering_disabled': 'Filtrowanie pytań według wersji i tagów nie jest jeszcze obsługiwane. Opcje zostały zablokowane.'
 };

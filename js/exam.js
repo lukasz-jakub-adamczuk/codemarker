@@ -20,7 +20,7 @@ function renderExams(displayLayer = true) {
         }
         // print available exams or warning
         if (exams.length) {
-            html += '<div class="list-group">';
+            html += '<div class="list-group" id="accordionExample">';
             for (var i in exams) {
                 html += prepareExam(exams[i]);
             }
@@ -44,6 +44,14 @@ function renderExams(displayLayer = true) {
         elem.addEventListener('click', deleteExam);
     });
 
+    document.querySelectorAll('.filter-tgr').forEach(function(elem) {
+        elem.addEventListener('click', toggleFilters);
+    });
+
+    document.querySelectorAll('.filter').forEach(function(elem) {
+        elem.addEventListener('click', filterExam);
+    });
+
     // alert(state);
 
     // if (['challenge_started', 'challenge_finished', 'exam_result_rendered', 'exam_printed'].includes(state)) {
@@ -53,9 +61,84 @@ function renderExams(displayLayer = true) {
     //     state = 'exams_rendered';
     // }
 }
+function prepareExam(config, includeWrapper = true) {
+    var questionsInExam = getMessage('questions_in_exam', '%d questions in %d min', [config.questions, config.duration]);
+    var valid = config.all - config.ignored;
+    var html = '';
+
+    html += includeWrapper ? '<article id="heading-'+config.exam+'" class="list-group-item list-group-item-action flex-column align-items-start">' : '';
+    html += (valid == 0 ? warning(getMessage('msg_exam_invalid', 'Challenge cannot be started, because has no valid questions.')) : '');
+    html += '<div class="collapsed" data-toggle="collapse" data-target="#collapse-'+config.exam+'" aria-expanded="false" aria-controls="collapse-'+config.exam+'">';
+    
+    html += '<div class="d-flex w-100 justify-content-between">'
+        + '<h5 class="mb-1 d-flex align-items-start">'
+        + '<span class="exam-name">'+config.exam.split('-').join(' ').toUpperCase()+'</span>'
+        // + '<i class="icon sync-icon" data-exam="'+config.exam+'"></i>'
+        + '</h5>'
+        // + '<small>'+(config.all - config.ignored > config.questions ? config.questions : config.all - config.ignored)+' questions in '+config.duration+'min</small>'
+        + '<small>' + questionsInExam + '</small>'
+        + '</div>'
+        + '<i class="icon delete-icon" data-exam="heading-'+config.exam+'"></i>'
+        + '<p class="mb-1">'+config.description+'</p>'
+        // + '<small>'+config.all+' questions found'+(config.ignored > 0 ? ', but ' +config.ignored+ ' ignored or incomplete' : '')+'</small>'
+        // + '<small>Notifications <span class="badge badge-secondary">4</span></small>'
+        + getMessage('found', 'Found') + ' <span class="badge badge-secondary">'+config.all+'</span> '
+        + getMessage('valid', 'Valid') + ' <span class="badge badge-success">'+(valid)+'</span> '
+        + getMessage('invalid', 'Invalid') + ' <span class="badge badge-danger">'+config.ignored+'</span> ';
+
+    html += '</div>';
+    
+    html += '<div id="collapse-'+config.exam+'" class="collapse mt-2" aria-labelledby="heading-'+config.exam+'" data-parent="#accordionExample">'
+    html += warning(getMessage('msg_filtering_disabled', 'Filtering questions by versions and tags is not supported yet. Options have been disabled.'));
+    html += '<div class="advanced row">';
+    html += '<div class="col-sm-12 col-md-6">';
+    html += '<h5>'+getMessage('filter_version', 'Versions')+' <small id="versions-'+config.exam+'" class="filter-tgr" data-selected="true">'+getMessage('toggle_filters', 'select/unselect all',)+'</small></h5>';
+    html += '<ul id="versions-'+config.exam+'-items" class="list-group">';
+    for (var v in config.version) {
+        var id = config.exam + '-version-' + slugify(v);
+        var label = v == 'empty' ? getMessage('filter_opt_empty', 'empty') : v;
+        var answer = v;
+        var checked = true;
+        var disabled = true;
+        html += '<li class="list-group-item d-flex justify-content-between align-items-center">';
+        html += '<div class="custom-control custom-checkbox">';
+        html += '<input type="checkbox" id="'+id+'" data-filter="version" class="filter custom-control-input" value="'+answer+'"'+(checked ? ' checked' : '')+(disabled ? ' disabled' : '')+'>';
+        html += '<label class="custom-control-label" for="'+id+'">'+ label + '</label>';
+        html += '</div>';
+        html += '<span class="badge bg-secondary rounded-pill">'+config.version[v]+'</span>';
+        html += '</li>';
+    }
+    html += '</ul>';
+    html += '</div>';
+    
+    html += '<div class="col-sm-12 col-md-6">';
+    html += '<h5>'+getMessage('filter_tag', 'Tags')+' <small id="tags-'+config.exam+'" class="filter-tgr" data-selected="true">'+getMessage('toggle_filters', 'select/unselect all',)+'</small></h5>';
+    html += '<ul id="tags-'+config.exam+'-items" class="list-group">';
+    for (var a in config.area) {
+        var id = config.exam + '-area-' + slugify(a);
+        var label = a == 'empty' ? getMessage('filter_opt_empty', 'empty') : a;
+        var answer = a;
+        var checked = true;
+        var disabled = true;
+        html += '<li class="list-group-item d-flex justify-content-between align-items-center">';
+        html += '<div class="custom-control custom-checkbox">';
+        html += '<input type="checkbox" id="'+id+'" data-filter="area" class="filter custom-control-input" value="'+answer+'"'+(checked ? ' checked' : '')+(disabled ? ' disabled' : '')+'>';
+        html += '<label class="custom-control-label" for="'+id+'">'+ label + '</label>';
+        html += '</div>';
+        html += '<span class="badge bg-secondary rounded-pill">'+config.area[a]+'</span>';
+        html += '</li>';
+    }
+    html += '</ul>'; // element
+    html += '</div>'; // section
+    html += '</div>'; // row
+
+    html += '</div>'; // collapse
+    html += includeWrapper ? '</article>' : '';
+    return html;
+}
 
 // Handle preparing single exam on list
-function prepareExam(config, includeWrapper = true) {
+function prepareExamOld(config, includeWrapper = true) {
     var questionsInExam = getMessage('questions_in_exam', '%d questions in %d min', [config.questions, config.duration]);
     var valid = config.all - config.ignored;
     var html = '';
@@ -80,14 +163,62 @@ function prepareExam(config, includeWrapper = true) {
     return html;
 }
 
+// Handle filtering exam from list
+function toggleFilters(event) {
+    console.log('toggleFilters() has been used.');
+    
+    var filter = event.target.getAttribute('id');
+    var selected = event.target.getAttribute('data-selected');
+    var elements = document.querySelectorAll('#' + filter + '-items .custom-control-input');
+
+    for (var el in elements) {
+        if (elements[el].type == 'checkbox') {
+            if (selected == 'true') {
+                elements[el].checked = false;
+                event.target.setAttribute('data-selected', 'false');
+            } else {
+                elements[el].checked = true;
+                event.target.setAttribute('data-selected', 'true');
+            }
+        }
+    }
+
+    event.stopPropagation();
+
+    state = 'exam_filtered';
+}
+
+// Handle filtering exam from list
+function filterExam(event) {
+    console.log('filterExam() has been used.');
+    
+    var value = event.target.value;
+    var filter = event.target.getAttribute('data-filter');
+
+    if (allExams[exam].filters) {
+        allExams[exam].filters.setup == 'custom';
+        allExams[exam].filters[filter][value] = event.target.checked;
+
+    }
+    if ('localStorage' in window) {
+        localStorage.setItem('allExams', JSON.stringify(allExams));
+    }
+    console.log(allExams[exam].filters.version);
+    console.log(allExams[exam].filters.area);
+
+    event.stopPropagation();
+
+    state = 'exam_filtered';
+}
+
 // Handle deleting exam from list
 function deleteExam(event) {
     console.log('deleteExam() has been used.');
     
     // maybe confirmation
-    var exam = event.target.getAttribute('data-exam');
+    var exam = event.target.getAttribute('data-exam').replace('heading-', '');
 
-    $('#'+exam).fadeOut(1000, function() {
+    $('#'+event.target.getAttribute('data-exam')).fadeOut(1000, function() {
         $(this).remove();
         console.log('Exam has been deleted.');
     });
@@ -112,7 +243,7 @@ function selectExam(event) {
     while (node.tagName.toLowerCase() != 'article') {
         node = node.parentNode;
     }
-    exam = 'cm-' + node.getAttribute('id');
+    exam = 'cm-' + node.getAttribute('id').replace('heading-', '');
 
     // console.log(exam);
     // console.log(localStorage.getItem(exam));
@@ -121,6 +252,23 @@ function selectExam(event) {
         parseChallenge(localStorage.getItem(exam));
     // }
     // console.warn(questions.all.map(x => x.index));
+
+    if (!allExams[exam].filters) {
+        allExams[exam].filters = {'setup': 'default', 'version': {}, 'area': {}};
+        for (var ver in allExams[exam].version) {
+            allExams[exam].filters.version[ver] = true;
+        }
+        for (var tag in allExams[exam].area) {
+            allExams[exam].filters.area[tag] = true;
+        }
+    }
+
+    if ('localStorage' in window) {
+        // if (!localStorage.getItem(exam)) {
+            // localStorage.setItem(exam, content);
+        // }
+        localStorage.setItem('allExams', JSON.stringify(allExams));
+    }
 
     if (properties['app_ui_start_challenge_after_selecting']) {
         startChallenge();

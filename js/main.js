@@ -1,6 +1,6 @@
 'use strict';
 
-const LW_VERSION = '0.11';
+const LW_VERSION = '0.12';
 const PROP_VERSION = '0.07';
 
 var version;
@@ -22,6 +22,8 @@ var limit;
 var displayTimer;
 var saverTimer;
 
+var displayTimerElement;
+
 var keyEventEnabled = false;
 
 // var initialSetup = {};
@@ -41,6 +43,12 @@ var letters = 'abcdefghijklmnopqrstuvwxyz'.split('');
 
 var goodFeedback = new Audio('./audio/bravo.mp3');
 var badFeedback = new Audio('./audio/buzzer.mp3');
+
+// var timePromise;
+// var answersPromise;
+
+
+
 
 // hide menu by default (in case would be opened during page reload and intro running)
 $('#options-tgr').prop('checked', false);
@@ -101,7 +109,7 @@ if (properties['app_ui_theme']) {
     changeTheme(properties['app_ui_theme']);
 }
 
-renderProperties(propertiesSetup);
+// renderProperties(propertiesSetup);
 
 // checking online version with local
 checkAppVersion();
@@ -116,22 +124,7 @@ checkAppVersion();
 
 
 // adding events
-
-// options
-document.querySelector('#file-input').addEventListener('change', readSingleFile);
-document.querySelector('#load').addEventListener('click', loadQuestions);
-document.querySelector('#retrieve').addEventListener('click', retrieveQuestions);
-document.querySelector('#app-properties').addEventListener('click', manageProperty);
-document.querySelector('#default-settings').addEventListener('click', resetAllSettings);
-document.querySelector('#enable-new-features').addEventListener('click', enableNewFeatures);
-document.querySelector('#remove-exams').addEventListener('click', removeAllExams);
-
-// document.querySelector('#app_ui_language').addEventListener('change', changeLanguage);
-var changeElement = document.querySelector('#app_ui_theme');
-if (changeElement) {
-    changeElement.addEventListener('change', changeTheme);
-}
-// document.querySelector('#app_ui_annotations').addEventListener('change', changeAnnotations);
+bindMenuEvents();
 
 // challenge
 document.querySelector('#exams .list').addEventListener('click', selectExam);  // true
@@ -258,13 +251,15 @@ mc.on("swiperight", function(ev) {
     prevQuestion(ev);
 });
 
+displayTimerElement = document.querySelector('.timer-content');
+
 function renderTimer() {
     if (properties['app_ui_display_timer']) {
         var hours   = Math.floor(time / 3600);
         var minutes = Math.floor((time - (hours*3600)) / 60);
         var seconds = Math.floor(time - (hours*3600) - (minutes*60));
         var timer = (hours+'').padStart(2, '0') + ':' + (minutes+'').padStart(2, '0') + ':' + (seconds+'').padStart(2, '0');
-        document.querySelector('.timer-content').innerHTML = timer;
+        displayTimerElement.textContent = timer;
         // console.log(time);
     }
 }
