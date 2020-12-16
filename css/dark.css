@@ -61,3 +61,6 @@ a.text-secondary:focus {
     /* background-color: #aaa; */
     border-color: #5c656d;
 }
+.badge-secondary {
+    background: #222;
+}

@@ -147,6 +147,11 @@ border-color: #0062cc; */
     padding: .25rem .5rem .125rem;
     border-radius: .25rem;
 }
+.almost-ended {
+    color: var(--red);
+    animation: runningOut 0.6s cubic-bezier(1, 0, 0, 1) infinite alternate;  
+}
+@keyframes runningOut { to { opacity: 0; } }
 
 #loader {
     position: absolute;
@@ -535,9 +540,10 @@ a:hover {
     margin-top: 2rem;
 }
 
-/* #myElement {
-    background: silver;
-    height: 300px;
-    text-align: center;
-    font: 30px/300px Helvetica, Arial, sans-serif;
-  } */
+.badge {
+    color: #fff;
+    /* padding: .3em .5em .2em; */
+}
+.advanced {
+    margin-top: 1rem;
+}

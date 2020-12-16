@@ -114,34 +114,72 @@ What is missing in file format
 
 ## TODO
 - [ ] display timer based on param
-- [ ] redesign and extend show result view
-- [x] click on challenge div (not answer) causes error
-- [ ] navigation by keys works any time
-- [x] too many questions counted for exam when selected exam (parsed indeed) and then loaded another (parsing new one without reset parser)
 - [ ] configurable prev and next buttons for left/right edge if screen (mobile)
 - [ ] collect questions answered wrong and use again
 - [ ] pause challenge
 - [ ] pwa
 - [ ] rwd
 - [ ] use all available questions option
-- [x] swipe support on mobile
-- [ ] show wrong questions after submitting
 - [ ] write tests
-- [x] support for text input in questions
-- [x] support for images in questions
-- [x] support for dropdown or match available answers
-- [x] support for param shuffle
-- [x] support for param answers (nothing to do)
-- [x] support for param comment
+- [ ] support for dropdown questions
 - [ ] displays letters before answers
 - [ ] complete file parsing errors handling
-- [x] deleting exams from list
-- [x] reset to default settings
 
 ## TOFIX
 - [ ] prev and next after time ended
 
 ## Changelogs
+
+### v0.12
+- [x] next question after positive feedback feature
+- [x] fixed translations for modals
+- [x] filtering visible, but disabled still
+- [x] fix for timer running out
+- [x] fix for progress bar calculation when using C key
+- [x] fix for letters in print mode
+- [x] user change for language, theme and annotations visible in UI
+- [x] fix for existing help button
+
+### v0.11
+- [x] instant feedback
+- [x] positive and negatiove audio feedback
+- [x] enable new features without reset settings
+- [x] new features label based on version
+- [x] features depending on version
+- [x] animated progress bar
+
+### v0.10
+- [x] support for translations
+- [x] support for UI theme
+- [x] annotations in menu
+
+### v0.09
+- [x] extending print mode for question new types
+- [x] matching type question support
+- [x] input type question support
+- [x] errors handling for answers in matching question
+- [x] comment param support
+- [x] image param support
+- [x] answers params support
+- [x] markdown support in questions and answers
+- [x] properties handling
+- [x] display progress bar during challenge property handling
+
+### v0.08
+- [x] redesign and extend show result view
+- [x] navigation by keys works any time
+- [x] click on challenge div (not answer) causes error
+- [x] too many questions counted for exam when selected exam (parsed indeed) and then loaded another (parsing new one without reset parser)
+- [x] swipe support on mobile
+- [x] show wrong questions after submitting
+- [x] support for text input in questions
+- [x] support for images in questions
+- [x] support for dropdown or match available answers
+- [x] support for param shuffle
+- [x] support for param answers
+- [x] support for param comment
+- [x] deleting exams from list
+- [x] reset to default settings
 
 ### v0.07
 - [x] extending print mode for question new types
