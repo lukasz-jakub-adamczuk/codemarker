@@ -103,7 +103,9 @@ function prepareExam(config, includeWrapper = true) {
     // html += warning(getMessage('msg_filtering_disabled', 'Filtering questions by versions and tags is not supported yet. Options have been disabled.'));
     html += '<div class="advanced row">';
 
+    html += '<div class="col-sm-12">';
     html += warning(getMessage('msg_filtering_info', 'Filtering questions is in testing phase still. It requires using all questions option enabled too.'));
+    html += '</div>';
 
     // filtering
     var options = {
@@ -112,12 +114,17 @@ function prepareExam(config, includeWrapper = true) {
         'area': getMessage('filtering_opt_area', 'Filter questions by tags'),
         'both': getMessage('filtering_opt_both', 'Filter questions by versions and tags')
     };
+    var disabled;
     var selected = allFilters[exam].usage || 'none';
     // var selected = selected == 'none' ? ' selected=""' : '';
 
     html += '<select class="app-settings-control-choice questions-filtering" data-exam="'+exam+'">';
     for (var opt in options) {
-        html += '<option value="' + opt + '"'+(opt == selected ? ' selected=""' : '')+'>' + options[opt] + '</option>';
+        disabled = false;
+        if (opt == 'both') {
+            disabled = true;
+        }
+        html += '<option value="' + opt + '"'+(opt == selected ? ' selected=""' : '')+(disabled ? ' disabled=""' : '')+'>' + options[opt] + '</option>';
     }
     html += '</select>';
 

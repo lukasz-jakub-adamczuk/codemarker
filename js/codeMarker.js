@@ -128,11 +128,11 @@ function initChallenge(skip_ignored, newExam = true) {
             console.log(allFilters[exam].filters.area);
             var areas = Object.entries(allFilters[exam].filters.area).map(function(itm){ if (itm[1] == true) return itm[0] }).filter(itm => itm);
             console.warn(areas);
-            if (areas.includes('empty')) {
-                questions.filtered = questions.used.filter(elem => areas.includes(elem.params.area) || !elem.params.area);
-            } else {
+            // if (areas.includes('empty')) {
+            //     questions.filtered = questions.used.filter(elem => areas.includes(elem.params.area) || !elem.params.area);
+            // } else {
                 questions.filtered = questions.used.filter(elem => areas.includes(elem.params.area));
-            }
+            // }
             console.warn(questions.filtered);
     
             questions.used = questions.filtered.slice(0);
