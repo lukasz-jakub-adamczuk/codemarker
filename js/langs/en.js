@@ -29,10 +29,18 @@ var translationsInEnglish = {
     'back_to_result': 'Back to exam result',
     // exams view
     'questions_in_exam': '%d questions in %d mins',
+    'filtering_opt_none': 'No filter',
+    'filtering_opt_version': 'Filter questions by versions',
+    'filtering_opt_area': 'Filter questions by tags',
+    'filtering_opt_both': 'Filter questions by versions and tags',
     'filter_version': 'Versions',
     'filter_tag': 'Tags',
     'toggle_filters': 'select/unselect all',
+    'select_filters': 'select all',
+    'unselect_filters': 'unselect all',
     'filter_opt_empty': 'empty',
+    'version_empty': 'empty',
+    'tag_empty': 'empty',
     // challenge view
     'question': 'Question',
     'choose_answer': 'choose_answer',
@@ -113,6 +121,8 @@ var translationsInEnglish = {
     'quiz_answers_help_button_hint': 'This option allow to use Help button placed on bottom navigation.',
     'quiz_answers_print_letters_label': 'Display letters before answers.',
     'quiz_answers_print_letters_hint': 'This option displays additional letters for before answers.',
+    'app_ui_display_versions_and_tags_label': 'Display versions and tags.',
+    'app_ui_display_versions_and_tags_hint': 'This option displays versions and tags for questions.',
     'app_ui_display_progress_label': 'Display progress bar during challenge.',
     'app_ui_display_progress_hint': 'This option displays progress bar on top.',
     'app_ui_display_timer_label': 'Display timer during challenge.',
@@ -152,5 +162,6 @@ var translationsInEnglish = {
     'msg_match_each': 'You have to match each answer.',
     'msg_match_once': 'You cannot use single answer many times.',
     'msg_exams_removed': 'All exams have been removed.',
-    'msg_filtering_disabled': 'Filtering questions by versions and tags is not supported yet. Options have been disabled.'
+    'msg_filtering_disabled': 'Filtering questions by versions and tags is not supported yet. Options have been disabled.',
+    'msg_filtering_info': 'Filtering questions is in testing phase still. It requires using all questions option enabled too.'
 };

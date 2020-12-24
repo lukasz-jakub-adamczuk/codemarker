@@ -101,6 +101,8 @@ function initChallenge(skip_ignored, newExam = true) {
     }
     
     questions.ignored = questions.all.filter(function(elem, index, array) { return elem.params.status == 'ignored'; }).slice(0);
+
+    // questions.filtered = questions.used.filter(elem => elem).slice(0);
     var questionsForExam;
     if (questions.used.length > allExams[exam].questions) {
         questionsForExam = allExams[exam].questions;
@@ -110,6 +112,33 @@ function initChallenge(skip_ignored, newExam = true) {
 
     if (properties['quiz_questions_use_all']) {
         questions.used = questions.used.slice(0);
+        if (allFilters[exam].usage == 'none') {
+            questions.used = questions.used.slice(0);
+        }
+        if (allFilters[exam].usage == 'version') {
+            console.log(allFilters[exam].filters.version);
+            var versions = Object.entries(allFilters[exam].filters.version).map(function(itm){ if (itm[1] == true) return itm[0] }).filter(itm => itm);
+            console.warn(versions);
+            questions.filtered = questions.used.filter(elem => versions.includes(elem.params.version));
+            console.warn(questions.filtered);
+    
+            questions.used = questions.filtered.slice(0);
+        }
+        if (allFilters[exam].usage == 'area') {
+            console.log(allFilters[exam].filters.area);
+            var areas = Object.entries(allFilters[exam].filters.area).map(function(itm){ if (itm[1] == true) return itm[0] }).filter(itm => itm);
+            console.warn(areas);
+            if (areas.includes('empty')) {
+                questions.filtered = questions.used.filter(elem => areas.includes(elem.params.area) || !elem.params.area);
+            } else {
+                questions.filtered = questions.used.filter(elem => areas.includes(elem.params.area));
+            }
+            console.warn(questions.filtered);
+    
+            questions.used = questions.filtered.slice(0);
+        }
+        if (allFilters[exam].usage == 'both') {
+        }
     } else {
         var allSlices = Math.ceil(questions.used.length / questionsForExam);
         var slice = allExams[exam].slice || 0;
@@ -286,10 +315,17 @@ function generateQuestion(q, idx, type, mode = 'challenge') {
     // var q = q || questions.used[challenge];
     // var mode = 
     
+    if (properties.app_ui_display_versions_and_tags) {
+        html += '<div class="versions-and-tags">';
+        var version = q.params.version == 'empty' ? getMessage('version_empty', 'empty') : q.params.version;
+        var area = q.params.area == 'empty' ? getMessage('tag_empty', 'empty') : q.params.area;
+        html += (version ? ' <span class="version-pill text-truncate" data-toggle="tooltip" data-placement="top" title="' + version + '"><em>' + version + '</em></span>' : '');
+        html += (area ? ' <span class="tag-pill text-truncate" data-toggle="tooltip" data-placement="top" title="' + area + '"><em>' + area + '</em></span>' : '');
+        html += '</div>';
+    }
+
     html += '<div class="challenge-header">';
     html += '<b class="_text-muted _badge _badge-secondary question-number">' + getMessage('question', 'Question') + ' ' + (idx + 1) + ' <span class="_text-muted">/ '+questions.used.length+'</span></b>';
-    html += (q.params.area ? ' <span class="_badge _badge-secondary tag"> ' + q.params.area + '</span>' : '');
-    html += (q.params.version ? ' <span class="_badge _badge-secondary tag"> ' + q.params.version + '</span>' : '');
     html += (q.params.status ? '<span class="badge badge-danger ml-2">' + q.params.status + '</span>' : '');
     
     if (q.params.comment) {

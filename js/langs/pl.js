@@ -26,13 +26,21 @@ var translationsInPolish = {
     'retry_exam': 'Spróbuj nowych pytań',
     'repeat_exam': 'Powtórz obecne pytania',
     'back_to_result_details': 'Wróć do szczegółów wyniku',
-    'back_to_result': 'Wróc do wyniku egzaminu',
+    'back_to_result': 'Wróć do wyniku egzaminu',
     // exams view
     'questions_in_exam': '%d pytań w %d min',
+    'filtering_opt_none': 'Brak filtrowania',
+    'filtering_opt_version': 'Filtrowanie pytań według wersji',
+    'filtering_opt_area': 'Filtrowanie pytań według tagów',
+    'filtering_opt_both': 'Fitrowanie pytań według wersji i tagów',
     'filter_version': 'Wersje',
     'filter_tag': 'Tagi',
     'toggle_filters': 'zaznacz/odznacz wszystkie',
+    'select_filters': 'zaznacz wszystkie',
+    'unselect_filters': 'odznacz wszystkie',
     'filter_opt_empty': 'puste',
+    'version_empty': 'brak',
+    'tag_empty': 'brak',
     // challenge view
     'question': 'Pytanie',
     'choose_answer': 'wybierz odpowiedź',
@@ -113,6 +121,8 @@ var translationsInPolish = {
     'quiz_negative_feedback_audio_hint': 'Opcja informuje dźwiękowo o błędnej odpowiedzi, jeśli natychmiastowa informacja zwrotna jest włączona',
     'quiz_answers_print_letters_label': 'Litery przed odpowiedziami.',
     'quiz_answers_print_letters_hint': 'Opcja wyświetla dodatkowe litery przed wariantami opowiedzi.',
+    'app_ui_display_versions_and_tags_label': 'Wersje i etykiety.',
+    'app_ui_display_versions_and_tags_hint': 'Opcja wyświetla wersje i etykiety dla pytań.',
     'app_ui_display_progress_label': 'Pasek postępu.',
     'app_ui_display_progress_hint': 'Opcja wyświetla pasek postępu powyżej pytania.',
     'app_ui_display_timer_label': 'Pomiar czasu.',
@@ -152,5 +162,6 @@ var translationsInPolish = {
     'msg_match_each': 'Musisz dopasować każdy z wariantów odpowiedzi.',
     'msg_match_once': 'Nie możesz użyć jednej odpowiedzi wielokrotnie.',
     'msg_exams_removed': 'Wszystkie egzaminy zostały usunięte.',
-    'msg_filtering_disabled': 'Filtrowanie pytań według wersji i tagów nie jest jeszcze obsługiwane. Opcje zostały zablokowane.'
+    'msg_filtering_disabled': 'Filtrowanie pytań według wersji i tagów nie jest jeszcze obsługiwane. Opcje zostały zablokowane.',
+    'msg_filtering_info': 'Filtrowanie pytań jest nadal w fazie testów. Dodatkowo wymaga włączenie opcji Użyj wszystkie dostępne pytania.'
 };

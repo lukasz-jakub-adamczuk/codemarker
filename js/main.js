@@ -1,6 +1,6 @@
 'use strict';
 
-const LW_VERSION = '0.12';
+const LW_VERSION = '0.13';
 const PROP_VERSION = '0.07';
 
 var version;
@@ -28,6 +28,7 @@ var keyEventEnabled = false;
 
 // var initialSetup = {};
 var allExams = {};
+var allFilters = {};
 var examsHashes = {};
 var availableExams = [];
 
@@ -79,6 +80,9 @@ if ('localStorage' in window) {
     if ('allExams' in localStorage) {
         allExams = JSON.parse(localStorage.getItem('allExams'));
     }
+    if ('allFilters' in localStorage) {
+        allFilters = JSON.parse(localStorage.getItem('allFilters'));
+    }
     // hashes for exams retrived from server
     if ('examsHashes' in localStorage) {
         examsHashes = JSON.parse(localStorage.getItem('examsHashes'));
@@ -127,7 +131,7 @@ checkAppVersion();
 bindMenuEvents();
 
 // challenge
-document.querySelector('#exams .list').addEventListener('click', selectExam);  // true
+document.querySelector('#exams .list').addEventListener('click', selectExam, true);  // true
 // document.querySelector('.challenge').addEventListener('click', registerAnswerForSimpleQuestion);
 document.querySelector('.challenge').addEventListener('change', registerAnswerForSimpleQuestion);
 

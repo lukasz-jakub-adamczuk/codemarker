@@ -22,6 +22,8 @@ function renderExams(displayLayer = true) {
         if (exams.length) {
             html += '<div class="list-group" id="accordionExample">';
             for (var i in exams) {
+                // console.log(exams[i]);
+                defaultFilters(exams[i]);
                 html += prepareExam(exams[i]);
             }
             html += '</div>';
@@ -41,15 +43,19 @@ function renderExams(displayLayer = true) {
     }
 
     document.querySelectorAll('.delete-icon').forEach(function(elem) {
-        elem.addEventListener('click', deleteExam);
+        elem.addEventListener('click', deleteExam, true);
+    });
+
+    document.querySelectorAll('.questions-filtering').forEach(function(elem) {
+        elem.addEventListener('change', setFilteringOption, true);
     });
 
     document.querySelectorAll('.filter-tgr').forEach(function(elem) {
-        elem.addEventListener('click', toggleFilters);
+        elem.addEventListener('click', toggleFilters, true);
     });
 
     document.querySelectorAll('.filter').forEach(function(elem) {
-        elem.addEventListener('click', filterExam);
+        elem.addEventListener('click', filterExam, true);
     });
 
     // alert(state);
@@ -64,7 +70,12 @@ function renderExams(displayLayer = true) {
 function prepareExam(config, includeWrapper = true) {
     var questionsInExam = getMessage('questions_in_exam', '%d questions in %d min', [config.questions, config.duration]);
     var valid = config.all - config.ignored;
+    var exam = 'cm-' + config.exam;
     var html = '';
+
+    // if (!allFilters[exam]) {
+    //     allFilters[exam] = {'filters': {}}
+    // }
 
     html += includeWrapper ? '<article id="heading-'+config.exam+'" class="list-group-item list-group-item-action flex-column align-items-start">' : '';
     html += (valid == 0 ? warning(getMessage('msg_exam_invalid', 'Challenge cannot be started, because has no valid questions.')) : '');
@@ -89,17 +100,41 @@ function prepareExam(config, includeWrapper = true) {
     html += '</div>';
     
     html += '<div id="collapse-'+config.exam+'" class="collapse mt-2" aria-labelledby="heading-'+config.exam+'" data-parent="#accordionExample">'
-    html += warning(getMessage('msg_filtering_disabled', 'Filtering questions by versions and tags is not supported yet. Options have been disabled.'));
+    // html += warning(getMessage('msg_filtering_disabled', 'Filtering questions by versions and tags is not supported yet. Options have been disabled.'));
     html += '<div class="advanced row">';
-    html += '<div class="col-sm-12 col-md-6">';
-    html += '<h5>'+getMessage('filter_version', 'Versions')+' <small id="versions-'+config.exam+'" class="filter-tgr" data-selected="true">'+getMessage('toggle_filters', 'select/unselect all',)+'</small></h5>';
-    html += '<ul id="versions-'+config.exam+'-items" class="list-group">';
+
+    html += warning(getMessage('msg_filtering_info', 'Filtering questions is in testing phase still. It requires using all questions option enabled too.'));
+
+    // filtering
+    var options = {
+        'none': getMessage('filtering_opt_none', 'No filter'),
+        'version': getMessage('filtering_opt_version', 'Filter questions by versions'),
+        'area': getMessage('filtering_opt_area', 'Filter questions by tags'),
+        'both': getMessage('filtering_opt_both', 'Filter questions by versions and tags')
+    };
+    var selected = allFilters[exam].usage || 'none';
+    // var selected = selected == 'none' ? ' selected=""' : '';
+
+    html += '<select class="app-settings-control-choice questions-filtering" data-exam="'+exam+'">';
+    for (var opt in options) {
+        html += '<option value="' + opt + '"'+(opt == selected ? ' selected=""' : '')+'>' + options[opt] + '</option>';
+    }
+    html += '</select>';
+
+    var versionSelected = Object.values(allFilters[exam].filters.version).every(val => val == true);
+    // html += 'selected: ' + versionSelected;
+    var versionLabel = versionSelected ? getMessage('unselect_filters', 'unselect all') : getMessage('select_filters', 'select all');
+    html += '<div class="col-sm-12 col-md-6 pt-2">';
+    html += '<h5>'+getMessage('filter_version', 'Versions')+' <small id="version-'+config.exam+'" class="filter-tgr" data-selected="'+versionSelected+'">'+versionLabel+'</small></h5>';
+    html += '<ul id="version-'+config.exam+'-items" class="list-group">';
     for (var v in config.version) {
         var id = config.exam + '-version-' + slugify(v);
         var label = v == 'empty' ? getMessage('filter_opt_empty', 'empty') : v;
         var answer = v;
-        var checked = true;
-        var disabled = true;
+        
+        var checked = exam in allFilters ? allFilters[exam].filters.version[v] : true;
+        // console.log(config.exam + '_' + v + '_' + allFilters[exam].filters.version[v]);
+        var disabled = false;
         html += '<li class="list-group-item d-flex justify-content-between align-items-center">';
         html += '<div class="custom-control custom-checkbox">';
         html += '<input type="checkbox" id="'+id+'" data-filter="version" class="filter custom-control-input" value="'+answer+'"'+(checked ? ' checked' : '')+(disabled ? ' disabled' : '')+'>';
@@ -111,15 +146,23 @@ function prepareExam(config, includeWrapper = true) {
     html += '</ul>';
     html += '</div>';
     
-    html += '<div class="col-sm-12 col-md-6">';
-    html += '<h5>'+getMessage('filter_tag', 'Tags')+' <small id="tags-'+config.exam+'" class="filter-tgr" data-selected="true">'+getMessage('toggle_filters', 'select/unselect all',)+'</small></h5>';
-    html += '<ul id="tags-'+config.exam+'-items" class="list-group">';
+    var areaSelected = Object.values(allFilters[exam].filters.area).every(val => val == true);
+    // html += 'selected: ' + areaSelected;
+    var areaLabel = areaSelected ? getMessage('unselect_filters', 'unselect all') : getMessage('select_filters', 'select all');
+    html += '<div class="col-sm-12 col-md-6 pt-2">';
+    html += '<h5>'+getMessage('filter_tag', 'Tags')+' <small id="area-'+config.exam+'" class="filter-tgr" data-selected="'+areaSelected+'">'+areaLabel+'</small></h5>';
+    html += '<ul id="area-'+config.exam+'-items" class="list-group">';
     for (var a in config.area) {
         var id = config.exam + '-area-' + slugify(a);
         var label = a == 'empty' ? getMessage('filter_opt_empty', 'empty') : a;
         var answer = a;
-        var checked = true;
-        var disabled = true;
+        // var exam = 'cm-' + config.exam;
+        var checked = exam in allFilters ? allFilters[exam].filters.area[a] : true;
+        console.log(config.exam);
+        if (config.exam in allFilters) {
+            console.log(config.exam + '_' + a + '_' + allFilters[exam].filters.area[a]);
+        }
+        var disabled = false;
         html += '<li class="list-group-item d-flex justify-content-between align-items-center">';
         html += '<div class="custom-control custom-checkbox">';
         html += '<input type="checkbox" id="'+id+'" data-filter="area" class="filter custom-control-input" value="'+answer+'"'+(checked ? ' checked' : '')+(disabled ? ' disabled' : '')+'>';
@@ -163,12 +206,47 @@ function prepareExamOld(config, includeWrapper = true) {
     return html;
 }
 
+function setFilteringOption(event) {
+    console.log('setFilteringOption() has been used.');
+    
+    var exam = event.target.getAttribute('data-exam');
+    
+    allFilters[exam].usage = event.target.value;
+    
+    setLocalStorageItem('allFilters', allFilters);
+}
+
+function defaultFilters(config) {
+    console.log('default filters used');
+    var exam = 'cm-' + config.exam;
+    if (!allFilters[exam]) {
+        console.warn('no object for ' + exam);
+        allFilters[exam] = {};
+    }
+    if (!allFilters[exam].hasOwnProperty('filters')) {
+        console.warn('no filters for ' + exam);
+        console.log(allFilters[exam]);
+        console.log(allFilters[exam].filters);
+        allFilters[exam].setup = 'default';
+        allFilters[exam].usage = 'none';
+        allFilters[exam].filters = {'version': {}, 'area': {}};
+        for (var ver in config.version) {
+            allFilters[exam].filters.version[ver] = true;
+        }
+        for (var tag in config.area) {
+            allFilters[exam].filters.area[tag] = true;
+        }
+    }
+    setLocalStorageItem('allFilters', allFilters);
+}
+
 // Handle filtering exam from list
 function toggleFilters(event) {
     console.log('toggleFilters() has been used.');
     
     var filter = event.target.getAttribute('id');
-    var selected = event.target.getAttribute('data-selected');
+    var type = filter.split('-')[0];
+    var selected = event.target.getAttribute('data-selected') || 'true';
     var elements = document.querySelectorAll('#' + filter + '-items .custom-control-input');
 
     for (var el in elements) {
@@ -176,12 +254,18 @@ function toggleFilters(event) {
             if (selected == 'true') {
                 elements[el].checked = false;
                 event.target.setAttribute('data-selected', 'false');
+                event.target.textContent = getMessage('select_filters', 'select all');
+                allFilters[exam].filters[type][elements[el].value] = false;
             } else {
                 elements[el].checked = true;
                 event.target.setAttribute('data-selected', 'true');
+                event.target.textContent = getMessage('unselect_filters', 'unselect all');
+                allFilters[exam].filters[type][elements[el].value] = true;
             }
         }
     }
+
+    setLocalStorageItem('allFilters', allFilters);
 
     event.stopPropagation();
 
@@ -195,16 +279,19 @@ function filterExam(event) {
     var value = event.target.value;
     var filter = event.target.getAttribute('data-filter');
 
-    if (allExams[exam].filters) {
-        allExams[exam].filters.setup == 'custom';
-        allExams[exam].filters[filter][value] = event.target.checked;
-
+    if (allFilters[exam].hasOwnProperty('filters')) {
+        console.log('filter setup');
+        allFilters[exam].filters.setup = 'custom';
+        allFilters[exam].filters[filter][value] = event.target.checked;
+        // console.log(allFilters[exam].filters.setup);
+        // console.log(allFilters[exam].filters.version);
+        // console.log(allFilters[exam].filters.area);
     }
-    if ('localStorage' in window) {
-        localStorage.setItem('allExams', JSON.stringify(allExams));
-    }
-    console.log(allExams[exam].filters.version);
-    console.log(allExams[exam].filters.area);
+    // if ('localStorage' in window) {
+    //     localStorage.setItem('allFilters', JSON.stringify(allFilters));
+        setLocalStorageItem('allFilters', allFilters);
+    //     console.log('stored allFilters in localsotriage');
+    // }
 
     event.stopPropagation();
 
@@ -253,21 +340,28 @@ function selectExam(event) {
     // }
     // console.warn(questions.all.map(x => x.index));
 
-    if (!allExams[exam].filters) {
-        allExams[exam].filters = {'setup': 'default', 'version': {}, 'area': {}};
-        for (var ver in allExams[exam].version) {
-            allExams[exam].filters.version[ver] = true;
-        }
-        for (var tag in allExams[exam].area) {
-            allExams[exam].filters.area[tag] = true;
-        }
-    }
+    // if (!allFilters[exam]) {
+    //     allFilters[exam] = {};
+    // }
+    // if (!allFilters[exam].hasOwnProperty('filters')) {
+    //     console.warn('no filters');
+    //     console.log(allFilters[exam]);
+    //     console.log(allFilters[exam].filters);
+    //     allFilters[exam].filters = {'setup': 'default', 'version': {}, 'area': {}};
+    //     for (var ver in allFilters[exam].version) {
+    //         allFilters[exam].filters.version[ver] = true;
+    //     }
+    //     for (var tag in allFilters[exam].area) {
+    //         allFilters[exam].filters.area[tag] = true;
+    //     }
+    // }
+    console.log(allFilters[exam].filters);
 
     if ('localStorage' in window) {
         // if (!localStorage.getItem(exam)) {
             // localStorage.setItem(exam, content);
         // }
-        localStorage.setItem('allExams', JSON.stringify(allExams));
+        localStorage.setItem('allFilters', JSON.stringify(allFilters));
     }
 
     if (properties['app_ui_start_challenge_after_selecting']) {

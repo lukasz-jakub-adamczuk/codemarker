@@ -130,6 +130,10 @@ What is missing in file format
 
 ## Changelogs
 
+### v0.13
+- [x] versions and tags depending property
+- [x] filtering questions with options
+
 ### v0.12
 - [x] next question after positive feedback feature
 - [x] fixed translations for modals

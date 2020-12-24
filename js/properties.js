@@ -111,6 +111,13 @@ var propertiesSetup = {
                 'hint': 'This option allow to use Help button placed on bottom navigation.',
                 'value': true
             }, {
+                'name': 'app_ui_display_versions_and_tags',
+                'label': 'Display versions and tags.',
+                'hint': 'This option displays versions and tags for questions.',
+                'value': false,
+                'version': '0.13',
+                'new_feature': true
+            }, {
                 'name': 'app_ui_display_progress',
                 'label': 'Display progress bar during challenge.',
                 'hint': 'This option displays progress bar on top.',
