@@ -72,10 +72,13 @@ function prepareExam(config, includeWrapper = true) {
     var valid = config.all - config.ignored;
     var exam = 'cm-' + config.exam;
     var html = '';
-
-    // if (!allFilters[exam]) {
-    //     allFilters[exam] = {'filters': {}}
-    // }
+    var versionSelected;
+    var versionLabel;
+    var versionStyle;
+    var areaSelected;
+    var areaLabel;
+    var areaStyle;
+    var disabled;
 
     html += includeWrapper ? '<article id="heading-'+config.exam+'" class="list-group-item list-group-item-action flex-column align-items-start">' : '';
     html += (valid == 0 ? warning(getMessage('msg_exam_invalid', 'Challenge cannot be started, because has no valid questions.')) : '');
@@ -128,12 +131,14 @@ function prepareExam(config, includeWrapper = true) {
     }
     html += '</select>';
 
-    var versionSelected = Object.values(allFilters[exam].filters.version).every(val => val == true);
-    // html += 'selected: ' + versionSelected;
-    var versionLabel = versionSelected ? getMessage('unselect_filters', 'unselect all') : getMessage('select_filters', 'select all');
-    html += '<div class="col-sm-12 col-md-6 pt-2">';
-    html += '<h5>'+getMessage('filter_version', 'Versions')+' <small id="version-'+config.exam+'" class="filter-tgr" data-selected="'+versionSelected+'">'+versionLabel+'</small></h5>';
-    html += '<ul id="version-'+config.exam+'-items" class="list-group">';
+    versionSelected = Object.values(allFilters[exam].filters.version).every(val => val == true);
+    versionLabel = versionSelected ? getMessage('unselect_filters', 'unselect all') : getMessage('select_filters', 'select all');
+    versionStyle = ['version', 'both'].includes(selected) ? ' style="opacity: 1;"' : ' style="opacity: .1;"';
+    disabled = ['version', 'both'].includes(selected) ? false : true;
+    
+    html += '<div id="version-'+config.exam+'-group" class="col-sm-12 col-md-6 pt-2"'+versionStyle+'>';
+    html += '<h5>'+getMessage('filter_version', 'Versions')+' <small id="version-'+config.exam+'-group-tgr" class="filter-tgr" data-disabled="'+disabled+'" data-selected="'+versionSelected+'">'+versionLabel+'</small></h5>';
+    html += '<ul class="list-group">';
     for (var v in config.version) {
         var id = config.exam + '-version-' + slugify(v);
         var label = v == 'empty' ? getMessage('filter_opt_empty', 'empty') : v;
@@ -141,7 +146,7 @@ function prepareExam(config, includeWrapper = true) {
         
         var checked = exam in allFilters ? allFilters[exam].filters.version[v] : true;
         // console.log(config.exam + '_' + v + '_' + allFilters[exam].filters.version[v]);
-        var disabled = false;
+        
         html += '<li class="list-group-item d-flex justify-content-between align-items-center">';
         html += '<div class="custom-control custom-checkbox">';
         html += '<input type="checkbox" id="'+id+'" data-filter="version" class="filter custom-control-input" value="'+answer+'"'+(checked ? ' checked' : '')+(disabled ? ' disabled' : '')+'>';
@@ -153,23 +158,25 @@ function prepareExam(config, includeWrapper = true) {
     html += '</ul>';
     html += '</div>';
     
-    var areaSelected = Object.values(allFilters[exam].filters.area).every(val => val == true);
-    // html += 'selected: ' + areaSelected;
-    var areaLabel = areaSelected ? getMessage('unselect_filters', 'unselect all') : getMessage('select_filters', 'select all');
-    html += '<div class="col-sm-12 col-md-6 pt-2">';
-    html += '<h5>'+getMessage('filter_tag', 'Tags')+' <small id="area-'+config.exam+'" class="filter-tgr" data-selected="'+areaSelected+'">'+areaLabel+'</small></h5>';
-    html += '<ul id="area-'+config.exam+'-items" class="list-group">';
+    areaSelected = Object.values(allFilters[exam].filters.area).every(val => val == true);
+    areaLabel = areaSelected ? getMessage('unselect_filters', 'unselect all') : getMessage('select_filters', 'select all');
+    areaStyle = ['area', 'both'].includes(selected) ? ' style="opacity: 1;"' : ' style="opacity: .1;"';
+    disabled = ['area', 'both'].includes(selected) ? false : true;
+    
+    html += '<div id="area-'+config.exam+'-group" class="col-sm-12 col-md-6 pt-2"'+areaStyle+'>';
+    html += '<h5>'+getMessage('filter_tag', 'Tags')+' <small id="area-'+config.exam+'-group-tgr" class="filter-tgr" data-disabled="'+disabled+'" data-selected="'+areaSelected+'">'+areaLabel+'</small></h5>';
+    html += '<ul class="list-group">';
     for (var a in config.area) {
         var id = config.exam + '-area-' + slugify(a);
         var label = a == 'empty' ? getMessage('filter_opt_empty', 'empty') : a;
         var answer = a;
         // var exam = 'cm-' + config.exam;
         var checked = exam in allFilters ? allFilters[exam].filters.area[a] : true;
-        console.log(config.exam);
-        if (config.exam in allFilters) {
-            console.log(config.exam + '_' + a + '_' + allFilters[exam].filters.area[a]);
-        }
-        var disabled = false;
+        // console.log(config.exam);
+        // if (config.exam in allFilters) {
+        //     console.log(config.exam + '_' + a + '_' + allFilters[exam].filters.area[a]);
+        // }
+        
         html += '<li class="list-group-item d-flex justify-content-between align-items-center">';
         html += '<div class="custom-control custom-checkbox">';
         html += '<input type="checkbox" id="'+id+'" data-filter="area" class="filter custom-control-input" value="'+answer+'"'+(checked ? ' checked' : '')+(disabled ? ' disabled' : '')+'>';
@@ -213,14 +220,69 @@ function prepareExamOld(config, includeWrapper = true) {
     return html;
 }
 
-function setFilteringOption(event) {
+function setFilteringOption(event/*, exam, filter*/) {
     console.log('setFilteringOption() has been used.');
+
+    console.log(event);
     
-    var exam = event.target.getAttribute('data-exam');
+    // var exam = exam;
+    // var filter = filter;
     
-    allFilters[exam].usage = event.target.value;
-    
-    setLocalStorageItem('allFilters', allFilters);
+    // if (event) {
+        var exam = event.target.getAttribute('data-exam');
+        var filter = event.target.value;
+        
+        allFilters[exam].usage = filter;
+
+        setLocalStorageItem('allFilters', allFilters);
+    // }
+
+    exam = exam.replace('cm-', '');
+
+    if (filter == 'none') {
+        disableGroup('#version-'+exam+'-group');
+        disableGroup('#area-'+exam+'-group');
+    }
+    if (filter == 'version') {
+        enableGroup('#version-'+exam+'-group');
+        disableGroup('#area-'+exam+'-group');
+    }
+    if (filter == 'area') {
+        disableGroup('#version-'+exam+'-group');
+        enableGroup('#area-'+exam+'-group');
+    }
+    if (filter == 'both') {
+        // enableGroup('#version-'+exam+'-group');
+        // enableGroup('#area-'+exam+'-group');
+    }
+}
+
+function enableGroup(name) {
+    // group
+    document.querySelector(name).style.opacity = '1';
+    // trigger
+    document.querySelector(name + '-tgr').setAttribute('data-disabled', 'false');
+    // filters
+    var elements = document.querySelectorAll(name + ' .custom-control-input');
+    for (var el in elements) {
+        if (elements[el].type == 'checkbox') {
+            elements[el].disabled = false;
+        }
+    }
+}
+
+function disableGroup(name) {
+    // group
+    document.querySelector(name).style.opacity = '.1';
+    // trigger
+    document.querySelector(name + '-tgr').setAttribute('data-disabled', 'true');
+    // filters
+    var elements = document.querySelectorAll(name + ' .custom-control-input');
+    for (var el in elements) {
+        if (elements[el].type == 'checkbox') {
+            elements[el].disabled = true;
+        }
+    }
 }
 
 function defaultFilters(config) {
@@ -251,10 +313,15 @@ function defaultFilters(config) {
 function toggleFilters(event) {
     console.log('toggleFilters() has been used.');
     
+    console.log(event.target.getAttribute('data-disabled'));
+    console.log(event.target.getAttribute('data-disabled') == 'true');
+    if (event.target.getAttribute('data-disabled') == 'true') {
+        return;
+    }
     var filter = event.target.getAttribute('id');
     var type = filter.split('-')[0];
     var selected = event.target.getAttribute('data-selected') || 'true';
-    var elements = document.querySelectorAll('#' + filter + '-items .custom-control-input');
+    var elements = document.querySelectorAll('#' + filter.replace('-tgr', '') + ' .custom-control-input');
 
     for (var el in elements) {
         if (elements[el].type == 'checkbox') {
