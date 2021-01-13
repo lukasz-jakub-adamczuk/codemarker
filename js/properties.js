@@ -60,7 +60,7 @@ var propertiesSetup = {
                 'name': 'app_ui_start_challenge_after_selecting',
                 'label': 'Start challenge after selecting.',
                 'hint': 'This option starts challenge right after selection from list without additional use Start button on bottom navigation. Print mode cannot be used.',
-                'value': false
+                'value': true
             }
         ]
     },
@@ -71,7 +71,7 @@ var propertiesSetup = {
                 'name': 'quiz_questions_mark_for_review',
                 'label': 'Allow marking questions for review during challenge.',
                 'hint': 'This option allows to mark question which can be reviewed before submitting exam.',
-                'value': false
+                'value': true
             }, {
                 'name': 'app_ui_display_nav_below_questions',
                 'label': 'Display additional navigation below questions during challenge.',

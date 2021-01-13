@@ -154,11 +154,15 @@ function initChallenge(skip_ignored, newExam = true) {
             slice = slice % allSlices;
             allExams[exam].slice = slice;
             var nextSlice = questions.used.slice(slice * singleSlice, (slice + 1) * singleSlice);
-            selected = selected.concat(shuffleArray(nextSlice).slice(0, sliceDiff));
+            selected = selected.concat(nextSlice.slice(0, sliceDiff));
         }
         setLocalStorageItem('allExam', allExams);
 
-        questions.used = shuffleArray(selected);
+        questions.used = selected;
+    }
+
+    if (properties.quiz_questions_shuffle) {
+        questions.used = shuffleArray(questions.used);
     }
     
     if (newExam) {

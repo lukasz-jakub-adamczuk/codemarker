@@ -28,7 +28,11 @@ function renderExams(displayLayer = true) {
             }
             html += '</div>';
         } else {
-            html += warning(getMessage('msg_no_exams', 'You need to load first challenge exam. Use application menu at bottom.'));
+            // html += warning(getMessage('msg_no_exams', 'You need to load first challenge exam. Use application menu at bottom.'));
+            // workaround
+            document.getElementById('retrieve-code').value = 'demoexam';
+            document.getElementById('retrieve').click();
+            // retrieveQuestions('demoexam');
         }
     // } else {
     //     html += warning(getMessage('msg_no_exams', 'You need to load first challenge exam. Use application menu at bottom.'));
