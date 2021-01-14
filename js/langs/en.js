@@ -41,6 +41,9 @@ var translationsInEnglish = {
     'filter_opt_empty': 'empty',
     'version_empty': 'empty',
     'tag_empty': 'empty',
+    'icon_sync_title': 'Sync questions',
+    'icon_download_title': 'Download questions',
+    'icon_delete_title': 'Delete all questions',
     // challenge view
     'question': 'Question',
     'choose_answer': 'choose_answer',
@@ -142,6 +145,7 @@ var translationsInEnglish = {
     'print_answers_print_incorrect_label': 'Print incorrect (less visible) answers.',
     'print_answers_print_incorrect_hint': 'This option prints incorrect answers, but less visible.',
     // messages
+    'msg_not_supported': 'Not supported yet',
     'msg_options_change_disabled': 'Changing options is disabled, because your browser does not support localStorage.',
     'msg_prop_not_detected': 'Property value not detected locally. Use switch to set correct value or Reset all settings.',
     'msg_options_has_been_reset': 'Current settings has been reset to default values.',
@@ -163,5 +167,7 @@ var translationsInEnglish = {
     'msg_match_once': 'You cannot use single answer many times.',
     'msg_exams_removed': 'All exams have been removed.',
     'msg_filtering_disabled': 'Filtering questions by versions and tags is not supported yet. Options have been disabled.',
-    'msg_filtering_info': 'Filtering questions is in testing phase still. It requires using all questions option enabled too.'
+    'msg_filtering_info': 'Filtering questions is in testing phase still. It requires using all questions option enabled too.',
+    'msg_filtering_warning': 'Filtering questions is in testing phase still.',
+    'msg_filtering_error': 'Filtering requires __Use all available questions__ option enabled and application refresh.'
 };

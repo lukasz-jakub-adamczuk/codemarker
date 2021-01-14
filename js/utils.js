@@ -70,7 +70,7 @@ function retrieveQuestions() {
         renderElement('.downloading-messages', html);
     } else {
         var req = new XMLHttpRequest();
-        req.open('POST', 'https://ash.unixstorm.org/codemarker/cloud/index.php', false);
+        req.open('POST', CLOUDSERVER_URL, false);
         req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         try {
             req.send('code=' + code.value);
@@ -129,22 +129,23 @@ function retrieveQuestions() {
 function checkQuestions(exam) {
     var req = new XMLHttpRequest();
 
-    req.open('POST', 'https://ash.unixstorm.org/codemarker/cloud/index.php', false); 
+    req.open('POST', CLOUDSERVER_URL, false); 
     req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     try {
         req.send('hash=' + exam.hashcode);
 
-        html = '';
+        var html = '';
         console.log(req);
         if (req.status == 200) {
             var timestamp = req.responseText * 1;
 
             if (exam.generated < timestamp) {
-                html += '<i class="icon sync-icon" data-hash="'+exam.hashcode+'"></i>';
+                // console.log('outdated');
+                html += '<i class="icon sync-icon" title="'+getMessage('icon_sync_title', 'Sync questions')+'" data-hash="'+exam.hashcode+'"></i>';
         
-                $('#'+exam.id.replace('cm-', '')+' div h5').append(html);
+                $('#heading-'+exam.id.replace('cm-', '')+' h5:first').append(html);
 
-                document.querySelector('#'+exam.id.replace('cm-', '')+' div h5 i').addEventListener('click', syncExam);
+                document.querySelector('#heading-'+exam.id.replace('cm-', '')+' div h5 i').addEventListener('click', syncExam);
             }
         } else {
             html += warning(req.status);
@@ -166,7 +167,7 @@ function syncExam(event) {
 
     var req = new XMLHttpRequest();
 
-    req.open('POST', 'https://ash.unixstorm.org/codemarker/cloud/index.php', false); 
+    req.open('POST', CLOUDSERVER_URL, false); 
     req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     try {
         req.send('code=' + hash);
@@ -197,6 +198,28 @@ function syncExam(event) {
     }
     event.stopPropagation();
 }
+
+function downloadExam(event) {
+    console.log('downloadExam() has been used.');
+
+    var name = event.target.getAttribute('data-exam');
+    // console.log(name);
+    // console.log(exam);
+
+    var content = getLocalStorageItem(exam, false);
+    var filename = exam + '.md'
+    var element = document.createElement('a');
+    
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
+    element.setAttribute('download', filename);
+  
+    element.style.display = 'none';
+    document.body.appendChild(element);
+  
+    element.click();
+  
+    document.body.removeChild(element);
+}  
 
 // Handle shuffling array
 function shuffleArray(array) {

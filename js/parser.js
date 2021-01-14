@@ -189,6 +189,16 @@ var parser = {
         }
         parser.questions[parser.n] = parser.question;
         parser.examConfig.all = parser.questions.length;
+        // recalculate versions and tags
+        for (var q of parser.questions) {
+            if (q.params.version && (q.params.status && q.params.status == 'ignored')) {
+                parser.examConfig.version[q.params.version]--;
+            }
+            if (q.params.area && (q.params.status && q.params.status == 'ignored')) {
+                parser.examConfig.area[q.params.area]--;
+            }
+        }
+        // var ignored = questions.all.filter(function(elem) { return elem.params.status == 'ignored'; }).slice(0);
         parser.debug ? console.log(parser) : '';
         // setup dafault for exam config if such missing in file
         if (!('exam' in parser.examConfig)) {

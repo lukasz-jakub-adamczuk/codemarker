@@ -432,7 +432,7 @@ div.hidden {
     min-width: 2rem;
     height: 2rem;
     padding: 0 .25rem;
-    margin-left: .5rem;
+    margin: .25rem;
     /* background-color: #a48b66; */
     background-position: 50% 50%;
     background-repeat: no-repeat;
@@ -457,10 +457,21 @@ div.hidden {
     background-image: url('../img/IcoMoon-Free-master/SVG/173-bin.svg');
     opacity: .2;
     width: 2rem;
-    float: right;
+    /* float: right; */
+    flex-grow: 0;
 }
 .delete-icon:hover {
     background-image: url('../img/IcoMoon-Free-master/SVG/173-bin-red.svg');
+    opacity: 1;
+}
+.download-icon {
+    background-image: url('../img/IcoMoon-Free-master/SVG/195-cloud-download.svg');
+    opacity: .2;
+    width: 2rem;
+    /* float: right; */
+    flex-grow: 0;
+}
+.download-icon:hover {
     opacity: 1;
 }
 .sync-icon {
@@ -470,7 +481,6 @@ div.hidden {
 .sync-icon:hover {
     opacity: 1;
 }
-
 .exam-name {
     align-self: center;
     line-height: 1.62;
@@ -488,6 +498,25 @@ div.hidden {
     /* float: right; */
 }
 
+.exam-description {
+    flex-grow: 50;
+}
+
+.relative {
+    position: relative;
+}
+.timestamp {
+    text-align: center;
+    color: #ddd;
+    position: absolute;
+    bottom: -.8rem;
+    right: -1rem;
+    font-size: 10px;
+}
+
+.alert p:only-child {
+    margin: 0;
+}
 
 a {
     /* color: #a48b66; */

@@ -7,7 +7,7 @@ var translations = {
     'pl': translationsInPolish
 };
 
-function getMessage(key, message, params) {
+function getMessage(key, message, params, useMarked) {
     // var lang = getProperty('app_ui_language', 'en');
     var lang = properties.app_ui_language || 'en';
     // console.log(lang);
@@ -23,11 +23,11 @@ function getMessage(key, message, params) {
         
         var found = message.match(regex);
         if (found) {
-        var placeholderRegex = /(\w+)/gm;
-        var placeholder = found[0].match(placeholderRegex);
-        var placeholderPhrase = params[0].replace('${}', placeholder[0]);
+            var placeholderRegex = /(\w+)/gm;
+            var placeholder = found[0].match(placeholderRegex);
+            var placeholderPhrase = params[0].replace('${}', placeholder[0]);
 
-        message = message.replace(regex, placeholderPhrase);
+            message = message.replace(regex, placeholderPhrase);
         }
 
         // variables
@@ -41,6 +41,9 @@ function getMessage(key, message, params) {
                 message = message.replace('%d', params[p]);
             }
         }
+    }
+    if (useMarked) {
+        return marked(message);
     }
     return message;
 }

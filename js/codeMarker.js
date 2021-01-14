@@ -138,6 +138,24 @@ function initChallenge(skip_ignored, newExam = true) {
             questions.used = questions.filtered.slice(0);
         }
         if (allFilters[exam].usage == 'both') {
+            console.log(allFilters[exam].filters.version);
+            var versions = Object.entries(allFilters[exam].filters.version).map(function(itm){ if (itm[1] == true) return itm[0] }).filter(itm => itm);
+            console.warn(versions);
+            
+            console.warn(questions.filtered);
+
+            console.log(allFilters[exam].filters.area);
+            var areas = Object.entries(allFilters[exam].filters.area).map(function(itm){ if (itm[1] == true) return itm[0] }).filter(itm => itm);
+            console.warn(areas);
+            // if (areas.includes('empty')) {
+            //     questions.filtered = questions.used.filter(elem => areas.includes(elem.params.area) || !elem.params.area);
+            // } else {
+                questions.filtered = questions.used.filter(elem => versions.includes(elem.params.version) || areas.includes(elem.params.area));
+                // questions.filtered = questions.used.filter(elem => areas.includes(elem.params.area));
+            // }
+            console.warn(questions.filtered);
+    
+            questions.used = questions.filtered.slice(0);
         }
     } else {
         var allSlices = Math.ceil(questions.used.length / questionsForExam);

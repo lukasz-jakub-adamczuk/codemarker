@@ -130,6 +130,13 @@ What is missing in file format
 
 ## Changelogs
 
+### v0.14
+- [x] fix for shuffling questions
+- [x] filtering questions with versions and tags
+- [x] demo exam for beginners
+- [x] download exam locally
+- [x] confirmation before deleting exam
+
 ### v0.13
 - [x] versions and tags depending property
 - [x] filtering questions with options

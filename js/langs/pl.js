@@ -41,6 +41,9 @@ var translationsInPolish = {
     'filter_opt_empty': 'puste',
     'version_empty': 'brak',
     'tag_empty': 'brak',
+    'icon_sync_title': 'Aktualizuj pytania',
+    'icon_download_title': 'Pobierz pytania',
+    'icon_delete_title': 'Usuń wszystkie pytania',
     // challenge view
     'question': 'Pytanie',
     'choose_answer': 'wybierz odpowiedź',
@@ -142,6 +145,7 @@ var translationsInPolish = {
     'print_answers_print_incorrect_label': 'Wyświetl błędne odpowiedzi',
     'print_answers_print_incorrect_hint': 'Opcja pozwala na wyświetlenie nieprawidłowych odpowiedzi, ale będą mniej widoczne',
     // messages
+    'msg_not_supported': 'Jeszcze nie działa',
     'msg_options_change_disabled': 'Zmiany ustawień są niedostępne, ponieważ twoja przeglądarka nie obsługuje localStorage.',
     'msg_prop_not_detected': 'Nie wykryto lokalnej wartości opcji konfiguracyjnej. Użyj przełącznika do ustawienia wartości lub Przywróć ustawienia domyślne.',
     'msg_options_has_been_reset': 'Bieżące ustawienia zostały zmienione na domyślne.',
@@ -163,5 +167,7 @@ var translationsInPolish = {
     'msg_match_once': 'Nie możesz użyć jednej odpowiedzi wielokrotnie.',
     'msg_exams_removed': 'Wszystkie egzaminy zostały usunięte.',
     'msg_filtering_disabled': 'Filtrowanie pytań według wersji i tagów nie jest jeszcze obsługiwane. Opcje zostały zablokowane.',
-    'msg_filtering_info': 'Filtrowanie pytań jest nadal w fazie testów. Dodatkowo wymaga włączenie opcji Użyj wszystkie dostępne pytania.'
+    'msg_filtering_info': 'Filtrowanie pytań jest nadal w fazie testów. Dodatkowo wymaga włączenia opcji Użyj wszystkie dostępne pytania.',
+    'msg_filtering_warning': 'Filtrowanie pytań jest nadal w fazie testów.',
+    'msg_filtering_error': 'Filtrowanie wymaga włączenia opcji **Użyj wszystkie dostępne pytania** oraz odświeżenia aplikacji.'
 };

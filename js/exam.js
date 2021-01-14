@@ -46,6 +46,10 @@ function renderExams(displayLayer = true) {
         checkQuestions(examsHashes[hash]);
     }
 
+    document.querySelectorAll('.download-icon').forEach(function(elem) {
+        elem.addEventListener('click', downloadExam, true);
+    });
+
     document.querySelectorAll('.delete-icon').forEach(function(elem) {
         elem.addEventListener('click', deleteExam, true);
     });
@@ -86,7 +90,7 @@ function prepareExam(config, includeWrapper = true) {
 
     html += includeWrapper ? '<article id="heading-'+config.exam+'" class="list-group-item list-group-item-action flex-column align-items-start">' : '';
     html += (valid == 0 ? warning(getMessage('msg_exam_invalid', 'Challenge cannot be started, because has no valid questions.')) : '');
-    html += '<div class="collapsed" data-toggle="collapse" data-target="#collapse-'+config.exam+'" aria-expanded="false" aria-controls="collapse-'+config.exam+'">';
+    html += '<div class="collapsed relative" data-toggle="collapse" data-target="#collapse-'+config.exam+'" aria-expanded="false" aria-controls="collapse-'+config.exam+'">';
     
     html += '<div class="d-flex w-100 justify-content-between">'
         + '<h5 class="mb-1 d-flex align-items-start">'
@@ -96,13 +100,18 @@ function prepareExam(config, includeWrapper = true) {
         // + '<small>'+(config.all - config.ignored > config.questions ? config.questions : config.all - config.ignored)+' questions in '+config.duration+'min</small>'
         + '<small>' + questionsInExam + '</small>'
         + '</div>'
-        + '<i class="icon delete-icon" data-exam="heading-'+config.exam+'"></i>'
-        + '<p class="mb-1">'+config.description+'</p>'
+        + '<div class="d-flex w-100 justify-content-between">'
+        + '<p class="mb-1 exam-description">'+config.description+'</p>'
+        + '<i class="icon download-icon" title="'+getMessage('icon_download_title', 'This action is not supported yet')+'" data-exam="heading-'+config.exam+'"></i>'
+        + '<i class="icon delete-icon" title="'+getMessage('icon_delete_title', 'Delete questions')+'" data-exam="heading-'+config.exam+'"></i>'
+        + '</div>'
+        
         // + '<small>'+config.all+' questions found'+(config.ignored > 0 ? ', but ' +config.ignored+ ' ignored or incomplete' : '')+'</small>'
         // + '<small>Notifications <span class="badge badge-secondary">4</span></small>'
         + getMessage('found', 'Found') + ' <span class="badge badge-secondary">'+config.all+'</span> '
         + getMessage('valid', 'Valid') + ' <span class="badge badge-success">'+(valid)+'</span> '
-        + getMessage('invalid', 'Invalid') + ' <span class="badge badge-danger">'+config.ignored+'</span> ';
+        + getMessage('invalid', 'Invalid') + ' <span class="badge badge-danger">'+config.ignored+'</span> '
+        + '<span class="timestamp">' + new Date(parseInt(config.generated)).toLocaleString() + '</span>';
 
     html += '</div>';
     
@@ -111,7 +120,7 @@ function prepareExam(config, includeWrapper = true) {
     html += '<div class="advanced row">';
 
     html += '<div class="col-sm-12">';
-    html += warning(getMessage('msg_filtering_info', 'Filtering questions is in testing phase still. It requires using all questions option enabled too.'));
+    html += warning(getMessage('msg_filtering_warning', 'Filtering questions is in testing phase still.'));
     html += '</div>';
 
     // filtering
@@ -121,35 +130,40 @@ function prepareExam(config, includeWrapper = true) {
         'area': getMessage('filtering_opt_area', 'Filter questions by tags'),
         'both': getMessage('filtering_opt_both', 'Filter questions by versions and tags')
     };
+    var filteringEnabled = false;
     var disabled;
     var selected = allFilters[exam].usage || 'none';
-    // var selected = selected == 'none' ? ' selected=""' : '';
 
-    html += '<select class="app-settings-control-choice questions-filtering" data-exam="'+exam+'">';
+    if (properties['quiz_questions_use_all']) {
+        filteringEnabled = true;
+    } else {
+        html += '<div class="col-sm-12">';
+        html += error(getMessage('msg_filtering_error', 'Filtering requires **Use all available questions** option enabled.', null, true));
+        html += '</div>';
+    }
+
+    html += '<select class="app-settings-control-choice questions-filtering" data-exam="'+exam+'"'+(filteringEnabled ? '' : ' disabled=""')+'>';
     for (var opt in options) {
         disabled = false;
-        if (opt == 'both') {
-            disabled = true;
-        }
         html += '<option value="' + opt + '"'+(opt == selected ? ' selected=""' : '')+(disabled ? ' disabled=""' : '')+'>' + options[opt] + '</option>';
     }
     html += '</select>';
 
     versionSelected = Object.values(allFilters[exam].filters.version).every(val => val == true);
     versionLabel = versionSelected ? getMessage('unselect_filters', 'unselect all') : getMessage('select_filters', 'select all');
-    versionStyle = ['version', 'both'].includes(selected) ? ' style="opacity: 1;"' : ' style="opacity: .1;"';
-    disabled = ['version', 'both'].includes(selected) ? false : true;
+    versionStyle = ['version', 'both'].includes(selected) && filteringEnabled ? ' style="opacity: 1;"' : ' style="opacity: .1;"';
+    disabled = ['version', 'both'].includes(selected) && filteringEnabled ? false : true;
+    
     
     html += '<div id="version-'+config.exam+'-group" class="col-sm-12 col-md-6 pt-2"'+versionStyle+'>';
     html += '<h5>'+getMessage('filter_version', 'Versions')+' <small id="version-'+config.exam+'-group-tgr" class="filter-tgr" data-disabled="'+disabled+'" data-selected="'+versionSelected+'">'+versionLabel+'</small></h5>';
     html += '<ul class="list-group">';
+
     for (var v in config.version) {
         var id = config.exam + '-version-' + slugify(v);
         var label = v == 'empty' ? getMessage('filter_opt_empty', 'empty') : v;
         var answer = v;
-        
         var checked = exam in allFilters ? allFilters[exam].filters.version[v] : true;
-        // console.log(config.exam + '_' + v + '_' + allFilters[exam].filters.version[v]);
         
         html += '<li class="list-group-item d-flex justify-content-between align-items-center">';
         html += '<div class="custom-control custom-checkbox">';
@@ -164,8 +178,8 @@ function prepareExam(config, includeWrapper = true) {
     
     areaSelected = Object.values(allFilters[exam].filters.area).every(val => val == true);
     areaLabel = areaSelected ? getMessage('unselect_filters', 'unselect all') : getMessage('select_filters', 'select all');
-    areaStyle = ['area', 'both'].includes(selected) ? ' style="opacity: 1;"' : ' style="opacity: .1;"';
-    disabled = ['area', 'both'].includes(selected) ? false : true;
+    areaStyle = ['area', 'both'].includes(selected) && filteringEnabled ? ' style="opacity: 1;"' : ' style="opacity: .1;"';
+    disabled = ['area', 'both'].includes(selected) && filteringEnabled ? false : true;
     
     html += '<div id="area-'+config.exam+'-group" class="col-sm-12 col-md-6 pt-2"'+areaStyle+'>';
     html += '<h5>'+getMessage('filter_tag', 'Tags')+' <small id="area-'+config.exam+'-group-tgr" class="filter-tgr" data-disabled="'+disabled+'" data-selected="'+areaSelected+'">'+areaLabel+'</small></h5>';
@@ -174,12 +188,7 @@ function prepareExam(config, includeWrapper = true) {
         var id = config.exam + '-area-' + slugify(a);
         var label = a == 'empty' ? getMessage('filter_opt_empty', 'empty') : a;
         var answer = a;
-        // var exam = 'cm-' + config.exam;
         var checked = exam in allFilters ? allFilters[exam].filters.area[a] : true;
-        // console.log(config.exam);
-        // if (config.exam in allFilters) {
-        //     console.log(config.exam + '_' + a + '_' + allFilters[exam].filters.area[a]);
-        // }
         
         html += '<li class="list-group-item d-flex justify-content-between align-items-center">';
         html += '<div class="custom-control custom-checkbox">';
@@ -191,6 +200,7 @@ function prepareExam(config, includeWrapper = true) {
     }
     html += '</ul>'; // element
     html += '</div>'; // section
+
     html += '</div>'; // row
 
     html += '</div>'; // collapse
@@ -256,8 +266,8 @@ function setFilteringOption(event/*, exam, filter*/) {
         enableGroup('#area-'+exam+'-group');
     }
     if (filter == 'both') {
-        // enableGroup('#version-'+exam+'-group');
-        // enableGroup('#area-'+exam+'-group');
+        enableGroup('#version-'+exam+'-group');
+        enableGroup('#area-'+exam+'-group');
     }
 }
 
@@ -380,7 +390,9 @@ function filterExam(event) {
 function deleteExam(event) {
     console.log('deleteExam() has been used.');
     
-    // maybe confirmation
+    if (!confirm(getMessage('confirm_seriously', 'Seriously?'))) {
+        return;
+    }
     var exam = event.target.getAttribute('data-exam').replace('heading-', '');
 
     $('#'+event.target.getAttribute('data-exam')).fadeOut(1000, function() {

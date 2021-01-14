@@ -1,7 +1,9 @@
 'use strict';
 
-const LW_VERSION = '0.13';
+const LW_VERSION = '0.14';
 const PROP_VERSION = '0.07';
+// const CLOUDSERVER_URL = 'http://localhost/sites/cloud-server/index.php';
+const CLOUDSERVER_URL = 'https://ash.unixstorm.org/codemarker/cloud/index.php';
 
 var version;
 
