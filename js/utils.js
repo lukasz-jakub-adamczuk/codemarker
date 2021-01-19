@@ -219,6 +219,8 @@ function downloadExam(event) {
     element.click();
   
     document.body.removeChild(element);
+
+    event.stopPropagation();
 }  
 
 // Handle shuffling array

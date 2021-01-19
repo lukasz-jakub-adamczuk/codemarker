@@ -90,6 +90,7 @@ function prepareExam(config, includeWrapper = true) {
 
     html += includeWrapper ? '<article id="heading-'+config.exam+'" class="list-group-item list-group-item-action flex-column align-items-start">' : '';
     html += (valid == 0 ? warning(getMessage('msg_exam_invalid', 'Challenge cannot be started, because has no valid questions.')) : '');
+    
     html += '<div class="collapsed relative" data-toggle="collapse" data-target="#collapse-'+config.exam+'" aria-expanded="false" aria-controls="collapse-'+config.exam+'">';
     
     html += '<div class="d-flex w-100 justify-content-between">'
@@ -100,6 +101,7 @@ function prepareExam(config, includeWrapper = true) {
         // + '<small>'+(config.all - config.ignored > config.questions ? config.questions : config.all - config.ignored)+' questions in '+config.duration+'min</small>'
         + '<small>' + questionsInExam + '</small>'
         + '</div>'
+        
         + '<div class="d-flex w-100 justify-content-between">'
         + '<p class="mb-1 exam-description">'+config.description+'</p>'
         + '<i class="icon download-icon" title="'+getMessage('icon_download_title', 'This action is not supported yet')+'" data-exam="heading-'+config.exam+'"></i>'
@@ -111,8 +113,9 @@ function prepareExam(config, includeWrapper = true) {
         + getMessage('found', 'Found') + ' <span class="badge badge-secondary">'+config.all+'</span> '
         + getMessage('valid', 'Valid') + ' <span class="badge badge-success">'+(valid)+'</span> '
         + getMessage('invalid', 'Invalid') + ' <span class="badge badge-danger">'+config.ignored+'</span> '
-        + '<span class="timestamp">' + new Date(parseInt(config.generated)).toLocaleString() + '</span>';
-
+        + '<span class="exam-compability" title="'+getMessage('exam_compability_title', 'Questions compability')+'">' + Math.round((parseInt(valid)/parseInt(config.all))*100) + '<span>%</span></span>'
+        + '<span class="exam-timestamp" title="'+getMessage('exam_timestamp_title', 'Generated on')+'">' + new Date(parseInt(config.generated)).toLocaleString() + '</span>';
+        
     html += '</div>';
     
     html += '<div id="collapse-'+config.exam+'" class="collapse mt-2" aria-labelledby="heading-'+config.exam+'" data-parent="#accordionExample">'
@@ -391,6 +394,7 @@ function deleteExam(event) {
     console.log('deleteExam() has been used.');
     
     if (!confirm(getMessage('confirm_seriously', 'Seriously?'))) {
+        event.stopPropagation();
         return;
     }
     var exam = event.target.getAttribute('data-exam').replace('heading-', '');

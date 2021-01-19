@@ -44,6 +44,8 @@ var translationsInEnglish = {
     'icon_sync_title': 'Sync questions',
     'icon_download_title': 'Download questions',
     'icon_delete_title': 'Delete all questions',
+    'exam_compability_title': 'Questions compability',
+    'exam_timestamp_title': 'Generated on',
     // challenge view
     'question': 'Question',
     'choose_answer': 'choose_answer',

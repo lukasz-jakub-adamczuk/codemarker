@@ -44,6 +44,8 @@ var translationsInPolish = {
     'icon_sync_title': 'Aktualizuj pytania',
     'icon_download_title': 'Pobierz pytania',
     'icon_delete_title': 'Usuń wszystkie pytania',
+    'exam_compability_title': 'Zgodność pytań',
+    'exam_timestamp_title': 'Wygenerowano',
     // challenge view
     'question': 'Pytanie',
     'choose_answer': 'wybierz odpowiedź',
