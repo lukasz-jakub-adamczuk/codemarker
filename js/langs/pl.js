@@ -148,6 +148,7 @@ var translationsInPolish = {
     'print_answers_print_incorrect_label': 'Wyświetl błędne odpowiedzi',
     'print_answers_print_incorrect_hint': 'Opcja pozwala na wyświetlenie nieprawidłowych odpowiedzi, ale będą mniej widoczne',
     // messages
+    'works_since': 'Działa od wersji ${numer}.',
     'msg_not_supported': 'Jeszcze nie działa',
     'msg_options_change_disabled': 'Zmiany ustawień są niedostępne, ponieważ twoja przeglądarka nie obsługuje localStorage.',
     'msg_prop_not_detected': 'Nie wykryto lokalnej wartości opcji konfiguracyjnej. Użyj przełącznika do ustawienia wartości lub Przywróć ustawienia domyślne.',

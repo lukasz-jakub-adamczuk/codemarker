@@ -113,9 +113,12 @@ function prepareExam(config, includeWrapper = true) {
         // + '<small>Notifications <span class="badge badge-secondary">4</span></small>'
         + getMessage('found', 'Found') + ' <span class="badge badge-secondary">'+config.all+'</span> '
         + getMessage('valid', 'Valid') + ' <span class="badge badge-success">'+(valid)+'</span> '
-        + getMessage('invalid', 'Invalid') + ' <span class="badge badge-danger">'+config.ignored+'</span> '
-        + '<span class="exam-compability" title="'+getMessage('exam_compability_title', 'Questions compability')+'">' + Math.round((parseInt(valid)/parseInt(config.all))*100) + '<span>%</span></span>'
+        + getMessage('invalid', 'Invalid') + ' <span class="badge badge-danger">'+config.ignored+'</span> ';
+    
+    if (isVersionEqualOrHigher(0.15)) {
+        html += '<span class="exam-compability" title="'+getMessage('exam_compability_title', 'Questions compability')+'">' + Math.round((parseInt(valid)/parseInt(config.all))*100) + '<span>%</span></span>'
         + '<span class="exam-timestamp" title="'+getMessage('exam_timestamp_title', 'Generated on')+'">' + new Date(parseInt(config.generated)).toLocaleString() + '</span>';
+    }
         
     html += '</div>';
     

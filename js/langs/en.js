@@ -148,6 +148,7 @@ var translationsInEnglish = {
     'print_answers_print_incorrect_label': 'Print incorrect (less visible) answers.',
     'print_answers_print_incorrect_hint': 'This option prints incorrect answers, but less visible.',
     // messages
+    'works_since': 'Works since ${number} version.',
     'msg_not_supported': 'Not supported yet',
     'msg_options_change_disabled': 'Changing options is disabled, because your browser does not support localStorage.',
     'msg_prop_not_detected': 'Property value not detected locally. Use switch to set correct value or Reset all settings.',

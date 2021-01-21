@@ -726,6 +726,7 @@ function generateMenuSections() {
 
         if (isVersionLower(0.15)) {
             uploadButton.setAttribute('disabled', true);
+            uploadButton.setAttribute('title', getMessage('works_since', 'Works since ${number} version.', ['0.15']));
         }
 
         var fileFormatLink = '<a href="https://github.com/lukasz-jakub-adamczuk/codemarker#file-format">${}</a>';
