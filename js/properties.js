@@ -387,7 +387,7 @@ function resetAllSettings(event) {
     // set local version
     if ('localStorage' in window) {
         setLocalStorageItem('learnwise', LW_VERSION, false);
-        document.querySelectorAll('#version strong').textContent = LW_VERSION;
+        document.querySelector('#version strong').textContent = LW_VERSION;
         html = info(getMessage('msg_version_up_to_date', 'Your version is up-to-date.'));
     }
     renderElement('.version-messages', html);
@@ -402,7 +402,7 @@ function enableNewFeatures(event) {
     // set local version
     if ('localStorage' in window) {
         setLocalStorageItem('learnwise', LW_VERSION, false);
-        document.querySelectorAll('#version strong').textContent = LW_VERSION;
+        document.querySelector('#version strong').textContent = LW_VERSION;
         html = info(getMessage('msg_version_up_to_date', 'Your version is up-to-date.'));
     }
     renderElement('.version-messages', html);
@@ -413,4 +413,8 @@ function enableNewFeatures(event) {
     html = info(getMessage('msg_options_new_features_enabled', 'New features has been enabled.'));
     
     renderElement('.settings-messages', html);
+
+    setTimeout(function() {
+        document.location = document.location;
+    }, 1000);
 }

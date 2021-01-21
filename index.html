@@ -207,7 +207,8 @@
                 <div class="list-group-item list-group-item-action flex-column align-items-start">
                     <span>Use this option to load questions from your computer or mobile. File content must be in <a href="https://github.com/lukasz-jakub-adamczuk/codemarker#exam-format">special format</a> to be parsed with application.</span>
                     <div class="input-group mb-2">
-                        <button id="load" class="btn btn-primary">Load your questions</button>
+                        <button id="load" class="btn btn-primary _col-sm-12">Load your questions</button>
+                        <button id="upload" class="btn btn-primary _col-sm-12">Upload questions in Excel</button>
                     </div>
                     <div class="loading-messages"></div>
                 </div>
@@ -235,10 +236,16 @@
             <div id="file-content" style="display: none;"></div>
         </div>
 
+        <div class="custom-file" style="display: none;">
+            <input type="file" class="custom-file-input" id="customFile">
+            <label class="custom-file-label" for="customFile">Choose file</label>
+        </div>
+
         <script src="js/hammer.min.js"></script>
         <!-- <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script> -->
         <script src="js/marked.min.js"></script>
         <script src="js/sha1.js"></script>
+        <!-- <script src="js/variables.js"></script> -->
         <script src="js/langs/en.js"></script>
         <script src="js/langs/pl.js"></script>
         <script src="js/translations.js"></script>

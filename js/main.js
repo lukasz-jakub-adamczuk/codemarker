@@ -1,9 +1,16 @@
-'use strict';
+'use script';
 
-const LW_VERSION = '0.14';
-const PROP_VERSION = '0.07';
-// const CLOUDSERVER_URL = 'http://localhost/sites/cloud-server/index.php';
-const CLOUDSERVER_URL = 'https://ash.unixstorm.org/codemarker/cloud/index.php';
+
+const LW_VERSION            = '0.15';
+const PROP_VERSION          = '0.07';
+
+var CS_INDEX_URL      = 'https://ash.unixstorm.org/codemarker/cloud/index.php';
+var CS_PARSER_URL     = 'https://ash.unixstorm.org/codemarker/cloud/parse.php';
+
+if (window.location.host == 'localhost') {
+    CS_INDEX_URL      = 'http://localhost/sites/cloud-server/index.php';
+    CS_PARSER_URL     = 'http://localhost/sites/cloud-server/parse.php';
+}
 
 var version;
 

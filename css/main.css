@@ -33,6 +33,13 @@ border-color: #0062cc; */
     padding-top: 15px;
     padding-bottom: 15px;
     margin-bottom: 3rem;
+    
+    overflow-y: scroll;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
 }
 #splash,
 ._result {
@@ -548,6 +555,14 @@ a {
 .btn {
     /* padding-left: 2rem;
     padding-right: 2rem; */
+}
+
+#default-settings,
+#enable-new-features,
+#remove-exams,
+#load,
+#upload {
+    margin: .25rem;
 }
 
 .btn-primary {

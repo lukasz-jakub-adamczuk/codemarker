@@ -112,6 +112,28 @@ What is missing in file format
 ## Sample exam file
 [Check sample-exam](https://raw.githubusercontent.com/lukasz-jakub-adamczuk/codemarker/master/sample-exam.md) file which can be saved locally and loaded in application. Open this exam and experiment with own questions to see how easily this can be done.
 
+## Excel template
+
+Exam template is written in Excel spreadsheet. There is few advantages for this method. First you don't need to use special format, so creating questions for people might be easier. Second you can load multiple exams at the same time. You need to follow some basic rules still.
+
+Valid question need 3 elements. Content for question have to be written in column B with header Question. Answers available for selection have to listed in column C with header Options. Notice that each answer need to be prefixed with letter and parenthis. Last condition says that answer need to be defined in column D with header Answer, unless this is match type question.
+
+More about available options in Excel template.
+
+Column A with header Lp. can be used for questions numbering, but it's not necessary. Value will be displayed with question in modal window.
+
+Column E with header Notes can be used for any comments related question or given answers. Value will be displayed with question in modal window
+
+Column F with header Version is used for specifing version of questions. Value might be used for filtering and will be displayed above question depending on user settings.
+
+Column G with header Image is used for specifing image in remote location or other params related question which defines application bahaviour in this case.
+
+Column H with heaser Tags is used for specifing area for the question. Value might be used for filtering and will be displayed above question depending on user settings.
+
+## Sample exam template
+[Check sample-template](https://raw.githubusercontent.com/lukasz-jakub-adamczuk/codemarker/master/sample-exam.xlsx) file which can be uploaded in application. Open this exam and experiment with own questions to see how easily this can be done.
+
+
 ## TODO
 - [ ] display timer based on param
 - [ ] configurable prev and next buttons for left/right edge if screen (mobile)
@@ -130,12 +152,18 @@ What is missing in file format
 
 ## Changelogs
 
+### v0.15
+- [x] parsing questions from Excel spreadsheet
+- [x] parsing timestamp for exam on list
+- [x] percentage count for valid quiestions
+
 ### v0.14
 - [x] fix for shuffling questions
 - [x] filtering questions with versions and tags
 - [x] demo exam for beginners
 - [x] download exam locally
 - [x] confirmation before deleting exam
+
 
 ### v0.13
 - [x] versions and tags depending property

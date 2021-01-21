@@ -10,6 +10,50 @@ function loadQuestions() {
     // });
 }
 
+document.querySelector('#customFile').addEventListener('change', customUpload);
+
+function uploadQuestions() {
+    // for 
+    console.log('upload questions');
+    document.querySelector('#customFile').click();
+}
+
+
+
+function customUpload() {
+    console.log('custom upload...');
+    // console.log(this.files);
+
+    sendFile(this.files[0]);
+}
+
+function sendFile(file) {
+    // const uri = "/index.php";
+    const xhr = new XMLHttpRequest();
+    const fd = new FormData();
+
+    xhr.open('POST', CS_PARSER_URL, true);
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            // alert(xhr.responseText); // handle response.
+            // console.log(xhr.responseText);
+            var sheets = JSON.parse(xhr.responseText);
+
+            console.log(sheets);
+            for (var sheet of sheets) {
+                // var code = sheet.split('/')[0];
+                // console.log(sheet);
+
+                retrieveExam(sheet);
+            }
+        }
+    };
+    fd.append('myFile', file);
+    // Initiate a multipart/form-data upload
+    xhr.send(fd);
+}
+  
+
 function readSingleFile(e) {
     // clear messages if any
     if ($('.loading-messages').length) {
@@ -52,13 +96,12 @@ function readSingleFile(e) {
     reader.readAsText(file);
 }
 
-
 // Handle retriving questions from server
 function retrieveQuestions() {
     var spinner = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> ';
     $(this).prepend(spinner);
     var code = document.getElementById('retrieve-code');
-    var html = '';
+    // var html = '';
 
     // clear messages if any
     if ($('.downloading-messages').length) {
@@ -66,70 +109,79 @@ function retrieveQuestions() {
     }
     
     if (code.value == '') {
-        html += error(getMessage('msg_exam_empty_code', 'Empty code.'));
-        renderElement('.downloading-messages', html);
+        // html += error(getMessage('msg_exam_empty_code', 'Empty code.'));
+        renderElement('.downloading-messages', error(getMessage('msg_exam_empty_code', 'Empty code.')));
     } else {
-        var req = new XMLHttpRequest();
-        req.open('POST', CLOUDSERVER_URL, false);
-        req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        try {
-            req.send('code=' + code.value);
+        // html += retrieveExam(code);
+        code.value = '';
+        renderElement('.downloading-messages', retrieveExam(code));
+    }
+    $(this).children('.spinner-border').remove();
+}
 
-            if (req.status == 200) {
-                if (req.responseText == 'Not found.') {
-                    html += error(getMessage('msg_exam_invalid_code', 'Invalid code.'));
+function retrieveExam(code) {
+    var req = new XMLHttpRequest();
+    var html = '';
+    req.open('POST', CS_INDEX_URL, false);
+    req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    try {
+        req.send('code=' + code);
+
+        if (req.status == 200) {
+            if (req.responseText == 'Not found.') {
+                html = error(getMessage('msg_exam_invalid_code', 'Invalid code.'));
+            } else {
+                html = info(getMessage('msg_exam_downloaded_parsed', 'Exam file has been downloaded and parsed successfully'));
+            
+                parseChallenge(req.responseText);
+
+                if (code.split('/').length == 2) {
+
                 } else {
-                    html += info(getMessage('msg_exam_downloaded_parsed', 'Exam file has been downloaded and parsed sucessfully'));
-                
-                    parseChallenge(req.responseText);
-    
-                    console.log(allExams);
-                    console.log(allExams[exam]);
-                    if (code.value.length != 40) {
+                    if (code.length != 40) {
                         var examHash = {
                             'id': exam,
                             'generated': allExams[exam].generated,
-                            'generatedDate': (new Date(allExams[exam].generated*1)) + '',
-                            'hashcode': sha1(code.value)
+                            'generatedDate': (new Date(allExams[exam].generated * 1)) + '',
+                            'hashcode': sha1(code)
                         };
                         examsHashes[exam] = examHash;
-    
-                        console.log(examsHashes);
+
                         setLocalStorageItem('examsHashes', examsHashes);
                     }
-    
-                    if (['challenge_started', 'challenge_finished', 'exam_result_rendered', 'exam_printed'].includes(state)) {
-                        renderExams(false);
-                    } else {
-                        renderExams();
-                    }
-                    
-                    code.value = '';
-    
-                    if (properties['app_ui_start_challenge_after_download_success']) {
-                        document.querySelector('#options-tgr').click();
-                        startChallenge();
-                    }
                 }
-            } else {
-                html += warning(req.status);
+
+                if (['challenge_started', 'challenge_finished', 'exam_result_rendered', 'exam_printed'].includes(state)) {
+                    renderExams(false);
+                } else {
+                    renderExams();
+                }
+                
+                // code.value = '';
+
+                // exams should start when multiple loaded from Excel
+                if (properties['app_ui_start_challenge_after_download_success']) {
+                    document.querySelector('#options-tgr').click();
+                    startChallenge();
+                }
             }
-        } catch (exception) {
-            if (exception.name == 'NetworkError') {
-                console.log('There was a network error.');
-                html += error(exception.message);
-            }
+        } else {
+            html = warning(req.status);
         }
-        renderElement('.downloading-messages', html);
+    } catch (exception) {
+        if (exception.name == 'NetworkError') {
+            console.log('There was a network error.');
+            html = error(exception.message);
+        }
     }
-    $(this).children('.spinner-border').remove();
+    return html;
 }
 
 // Handle checking fresh questions from server
 function checkQuestions(exam) {
     var req = new XMLHttpRequest();
 
-    req.open('POST', CLOUDSERVER_URL, false); 
+    req.open('POST', CS_INDEX_URL, false); 
     req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     try {
         req.send('hash=' + exam.hashcode);
@@ -167,7 +219,7 @@ function syncExam(event) {
 
     var req = new XMLHttpRequest();
 
-    req.open('POST', CLOUDSERVER_URL, false); 
+    req.open('POST', CS_INDEX_URL, false); 
     req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     try {
         req.send('code=' + hash);
@@ -185,7 +237,7 @@ function syncExam(event) {
             examsHashes[exam] = examHash;
             setLocalStorageItem('examsHashes', examsHashes);
             
-            $('#'+exam.replace('cm-', '')).html(prepareExam(allExams[exam], false));
+            $('#heading-'+exam.replace('cm-', '')).html(prepareExam(allExams[exam], false));
             console.log('OK');
         } else {
             console.log(req.status);
@@ -376,6 +428,7 @@ function changeLanguage(language) {
     console.warn(properties.app_ui_language);
 
     // this need to run after manage property registred on parent element
+    // refactor to Promise
     setTimeout(function() {
         generateMenuSections();
         checkAppVersion();
@@ -569,7 +622,7 @@ function checkAppVersion() {
             // console.log(getLocalStorageItem('learnwise', false));
             // console.log(LW_VERSION);
         if (getLocalStorageItem('learnwise', false) == LW_VERSION) {
-            $('#version strong')[0].textContent = LW_VERSION;
+            document.querySelector('#version strong').textContent = LW_VERSION;
         } else {
             var html = warning(getMessage('msg_new_version', 'Application available online has new features. Your local version is outdated. Reset all settings using button placed below.'));
             renderElement('.version-messages', html);
@@ -649,10 +702,10 @@ function generateMenuSections() {
         version.querySelector('div').id = 'version';
         // version.setAttribute('id', 'version');
         
-        var sourceCodeLink = ['<a href="https://github.com/lukasz-jakub-adamczuk/codemarker#codemarker">${}</a>'];
+        var sourceCodeLink = '<a href="https://github.com/lukasz-jakub-adamczuk/codemarker#codemarker">${}</a>';
         
-        sourceCode.querySelector('div').innerHTML = '<span>' + getMessage('source_code_desc', 'Source code available on ${Github}', sourceCodeLink) + '</span>';
-        defaultSettings.querySelector('div').innerHTML = '<span>' + getMessage('default_settings_desc', 'Use those actions to back with current options to default settings.') + '</span><div class="mb-2"><button id="default-settings" class="btn btn-secondary">' + getMessage('reset_settings', 'Reset settings') + '</button> <button id="enable-new-features" class="btn btn-secondary">' + getMessage('enable_new_features', 'Enable new features') + '</button> <button id="remove-exams" class="btn btn-danger">' + getMessage('remove_exams', 'Remove exams') + '</button></div><div class="settings-messages"></div>';
+        sourceCode.querySelector('div').innerHTML = '<span>' + getMessage('source_code_desc', 'Source code available on ${Github}', [sourceCodeLink]) + '</span>';
+        defaultSettings.querySelector('div').innerHTML = '<span>' + getMessage('default_settings_desc', 'Use those actions to back with current options to default settings.') + '</span><div class="mb-2"><button id="default-settings" class="btn btn-secondary _col-sm-12">' + getMessage('reset_settings', 'Reset settings') + '</button><button id="enable-new-features" class="btn btn-secondary _col-sm-12">' + getMessage('enable_new_features', 'Enable new features') + '</button><button id="remove-exams" class="btn btn-danger _col-sm-12">' + getMessage('remove_exams', 'Remove exams') + '</button></div><div class="settings-messages"></div>';
 
         aboutContent.appendChild(version);
         aboutContent.appendChild(sourceCode);
@@ -660,7 +713,6 @@ function generateMenuSections() {
         
         // clear menu options before generating
         menu.innerHTML = '';
-        console.error(menu);
         menu.appendChild(about);
 
 
@@ -669,13 +721,20 @@ function generateMenuSections() {
 
         var uploadHeader = uploadSection.querySelector('p');
         var uploadDescription = uploadSection.querySelector('span');
-        var uploadButton = uploadSection.querySelector('#load');
+        var loadButton = uploadSection.querySelector('#load');
+        var uploadButton = uploadSection.querySelector('#upload');
 
-        var fileFormatLink = ['<a href="https://github.com/lukasz-jakub-adamczuk/codemarker#file-format">${}</a>'];
+        if (isVersionLower(0.15)) {
+            uploadButton.setAttribute('disabled', true);
+        }
+
+        var fileFormatLink = '<a href="https://github.com/lukasz-jakub-adamczuk/codemarker#file-format">${}</a>';
+        var excelTemplateLink = '<a href="https://github.com/lukasz-jakub-adamczuk/codemarker#excel-template">${}</a>';
         
         uploadHeader.textContent = getMessage('upload_file', 'Upload file');
-        uploadDescription.innerHTML = getMessage('upload_desc', 'Use this option to load questions from your computer or mobile. File content must be in special ${format} to be parsed with application.', fileFormatLink);
-        uploadButton.textContent = getMessage('load_questions', 'Load your questions');
+        uploadDescription.innerHTML = getMessage('upload_desc', 'Use this option to load questions from your computer or mobile. File content must be in special ${format} to be parsed with application. Another option allows to use ${template} with own questions in Excel speadsheet.', [fileFormatLink, excelTemplateLink]);
+        loadButton.textContent = getMessage('load_questions', 'Load questions from markdown');
+        uploadButton.textContent = getMessage('upload_questions', 'Upload questions from Excel');
 
         menu.appendChild(uploadSection);
 
@@ -709,6 +768,9 @@ function bindMenuEvents() {
     // options
     document.querySelector('#file-input').addEventListener('change', readSingleFile);
     document.querySelector('#load').addEventListener('click', loadQuestions);
+    if (isVersionEqualOrHigher(0.15)) {
+        document.querySelector('#upload').addEventListener('click', uploadQuestions);
+    }
     document.querySelector('#retrieve').addEventListener('click', retrieveQuestions);
     document.querySelector('#app-properties').addEventListener('click', manageProperty);
     document.querySelector('#default-settings').addEventListener('click', resetAllSettings);
@@ -740,51 +802,14 @@ function readyToSubmitChallenge() {
     });
 }
 
+function isVersionEqual(version) {
+    return parseFloat(getLocalStorageItem('learnwise', false)) == parseFloat(version);
+}
 
-// function generateRetrieveSection() {
-//     var menu = document.querySelector('.menu-options .container');
-//     var div = document.createElement('div');
+function isVersionEqualOrHigher(version) {
+    return parseFloat(getLocalStorageItem('learnwise', false)) >= parseFloat(version);
+}
 
-//     var retrieveHeader = getMessage('retrieve_file', 'Retrieve file from internet');
-//     var retrieveDesciption = getMessage('retrieve_desc', 'Use this option to load prepared questions from LearnWise cloud storage.');
-//     var retrievePlaceholder = getMessage('retrieve_questions', 'Retrieve');
-//     var retrieveButton = getMessage('retrieve_placeholder', 'type code here');
-    
-//     var html = '';
-//     html =+ '<p class="opts-header">' + retrieveHeader + '</p>';
-//     html =+ '    <div class="list-group">';
-//     html =+ '        <div class="list-group-item list-group-item-action flex-column align-items-start">';
-//     html =+ '            <span>' + retrieveDesciption + '</span>';
-//     html =+ '            <div class="input-group mb-2">';
-//     html =+ '                <input id="retrieve-code" type="text" class="form-control" placeholder="' + retrievePlaceholder + '" aria-label="' + retrievePlaceholder + '" aria-describedby="retrieve">';
-//     html =+ '                <div class="input-group-append">';
-//     html =+ '                    <button id="retrieve" class="btn btn-primary" type="button">' + retrieveButton + '</button>';
-//     html =+ '                </div>';
-//     html =+ '            </div>';
-//     html =+ '            <div class="downloading-messages"></div>';
-//     html =+ '        </div>';
-//     html =+ '    </div>';
-
-//     div.innerHTML = html;
-
-//     menu.appendChild(div.firstElementChild);
-
-    
-// }
-
-// var letters = 'abcdefghijklm'.split('');
-// var html = '';
-// for (var q in questions.marked) {
-// 	if (questions.marked[q] == true) {
-// 		html += questions.used[q].name;
-// 		var idx = 0;
-// 		for (var opt of questions.used[q].answers.choices) {
-// 			html += letters[idx] + ')' ;
-// 			html += (opt.type == 'correct') ? '+ ' : '- ';
-// 			html += opt.name + "\n";
-// 			idx++;
-// 		}
-// 		html += "\n";
-// 	}
-// }
-// console.log(html);
+function isVersionLower(version) {
+    return parseFloat(getLocalStorageItem('learnwise', false)) < parseFloat(version);
+}

@@ -30,9 +30,10 @@ function renderExams(displayLayer = true) {
         } else {
             // html += warning(getMessage('msg_no_exams', 'You need to load first challenge exam. Use application menu at bottom.'));
             // workaround
-            document.getElementById('retrieve-code').value = 'demoexam';
-            document.getElementById('retrieve').click();
-            // retrieveQuestions('demoexam');
+            // document.getElementById('retrieve-code').value = 'demoexam';
+            // document.getElementById('retrieve').click();
+            retrieveExam('demoexam');
+            // renderElement('.downloading-messages', retrieveExam('demoexam'));
         }
     // } else {
     //     html += warning(getMessage('msg_no_exams', 'You need to load first challenge exam. Use application menu at bottom.'));
@@ -207,32 +208,6 @@ function prepareExam(config, includeWrapper = true) {
     html += '</div>'; // row
 
     html += '</div>'; // collapse
-    html += includeWrapper ? '</article>' : '';
-    return html;
-}
-
-// Handle preparing single exam on list
-function prepareExamOld(config, includeWrapper = true) {
-    var questionsInExam = getMessage('questions_in_exam', '%d questions in %d min', [config.questions, config.duration]);
-    var valid = config.all - config.ignored;
-    var html = '';
-    html += includeWrapper ? '<article id="'+config.exam+'" class="list-group-item list-group-item-action flex-column align-items-start">' : '';
-    html += (valid == 0 ? warning(getMessage('msg_exam_invalid', 'Challenge cannot be started, because has no valid questions.')) : '');
-    html += '<div class="d-flex w-100 justify-content-between">'
-        + '<h5 class="mb-1 d-flex align-items-start">'
-        + '<span class="exam-name">'+config.exam.split('-').join(' ').toUpperCase()+'</span>'
-        // + '<i class="icon sync-icon" data-exam="'+config.exam+'"></i>'
-        + '</h5>'
-        // + '<small>'+(config.all - config.ignored > config.questions ? config.questions : config.all - config.ignored)+' questions in '+config.duration+'min</small>'
-        + '<small>' + questionsInExam + '</small>'
-        + '</div>'
-        + '<i class="icon delete-icon" data-exam="'+config.exam+'"></i>'
-        + '<p class="mb-1">'+config.description+'</p>'
-        // + '<small>'+config.all+' questions found'+(config.ignored > 0 ? ', but ' +config.ignored+ ' ignored or incomplete' : '')+'</small>'
-        // + '<small>Notifications <span class="badge badge-secondary">4</span></small>'
-        + getMessage('found', 'Found') + ' <span class="badge badge-secondary">'+config.all+'</span> '
-        + getMessage('valid', 'Valid') + ' <span class="badge badge-success">'+(valid)+'</span> '
-        + getMessage('invalid', 'Invalid') + ' <span class="badge badge-danger">'+config.ignored+'</span> ';
     html += includeWrapper ? '</article>' : '';
     return html;
 }

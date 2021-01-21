@@ -14,7 +14,7 @@ function getMessage(key, message, params, useMarked) {
     message = translations[lang][key] || message;
     // params might me used in message ${1} ${2}
     if (params) {
-        // var message = 'Use this option to load questions from your computer or mobile. File content must be in ${format} to be parsed with application.';
+        // var message = 'Use this option to load questions from your computer or mobile. File content must be in ${format} to be ${parsed} with application.';
 
         // console.log(message);
 
@@ -22,12 +22,15 @@ function getMessage(key, message, params, useMarked) {
         const regex = /(\${\w*})/gm;
         
         var found = message.match(regex);
-        if (found) {
-            var placeholderRegex = /(\w+)/gm;
-            var placeholder = found[0].match(placeholderRegex);
-            var placeholderPhrase = params[0].replace('${}', placeholder[0]);
 
-            message = message.replace(regex, placeholderPhrase);
+        if (found) {
+            for (var item in found) {
+                var placeholderRegex = /(\w+)/gm;
+                var placeholder = found[item].match(placeholderRegex);
+                var placeholderPhrase = params[item].replace('${}', placeholder[0]);
+
+                message = message.replace(found[item], placeholderPhrase);
+            }
         }
 
         // variables

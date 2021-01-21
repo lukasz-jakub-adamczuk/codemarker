@@ -17,7 +17,8 @@ var translationsInPolish = {
     'reset_settings': 'Przywróć domyślne ustawienia',
     'enable_new_features': 'Aktywuj nowe funkcje',
     'remove_exams': 'Usuń wyzwania',
-    'load_questions': 'Wgraj swoje pytania',
+    'load_questions': 'Wgraj pytania z markdown',
+    'upload_questions': 'Wgraj pytania z Excela',
     'retrieve_questions': 'Pobierz',
     'prev_short': 'Poprzednie',
     'next_short': 'Następne',
@@ -81,7 +82,7 @@ var translationsInPolish = {
     'close': 'Zamknij',
     // menu sections
     'about_app': 'O aplikacji',
-    'upload_file': 'Wgraj pytania',
+    'upload_file': 'Użyj pliku z pytaniami',
     'retrieve_file': 'Pobierz pytania z internetu',
     'app_label': 'Aplikacja',
     'ui_label': 'Interfejs użytkownika',
@@ -91,7 +92,7 @@ var translationsInPolish = {
     'version_desc': 'Aktualna wersja',
     'source_code_desc': 'Kod źródłowy dostępny na ${Githubie}',
     'default_settings_desc': 'Użyj tych opcji do przywrócenia ustawień domyślnych.',
-    'upload_desc': 'Opcja ta pozwala na wgranie pytań z pamięci komputera lub telefonu. Jednak plik wymaga przygotowania pytań zgodnie z ${formatem} obsługiwanym przez aplikację LearnWise.',
+    'upload_desc': 'Opcja ta pozwala na wgranie pytań z pamięci komputera lub telefonu. Jednak plik wymaga przygotowania pytań zgodnie z ${formatem} obsługiwanym przez aplikację LearnWise. Druga opcja to wykorzystanie ${szablonu} Excela i dodanie do niego własnych pytań.',
     'retrieve_desc': 'Opcja ta umożliwia pobranie przygotowanych pytań z magazynu aplikacji LearnWise.',
     'retrieve_placeholder': 'tutaj wpisz kod',
     // properties
