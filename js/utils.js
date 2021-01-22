@@ -114,7 +114,7 @@ function retrieveQuestions() {
     } else {
         // html += retrieveExam(code);
         code.value = '';
-        renderElement('.downloading-messages', retrieveExam(code));
+        renderElement('.downloading-messages', retrieveExam(code.value));
     }
     $(this).children('.spinner-border').remove();
 }
