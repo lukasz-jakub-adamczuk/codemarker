@@ -113,8 +113,8 @@ function retrieveQuestions() {
         renderElement('.downloading-messages', error(getMessage('msg_exam_empty_code', 'Empty code.')));
     } else {
         // html += retrieveExam(code);
-        code.value = '';
         renderElement('.downloading-messages', retrieveExam(code.value));
+        code.value = '';
     }
     $(this).children('.spinner-border').remove();
 }
