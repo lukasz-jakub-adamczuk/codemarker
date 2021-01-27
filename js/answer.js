@@ -57,8 +57,8 @@ function registerAnswerForSimpleQuestion(event) {
             questions.exam[question][answer] = match;
     
             var selected = [];
-            $('select option:selected').each(function(idx, itm) { if (itm.value != '') selected.push(itm.value) });
-            console.log(selected);
+            $('.answers select option:selected').each(function(idx, itm) { if (itm.value != '') selected.push(itm.value) });
+            console.warn(selected);
             if (Object.values(questions.exam[question]).some(el => el == '')) {
                 errors[question-1].push(getMessage('msg_match_each', 'You have to match each answer.'));
             }
