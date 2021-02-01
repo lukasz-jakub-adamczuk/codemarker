@@ -1,7 +1,7 @@
 'use script';
 
 
-const LW_VERSION            = '0.14';
+const LW_VERSION            = '0.15';
 const PROP_VERSION          = '0.07';
 
 if (window.location.host == 'localhost') {
