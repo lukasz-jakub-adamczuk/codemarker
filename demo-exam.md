@@ -1,4 +1,4 @@
-# exam:        deloitte demo
+# exam:        demo
 # questions:   10
 # duration:    5
 # pass:        80
