@@ -1,20 +1,61 @@
-# exam:        demo
-# questions:   5
-# duration:    10
+# exam:        deloitte demo
+# questions:   10
+# duration:    5
 # pass:        80
 # description: Demo quiz presenting possible questions
 # generated:   1608745128000
 
-What colors can be seen on traffic lights.
+ServiceNow was founded in 2003 and formely known as ...
+{"shuffle_answers": "true", "area": "Single answer"}
++ Glidesoft
+- GlideFast
+- GlideNow
+- GlideConsulting
 
-Select 3 correct answers:
-{"area": "Multiple answers"}
-+ red
-+ yellow
-+ green
-- blue
-- purple
-- gray
+Do you remember ServiceNow founders? All are well known users.
+
+Choose 4 answers:
+{"shuffle_answers": "true", "area": "Multiple answer", "answers": "4", "type": "multiple"}
++ Fred Luddy
++ David Loo
++ John Goodliffe
++ Bow Ruggeri
+- Bruce Banner
+- Tony Stark
+- Steven Rogers
+- Peter Parker
+
+How many years ago ServiceNow was founded?
+{"shuffle_answers": "false", "area": "Single answer"}
++ 19
+- 20
+- 21
+- 22
+
+ServiceNow was founded by Fred Luddy. Who is current CEO for ServiceNow?
+{"shuffle_answers": "true", "area": "Single answer"}
++ Bill McDermott
+- Elon Musk
+- Jeff Bezos
+- Richard Branson
+
+Can you recognize actor behind mask?
+{"image": "https://wallpapercave.com/wp/wp9429740.jpg", "shuffle_answers": "true", "area": "Single answer"}
++ Robert Pattinson
+- Ben Affleck
+- Christian Bale
+- George Clooney
+- Val Kilmer
+- Michael Keaton
+
+How many pieces contains 75192 Lego Star Wars Millenium Falcon set?
+
+_If you don't know the correct answer check comment for this question, please._
+{"comment": "Millenium Falcon has 7541 pieces.", "area": "Single answer"}
++ 7541
+- 7451
+- 7154
+- 7145
 
 Match number of wheels with name of vehicle
 {"type": "matching", "shuffle_answers": "false", "area": "Matching answers"}
@@ -23,19 +64,12 @@ Match number of wheels with name of vehicle
 + 3 == tricycle
 + 4 == car
 
-How many pieces contains 75192 Lego Star Wars Millenium Falcon set? If you don't know the correct answer check comment for this question, please.
-{"comment": "Millenium Falcon has 7541 pieces.", "area": "Single answer"}
-+ 7541
-- 7451
-- 7154
-- 7145
-
-What you can see on image?
-{"image": "https://lukasz-jakub-adamczuk.github.io/codemarker/img/cat.png", "area": "Single answer"}
-+ Cat
-- Dog
-- Turtle
-- Horse
+Which __animal__ is programming language also?
+{"shuffle_answers": "true", "area": "Single answer"}
++ Python
+- Lion
+- Frog
+- Crow
 
 There is much more parameters available to configure different types of questions and behaviour for application. What should be used to learn about?
 {"shuffle_answers": "false", "area": "Single answer"}
