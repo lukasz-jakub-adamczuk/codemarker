@@ -1,4 +1,4 @@
-'use strict'
+// 'use strict'
 
 // var translations = {};
 
@@ -46,7 +46,7 @@ function getMessage(key, message, params, useMarked) {
         }
     }
     if (useMarked) {
-        return marked(message);
+        return marked.parse(message);
     }
     return message;
 }

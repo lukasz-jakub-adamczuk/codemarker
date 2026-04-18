@@ -1,4 +1,4 @@
-'use strict';
+// 'use strict';
 
 // Handle previous question for running challenge
 function prevQuestion(event) {
@@ -76,9 +76,10 @@ function prepareSimpleQuestion(q, idx) {
 
     var question = q.name;
     question = question.escapeHtml();
+    question = question.split('|\n\n|').join('|\n|')
 
     if (!q.params.markdown || q.params.markdown == 'both' || q.params.markdown == 'question') {
-        question = marked(question);
+        question = marked.parse(question);
     }
     question = replaceBBCode(question);
     
@@ -108,7 +109,7 @@ function prepareSimpleQuestion(q, idx) {
             // if (mode != 'print' || (mode == 'print' && answers.choices[ans].type == 'correct') || (mode == 'print' && properties['print_answers_print_incorrect'] && answers.choices[ans].type == 'wrong')) {
                 html += '<div class="custom-control custom-checkbox">'
                     +'<input type="checkbox" id="'+id+'" name="answer" class="custom-control-input" tabindex="'+(parseInt(ans)+1)+'" value="'+slugify(answer)+'"'+(checked ? ' checked' : '')+'>'
-                    +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+marked(letter+answer.escapeHtml()).split('[br]').join('<br>')+'</label>'
+                    +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+marked.parse(letter+answer.escapeHtml()).split('[br]').join('<br>')+'</label>'
                 +'</div>';
             // }
         } else {
@@ -116,7 +117,7 @@ function prepareSimpleQuestion(q, idx) {
             // if (mode != 'print' || (mode == 'print' && answers.choices[ans].type == 'correct') || (mode == 'print' && properties['print_answers_print_incorrect'] && answers.choices[ans].type == 'wrong')) {
                 html += '<div class="custom-control custom-radio">'
                     +'<input type="radio" id="'+id+'" name="answer" class="custom-control-input" tabindex="'+(parseInt(ans)+1)+'" value="'+slugify(answer)+'"'+(checked ? ' checked' : '')+'>'
-                    +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+marked(letter+answer.escapeHtml()).split('[br]').join('<br>')+'</label>'
+                    +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+marked.parse(letter+answer.escapeHtml()).split('[br]').join('<br>')+'</label>'
                 +'</div>';
             // }
         }
@@ -140,7 +141,7 @@ function prepareMatchingQuestion(q, idx) {
     question = question.escapeHtml();
 
     if (!q.params.markdown || q.params.markdown == 'both' || q.params.markdown == 'question') {
-        question = marked(question);
+        question = marked.parse(question);
     }
     question = replaceBBCode(question);
     
@@ -168,7 +169,7 @@ function prepareMatchingQuestion(q, idx) {
 
         html += '<div class="matching-control">'
             // +'<input type="radio" id="'+id+'" name="customRadio" class="custom-control-input" value="'+slugify(answer)+'"'+(checked ? ' checked' : '')+'>'
-            +'<label class="matching-control-label" for="'+id+'">'+marked(answer.escapeHtml()).split('[br]').join('<br>')+'</label>'
+            +'<label class="matching-control-label" for="'+id+'">'+marked.parse(answer.escapeHtml()).split('[br]').join('<br>')+'</label>'
             // +'<select class="custom-select" id="'+id+'" name="'+slugify(answer)+'">';
             +'<select class="custom-select" id="'+id+'" name="answer">';
         html +='<option value="">' + getMessage('choose_answer', 'choose answer') + '</option>';
@@ -185,7 +186,7 @@ function prepareMatchingQuestion(q, idx) {
             //     selected = ' selected';
             // }
 
-            html +='<option value="'+slugify(match.answer)+'"'+selected+'>' + marked(match.answer.escapeHtml()).split('[br]').join('<br>') + '</option>';
+            html +='<option value="'+slugify(match.answer)+'"'+selected+'>' + marked.parse(match.answer.escapeHtml()).split('[br]').join('<br>') + '</option>';
         }
         html +='</select>';
         html += '</div>';
@@ -222,7 +223,7 @@ function prepareInputQuestion(q, idx) {
     question = question.escapeHtml();
 
     if (!q.params.markdown || q.params.markdown == 'both' || q.params.markdown == 'question') {
-        question = marked(question);
+        question = marked.parse(question);
     }
     question = replaceBBCode(question);
     
@@ -246,7 +247,7 @@ function printSimpleQuestion(q, challenge) {
     question = question.escapeHtml();
 
     if (!q.params.markdown || q.params.markdown == 'both' || q.params.markdown == 'question') {
-        question = marked(question);
+        question = marked.parse(question);
     }
     question = replaceBBCode(question);
     question = question.replace('<p>', '<p>' + idx + '. ');
@@ -289,7 +290,7 @@ function printSimpleQuestion(q, challenge) {
                 if (answers.choices[ans].type == 'correct' || (properties['print_answers_print_incorrect'] && answers.choices[ans].type == 'wrong')) {
                     html += '<div class="custom-control custom-checkbox">'
                         +'<input type="checkbox" id="'+id+'" name="'+id+'" class="custom-control-input '+inputState+'" value="'+slugify(answer)+'"'+(checked ? ' checked="checked"' : '')+' >'
-                        +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+marked(answer.escapeHtml()).split('[br]').join('<br>')+'</label>'
+                        +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+marked.parse(answer.escapeHtml()).split('[br]').join('<br>')+'</label>'
                     +'</div>';
                 }
             } else {
@@ -297,7 +298,7 @@ function printSimpleQuestion(q, challenge) {
                 if (answers.choices[ans].type == 'correct' || (properties['print_answers_print_incorrect'] && answers.choices[ans].type == 'wrong')) {
                     html += '<div class="custom-control custom-radio">'
                         +'<input type="radio" id="'+id+'" name="'+id+'" class="custom-control-input '+inputState+'" value="'+slugify(answer)+'"'+(checked ? ' checked="checked"' : '')+' >'
-                        +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+marked(answer.escapeHtml()).split('[br]').join('<br>')+'</label>'
+                        +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+marked.parse(answer.escapeHtml()).split('[br]').join('<br>')+'</label>'
                     +'</div>';
                 }
             }
@@ -320,7 +321,7 @@ function printMatchingQuestion(q, challenge) {
     question = question.escapeHtml();
 
     if (!q.params.markdown || q.params.markdown == 'both' || q.params.markdown == 'question') {
-        question = marked(question);
+        question = marked.parse(question);
     }
     question = replaceBBCode(question);
     question = question.replace('<p>', '<p>' + idx + '. ');
@@ -366,7 +367,7 @@ function printMatchingQuestion(q, challenge) {
                         selected = ' selected';
                     }
 
-                    html +='<option value="'+slugify(match.answer)+'"'+selected+'>' + marked(match.answer) + '</option>';
+                    html +='<option value="'+slugify(match.answer)+'"'+selected+'>' + marked.parse(match.answer) + '</option>';
                 }
                 html +='</select>';
             html += '</div>';
@@ -403,7 +404,7 @@ function printInputQuestion(q, challenge) {
     question = question.escapeHtml();
 
     if (!q.params.markdown || q.params.markdown == 'both' || q.params.markdown == 'question') {
-        question = marked(question);
+        question = marked.parse(question);
     }
     question = replaceBBCode(question);
     question = question.replace('[]', '<strong>'+written+'</strong>');
