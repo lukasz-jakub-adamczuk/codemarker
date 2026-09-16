@@ -9,7 +9,7 @@ function startChallenge(event, newExam = true) {
     if (event && event.target.className.indexOf('disabled') != -1) {
         return;
     }
-    console.log('Start event has been triggered.');
+    console.warn('! Start event has been triggered.');
 
     // reset used questions
     if (initChallenge(properties['quiz_questions_skip_ignored'], newExam)) {
@@ -26,6 +26,7 @@ function startChallenge(event, newExam = true) {
         if (properties['app_ui_display_timer']) {
             showElement('#timer');
         }
+        console.warn("showElement('#timer');");
         // enable nav buttons
         if (challenge == 0) {
             disableAction('prev');
@@ -352,7 +353,7 @@ function generateQuestion(q, idx, type, mode = 'challenge') {
     
     if (q.params.comment) {
         html += '<span class="icon comment-icon" data-toggle="modal" data-target="#comment-modal"></span>';
-        renderElement('#comment-modal .modal-body', marked(q.params.comment));
+        renderElement('#comment-modal .modal-body', marked.parse(q.params.comment));
     }
     if (q.params.image) {
         html += '<span class="icon image-icon" data-toggle="modal" data-target="#image-modal"></span>';
@@ -369,7 +370,7 @@ function generateQuestion(q, idx, type, mode = 'challenge') {
         var infoEri = getMessage('info_eri', 'Row in Excel');
         var infoEqi = getMessage('info_eqi', 'Question in Excel');
         
-        renderElement('#database-modal .modal-body', marked(infoDesc + '\n\n'+infoEqi+': '+(q.params.eqi || '?')+'\n\n'+infoEri+': '+(q.params.eri || '?')));
+        renderElement('#database-modal .modal-body', marked.parse(infoDesc + '\n\n'+infoEqi+': '+(q.params.eqi || '?')+'\n\n'+infoEri+': '+(q.params.eri || '?')));
     }
     html += '</div>';
     

@@ -13,7 +13,7 @@ function loadQuestions() {
 document.querySelector('#customFile').addEventListener('change', customUpload);
 
 function uploadQuestions() {
-    // for 
+    // for excel files
     console.log('upload questions');
     document.querySelector('#customFile').click();
 }
@@ -80,9 +80,9 @@ function readSingleFile(e) {
         }
         renderElement('.loading-messages', html);
 
-        $('#load').children('.spinner-border').remove();       
+        $('#load').children('.spinner-border').remove();
 
-        if (['challenge_started', 'challenge_finished', 'exam_result_rendered', 'exam_printed'].includes(state)) {
+        if (['challenge_started', 'challenge_finished', 'exam_selected', 'exam_result_rendered', 'exam_printed'].includes(state)) {
             renderExams(false);
         } else {
             renderExams();
@@ -151,7 +151,7 @@ function retrieveExam(code) {
                     }
                 }
 
-                if (['challenge_started', 'challenge_finished', 'exam_result_rendered', 'exam_printed'].includes(state)) {
+                if (['challenge_started', 'challenge_finished', 'exam_selected', 'exam_result_rendered', 'exam_printed'].includes(state)) {
                     renderExams(false);
                 } else {
                     renderExams();
@@ -523,7 +523,7 @@ function renderErrors(question, returnHtml = false) {
 function showFeedback(type) {
     console.log('showFeedback() has been used.');
 
-    if (properties.quiz_answer_instant_feedback) {
+    // if (properties.quiz_answer_instant_feedback) {
         var feedback = document.querySelector('.feedback.'+type);
 
         if (properties.quiz_positive_feedback_audio && type == 'good') {
@@ -544,7 +544,7 @@ function showFeedback(type) {
                 nextQuestion();
             }
         }, 300);
-    }
+    // }
 }
 
 function runSpinner(callback, toShow) {

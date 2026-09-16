@@ -212,6 +212,9 @@ function renderTimer() {
         var minutes = Math.floor((time - (hours*3600)) / 60);
         var seconds = Math.floor(time - (hours*3600) - (minutes*60));
         var timer = (hours+'').padStart(2, '0') + ':' + (minutes+'').padStart(2, '0') + ':' + (seconds+'').padStart(2, '0');
+        if (displayTimerElement == undefined) {
+            displayTimerElement = document.querySelector('.timer-content');
+        }
         displayTimerElement.textContent = timer;
         // console.log(time);
     }

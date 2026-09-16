@@ -179,7 +179,12 @@ function prepareMatchingQuestion(q, idx) {
             // }
         for (var match of choices) {
             selected = '';
-            if (idx in questions.exam && ans in questions.exam[idx] && questions.exam[idx][ans] == slugify(match.answer)) {
+
+            var exam        = questions.exam;
+            var examIs      = idx in questions.exam;
+            var answerIs    = questions.exam[idx] != null && ans in questions.exam[idx];
+            var answerMatch = questions.exam[idx] != null && questions.exam[idx][ans] != null && questions.exam[idx][ans] == slugify(match.answer);
+            if (exam && examIs && answerIs && answerMatch) {
                 selected = ' selected';
             }
             // if (mode == 'print' && choice == match.answer) {

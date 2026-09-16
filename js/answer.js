@@ -86,10 +86,12 @@ function registerAnswerForSimpleQuestion(event) {
             var answeredAnswers = Object.entries(questions.exam[question]).reduce(function(acc, cur, idx) { return cur[1] == true ? acc + cur[0] : acc}, '');
             console.warn(correctAnswers);
             console.warn(answeredAnswers);
-            if (correctAnswers == answeredAnswers) {
-                showFeedback('good');
-            } else {
-                showFeedback('bad');
+            if (properties.quiz_answer_instant_feedback) {
+                if (correctAnswers == answeredAnswers) {
+                    showFeedback('good');
+                } else {
+                    showFeedback('bad');
+                }
             }
         }
 
@@ -118,7 +120,7 @@ function registerAnswerForSimpleQuestion(event) {
 }
 // Handle registring answer used to calculate running challenge result
 function registerAnswerForMatchingQuestion(event) {
-    console.log('registerAnswerForSimpleQuestion() has been used.');
+    console.log('registerAnswerForMatchingQuestion() has been used.');
     var label = event.target.getAttribute('id');
     var question = label.split('q')[1].split('a')[0];
     var answer = label.split('a')[1];
@@ -287,7 +289,7 @@ function validateQuestionAnswers(question) {
         console.log(answers);
         errors[question-1] = [];
         if (questions.exam[question]) {
-            if (Object.values(questions.exam[question]).filter(val => val == true).length != answers) {
+            if (Object.values(questions.exam[question]).filter(val => val == true).length < answers) {
                 errors[question-1].push(getMessage('msg_answers_limit', 'You have to choose %d answers.', [answers]));
                 console.log(errors);
             // } else {
@@ -307,7 +309,7 @@ function validateQuestionAnswers(question) {
 }
 
 function validateMandatoryAnswers(question) {
-    // multi choice questions may have exact number of answers
+    // multi choice questions may have too many answers
     console.log(question);
     var answers = questions.used[question-1].params.answers;
     if (answers) {
@@ -329,63 +331,105 @@ function validateMandatoryAnswers(question) {
 function validateExamAnswers() {
     var score = 0;
     var point;
-    var ratio;
+    // var ratio;
     var matches;
+
+    var smallPoints;
+    var needAnswers;
 
     var summary = {'score': 0, 'correct': [], 'wrong': []};
 
-    if (questions.exam.length) {
-        for (var i = 1; i < questions.exam.length; i++) {
-            ratio = 1 / questions.used[i-1].answers.correct;
+    // check all used questions
+    if (questions.used) {
+    // if (questions.exam.length) {
+        var e;
+        for (var u = 0; u < questions.used.length; u++) {
             point = 0;
-            
-            if (questions.exam[i] != undefined) {
-                console.log('\nQuestion: ' + questions.used[i-1].name);
-                console.log('Ratio:    ' + ratio);
-                // summarize multiple checked answers
-                for (var answer in questions.exam[i]) {
-                    if (questions.used[i-1].answers.choices[answer].name.indexOf('==') != -1) {
-                        matches = questions.used[i-1].answers.choices[answer].name.split('==').map(val => slugify(val.trim()));
-                    }
-                    // console.log(answer);
-                    if ((questions.exam[i][answer] === true
-                        && questions.used[i-1].answers.choices[answer].type === 'correct')
-                        || (questions.exam[i][answer] !== ''
-                        && matches && matches[0]+'-'+questions.exam[i][answer] === matches[0]+'-'+matches[1]
-                        && questions.used[i-1].answers.choices[answer].type === 'correct')
-                        || (questions.exam[i][answer] !== ''
-                        && questions.used[i-1].answers.choices[answer].slug === slugify((questions.exam[i][answer] + '').trim())
-                        && questions.used[i-1].answers.choices[answer].type === 'correct')) {
-                        point += ratio;
-                    }
-                }
-                console.log('Checking correct answers: ' + point);
-                if (ratio < 1) {
-                    for (var answer in questions.exam[i]) {
-                        if (questions.used[i-1].answers.choices[answer].name.indexOf('==') != -1) {
-                            matches = questions.used[i-1].answers.choices[answer].name.split('==').map(val => slugify(val.trim()));
-                            if (matches[0]+'-'+questions.exam[i][answer] !== matches[0]+'-'+matches[1]) {
-                                point = 0;
-                            }
-                        } else {
-                            if ((questions.exam[i][answer] === true 
-                                && questions.used[i-1].answers.choices[answer].type === 'wrong')
-                                || questions.exam[i][answer] == '') {
-                                point = 0;
-                            }
+            // does answer given at all
+            e = u + 1;
+            // i = u + 1;
+            if (questions.exam[e]) {
+                // verify answers
+
+                            // for (var i = 1; i < questions.exam.length; i++) {
+                // ratio = 1 / questions.used[u].answers.correct;
+                
+                if (questions.exam[e] != undefined) {
+                    console.log('\nQuestion: ' + questions.used[u].name);
+                    needAnswers = questions.used[u].answers.correct;
+                    // console.log('Ratio:    ' + ratio);
+                    
+                    smallPoints = 0;
+                    
+                    // summarize multiple checked answers
+                    // checking that correct multipple answers were selected
+                    for (var answer in questions.exam[e]) {
+                        // answers for matching questions
+                        if (questions.used[u].answers.choices[answer].name.indexOf('==') != -1) {
+                            matches = questions.used[u].answers.choices[answer].name.split('==').map(val => slugify(val.trim()));
+                        }
+                        // console.log(answer);
+                        if ((questions.exam[e][answer] === true
+                                && questions.used[u].answers.choices[answer].type === 'correct')
+                            ||
+                            (questions.exam[e][answer] !== ''
+                                && matches
+                                && matches[0]+'-'+questions.exam[e][answer] === matches[0]+'-'+matches[1]
+                                && questions.used[u].answers.choices[answer].type === 'correct')
+                            ||
+                            (questions.exam[e][answer] !== ''
+                                && questions.used[u].answers.choices[answer].slug === slugify((questions.exam[e][answer] + '').trim())
+                                && questions.used[u].answers.choices[answer].type === 'correct')) {
+                            // point += ratio;
+                            smallPoints += 1;
                         }
                     }
+                    if (smallPoints == needAnswers) {
+                        point = 1;
+                    }
+                    console.log('Checking correct answers were checked: ' + point);
+                    // if more answers can be selected that wrong should be unchecked
+                    if (needAnswers > 1) {
+                        // var Selected = true;
+                        for (var answer in questions.exam[e]) {
+                            // mapping
+                            if (questions.used[u].answers.choices[answer].name.indexOf('==') != -1) {
+                                matches = questions.used[u].answers.choices[answer].name.split('==').map(val => slugify(val.trim()));
+                                if (matches[0]+'-'+questions.exam[e][answer] !== matches[0]+'-'+matches[1]) {
+                                    point = 0;
+                                }
+                            } else {
+                                if ((questions.exam[e][answer] === true 
+                                    && questions.used[u].answers.choices[answer].type === 'wrong')
+                                    || questions.exam[e][answer] === '') {
+                                    point = 0;
+                                }
+                            }
+                        }
+                        console.log('Checking wrong answers were not checked: ' + point);
+                    }
                 }
-                console.log('Checking wrong answers: ' + point);
-            }
-            console.log(point);
-            if (point == 1 || (parseInt(point * 1000) == 999)) {
-                summary.correct.push(questions.exam[i]);
-                questions.answered[i] = 'correct';
+
+
+                console.log(point);
+                if (point == 1) {
+                // if (point == 1 || (parseInt(point * 1000) == 999)) {
+                    summary.correct.push(questions.exam[e]);
+                    questions.answered[e] = 'correct';
+                } else {
+                    summary.wrong.push(questions.exam[e]);
+                    questions.answered[e] = 'wrong';
+                }
+
+
+
             } else {
-                summary.wrong.push(questions.exam[i]);
-                questions.answered[i] = 'wrong';
+                summary.wrong.push(questions.exam[e]);
+                questions.answered[e] = 'wrong';
             }
+
+
+
             score += point;
         }
         score = score * 100 / questions.used.length;

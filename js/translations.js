@@ -7,7 +7,7 @@ var translations = {
     'pl': translationsInPolish
 };
 
-function getMessage(key, message, params, useMarked) {
+function getMessage(key, message, params, useMarkdown) {
     // var lang = getProperty('app_ui_language', 'en');
     var lang = properties.app_ui_language || 'en';
     // console.log(lang);
@@ -45,7 +45,7 @@ function getMessage(key, message, params, useMarked) {
             }
         }
     }
-    if (useMarked) {
+    if (useMarkdown) {
         return marked.parse(message);
     }
     return message;

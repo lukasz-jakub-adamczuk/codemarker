@@ -95,14 +95,14 @@ var propertiesSetup = {
                 'name': 'quiz_positive_feedback_audio',
                 'label': 'Positive feedback with audio.',
                 'hint': 'This option provides positive feedback audio for answers when instant feedback is enabled.',
-                'value': true,
+                'value': false,
                 'version': '0.11',
                 'new_feature': true
             }, {
                 'name': 'quiz_negative_feedback_audio',
                 'label': 'Negative feedback with audio.',
                 'hint': 'This option provides negative feedback audio for answers when instant feedback is enabled.',
-                'value': true,
+                'value': false,
                 'version': '0.11',
                 'new_feature': true
             }, {
