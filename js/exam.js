@@ -450,6 +450,7 @@ function parseChallenge(content) {
     console.log('parseChallenge() has been used.');
     
     parser.init();
+    // console.warn(content);
     parser.parse(content);
 
     questions.all = parser.questions;
