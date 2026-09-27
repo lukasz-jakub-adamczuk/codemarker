@@ -4,22 +4,28 @@ var parser = {
     
     init: function() {
         this.debug = false;
-        this.question = {};        
-        this.questions = [];        
-        this.setup = null;        
+        this.question = {};
+        this.questions = [];
+        this.setup = null;
         this.line = '';
-        this.params = '';        
+        this.params = '';
         this.answer = '';
-        this.examName = '';        
+        this.category = [];
+        this.examName = '';
         this.paramsFound = false;
         this.answersFound = false;
-        this.examConfig = {'all': 0, 'ignored': 0, 'version': {}, 'area': {}};        
+        this.categoryFound = false;
+        this.explanationFound = false;
+        this.explanation = [];
+        this.examConfig = {'all': 0, 'ignored': 0, 'version': {}, 'area': {}};
         this.n = 0;
-        this.errors = [];        
+        this.errors = [];
         this.lengths = [];
     },
     
     parse: function(content) {
+        // answers cannot be multi-line text
+        // same with explanation for it
         console.log('Parsing challenge questions has been started.');
         parser.debug ? console.log(content) : '';
         var parts = content.split('\n');
@@ -34,15 +40,32 @@ var parser = {
                 parser.question.length = parser.question.length || 0;
                 parser.question.counter = parser.question.counter || {'correct': 0, 'wrong': 0};
                 parser.question.processed = false;
+                parser.question.category = parser.question.category || [];
+                parser.question.explanation = parser.question.explanation || [];
     
                 parser.question.params = parser.question.params || {};
     
                 parser.question.answers = parser.question.answers || [];
                 // parser.question.answers.correct = parser.question.answers.correct || {};
                 // parser.question.answers.wrong = parser.question.answers.wrong || {};
-                
+                parser.question.category = parser.question.category || [];
+        
                 switch(parser.line[0]) {
                     case '+':
+                        if (parser.explanationFound && parser.answersFound) {
+                            // extend previous answer with explanation
+                            parser.answer = parser.question.answers.pop();
+                            parser.answer.explanation = parser.explanation;
+                            parser.question.answers.push(parser.answer);
+                            parser.explanation = [];
+                            parser.explanationFound = false;
+                        }
+                        if (parser.explanationFound) {
+                            parser.question.explanation = parser.explanation.join("\n");
+                            parser.explanation = [];
+                            parser.explanationFound = false;
+                        }
+                        // correct answers
                         parser.answer = parser.line.substr(1,).trim();
                         parser.question.answers.push({'type': 'correct', 'slug': slugify(parser.answer), 'name': parser.answer});
                         // parser.question.answers.correct[slugify(parser.answer)] = parser.answer;
@@ -51,6 +74,20 @@ var parser = {
                         parser.answersFound = true;
                         break;
                     case '-':
+                        if (parser.explanationFound && parser.answersFound) {
+                            // extend previous answer with explanation
+                            parser.answer = parser.question.answers.pop();
+                            parser.answer.explanation = parser.explanation;
+                            parser.question.answers.push(parser.answer);
+                            parser.explanation = [];
+                            parser.explanationFound = false;
+                        }
+                        if (parser.explanationFound) {
+                            parser.question.explanation = parser.explanation.join("\n");
+                            parser.explanation = [];
+                            parser.explanationFound = false;
+                        }
+                        // incorrect answers
                         parser.answer = parser.line.substr(1,).trim();
                         parser.question.answers.push({'type': 'wrong', 'slug': slugify(parser.answer), 'name': parser.answer});
                         // parser.question.answers.wrong[slugify(parser.answer)] = parser.answer;
@@ -58,7 +95,24 @@ var parser = {
                         parser.question.length += parser.answer.length;
                         parser.answersFound = true;
                         break;
+                    case '@':
+                        // category
+                        if (parser.line.indexOf(',') !== -1) {
+                            parser.category.push(...parser.line.substr(1,).trim().split(','));
+                        } else {
+                            parser.category.push(...parser.line.substr(1,).trim().split(','));
+                        }
+                        parser.categoryFound = true;
+                        break;
+                    case '>':
+                        // explanation for question or answer
+                        // if (!parser.answersFound) {
+                            parser.explanation.push(parser.line.substr(1,).trim());
+                            parser.explanationFound = true;
+                        // }
+                        break;
                     case '{':
+                        // question parameters
                         parser.params += parser.line;
                         parser.paramsFound = true;
                         if (parser.line.trim().substr(-1) == '}') {
@@ -96,6 +150,7 @@ var parser = {
                         }
                         break;
                     case '#':
+                        // exam configuration
                         parser.setup = parser.line.substr(1,).trim().split(':');
                         if (parser.setup.length > 1) {
                             // if (parser.setup[0] == 'exam') {
@@ -106,6 +161,7 @@ var parser = {
                         }
                         break;
                     default:
+                        // else 
                         if (parser.paramsFound) {
                             parser.params += parser.line;
                             if (parser.line.trim().substr(-1) == '}') {
@@ -150,6 +206,15 @@ var parser = {
                                 if (parser.question.params.status == 'ignored') {
                                     parser.examConfig.ignored++;
                                 }
+                                // last answer explanation parsing
+                                if (parser.explanationFound && parser.answersFound) {
+                                    // extend previous answer with explanation
+                                    parser.answer = parser.question.answers.pop();
+                                    parser.answer.explanation = parser.explanation;
+                                    parser.question.answers.push(parser.answer);
+                                    parser.explanation = [];
+                                    parser.explanationFound = false;
+                                }
                                 parser.answersFound = false;
                                 // adding found question to 
                                 parser.questions[parser.n] = parser.question;
@@ -161,11 +226,22 @@ var parser = {
                                 parser.question.counter = {'correct': 0, 'wrong': 0};
                                 parser.question.params = {};
                                 parser.question.answers = [];
+
+                                parser.question.category = [];
+                                parser.categoryFound = false;
+                                parser.explanationFound = false;
+                                parser.explanation = [];
                                 // parser.question.answers.correct = {};
                                 // parser.question.answers.wrong = {};
                                 parser.n++;
                             }
+                            // question defined below
                             // parser.question.name += '<p>' + parser.line + '</p>';
+                            if (parser.category.length) {
+                                parser.question.category = parser.category;
+                                parser.category = [];
+                                parser.categoryFound = false;
+                            }
                             parser.question.name += parser.line + "\n\n";
                             parser.question.length += parser.line.length;
                             parser.question.index = parser.n;
