@@ -82,8 +82,20 @@ function prepareSimpleQuestion(q, idx) {
         question = marked.parse(question);
     }
     question = replaceBBCode(question);
+
+    // categories
+    if (q.category.length) {
+        for (var ck in q.category) {
+            html += '<span class="badge badge-pill badge-secondary">' + q.category[ck].escapeHtml().trim() + '</span> ';
+        }
+    }
     
     html += '<div class="question">' + question + '</div>';
+
+    // explanation
+    if (q.explanation != '') {
+        html += '<div class="explanation alert alert-info">' + q.explanation.escapeHtml().split("\n").join("<br>") + '</div>';
+    }
     
     html += '<div class="answers">';
     for (var ans in answers.choices) {
@@ -112,6 +124,12 @@ function prepareSimpleQuestion(q, idx) {
                     +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+marked.parse(letter+answer.escapeHtml()).split('[br]').join('<br>')+'</label>'
                 +'</div>';
             // }
+            // explanation
+            if (answers.choices[ans].explanation && answers.choices[ans].explanation.length) {
+                for (var ak in answers.choices[ans].explanation) {
+                    html += '<div class="alert alert-dark">' + answers.choices[ans].explanation.join('<br>').escapeHtml().trim() + '</div> ';
+                }
+            }
         } else {
             // single choice
             // if (mode != 'print' || (mode == 'print' && answers.choices[ans].type == 'correct') || (mode == 'print' && properties['print_answers_print_incorrect'] && answers.choices[ans].type == 'wrong')) {
@@ -120,6 +138,12 @@ function prepareSimpleQuestion(q, idx) {
                     +'<label class="custom-control-label'+answerClass+'" for="'+id+'">'+marked.parse(letter+answer.escapeHtml()).split('[br]').join('<br>')+'</label>'
                 +'</div>';
             // }
+            // explanation
+            if (answers.choices[ans].explanation && answers.choices[ans].explanation.length) {
+                for (var ak in answers.choices[ans].explanation) {
+                    html += '<div class="alert alert-dark">' + answers.choices[ans].explanation.join('<br>').escapeHtml().trim() + '</div> ';
+                }
+            }
         }
     }
     // html += '</div>';
