@@ -162,7 +162,7 @@ Column H with heaser Tags is used for specifing area for the question. Value mig
 - [x] Fixing incorrectly rendered exams list after uploading question from Excel during lauched exam
 - [x] Changing calculations for correct answers in exam result (multi-answer questions)
 - [x] Changing calculations for exam final score and achieved results
-- [x] Adding default params for matching questions in markdown 
+- [x] Adding default params for matching questions in Markdown 
 
 ### v0.15
 - [x] parsing questions from Excel spreadsheet
