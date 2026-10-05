@@ -152,7 +152,7 @@ Column H with heaser Tags is used for specifing area for the question. Value mig
 
 ## Changelogs
 
-### v0.15
+### v0.16
 - [x] Fixing broken timer display for restored questions
 - [x] Fixing parsing controlling parameters in questions (marked.js usage)
 - [x] Fixing parsing messages for questions with comments (marked.js usage)
