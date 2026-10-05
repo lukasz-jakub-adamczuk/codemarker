@@ -153,6 +153,18 @@ Column H with heaser Tags is used for specifing area for the question. Value mig
 ## Changelogs
 
 ### v0.15
+- [x] Fixing broken timer display for restored questions
+- [x] Fixing parsing controlling parameters in questions (marked.js usage)
+- [x] Fixing parsing messages for questions with comments (marked.js usage)
+- [x] Fixing vertical alignment in CSS for sync icon
+- [x] Turning off default values for audio feedback properties
+- [x] Fixing incorrectly rendered exams list after loading question from markdown during lauched exam
+- [x] Fixing incorrectly rendered exams list after uploading question from Excel during lauched exam
+- [x] Changing calculations for correct answers in exam result (multi-answer questions)
+- [x] Changing calculations for exam final score and achieved results
+- [x] Adding default params for matching questions in markdown 
+
+### v0.15
 - [x] parsing questions from Excel spreadsheet
 - [x] parsing timestamp for exam on list
 - [x] percentage count for valid quiestions
