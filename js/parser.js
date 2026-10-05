@@ -65,6 +65,12 @@ var parser = {
                             parser.explanation = [];
                             parser.explanationFound = false;
                         }
+                        // matching answers default parameter
+                        if (parser.line.substr(1,).trim().indexOf('==') !== -1) {
+                            parser.question.params = {'type': 'matching'};
+                            parser.paramsFound = false;
+                            parser.params = '';
+                        }
                         // correct answers
                         parser.answer = parser.line.substr(1,).trim();
                         parser.question.answers.push({'type': 'correct', 'slug': slugify(parser.answer), 'name': parser.answer});
@@ -250,6 +256,17 @@ var parser = {
                 }
             }
         }
+        // last answer explanation for last question parsing case
+        if (parser.explanationFound && parser.answersFound) {
+            // extend previous answer with explanation
+            parser.answer = parser.question.answers.pop();
+            parser.answer.explanation = parser.explanation;
+            parser.question.answers.push(parser.answer);
+            parser.explanation = [];
+            parser.explanationFound = false;
+        }
+
+
         // this actions needs to be done for last question because during loop parsing
         // have been skipped as last line of question is answer and each question
         // is added to list when next is found
